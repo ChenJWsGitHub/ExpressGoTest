@@ -1,0 +1,17 @@
+全都 package zegoexpress
+
+之后测试Demo引入方式：
+import {
+    zegoexpress
+    ...
+}
+
+需要把 zegoexpress 这个目录放到：
+1. go env GOROOT 显示的位置
+2. go env GOPATH 显示的位置/src
+之一
+
+临时设置GOPATH（仅当前终端有效）
+export GOPATH=/your/custom/path
+​使用 Go 命令设置（Go 1.14+）​​
+go env -w GOPATH=/your/custom/path
