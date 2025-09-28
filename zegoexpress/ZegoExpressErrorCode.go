@@ -1,7 +1,7 @@
 package zegoexpress
 
-type ZegoErrorCode int
+//type ZegoErrorCode int
 
 const (
-	ZegoErrorCodeCommonSuccess ZegoErrorCode = 0
+	ZegoErrorCodeCommonSuccess = 0
 )

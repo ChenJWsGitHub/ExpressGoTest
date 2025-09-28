@@ -375,16 +375,16 @@ type IZegoExpressEngine interface {
 	FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudioFrameParam)
 }
 
-func CreateEngine(profile ZegoEngineProfile, eventHandler *IZegoEventHandler) *IZegoExpressEngine {
+func CreateEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
 	return createEngine(profile, eventHandler)
 }
 
 type ZegoDestroyCompletionCallback func()
-func DestroyEngine(engine *IZegoExpressEngine, callback ZegoDestroyCompletionCallback) {
+func DestroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCallback) {
 	destroyEngine(engine, callback)
 }
 
-func GetEngine() *IZegoExpressEngine {
+func GetEngine() IZegoExpressEngine {
 	return getEngine()
 }
 
@@ -404,6 +404,6 @@ func GetVersion() string {
 	return getVersion()
 }
 
-func SetApiCalledCallback(callback *IZegoApiCalledEventHandler) {
+func SetApiCalledCallback(callback IZegoApiCalledEventHandler) {
 	setApiCalledCallback(callback)
 }

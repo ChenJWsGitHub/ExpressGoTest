@@ -4,8 +4,14 @@ package zegoexpress
 #cgo CFLAGS: -I./lib/include
 #cgo LDFLAGS: -L./lib -lZegoExpressEngine -lZegoExpressGoBridge -Wl,-rpath=./lib
 #include <stdlib.h>
+#include <string.h>
 #include "zego-express-engine.h"
 #include "zego-express-room.h"
+#include "zego-express-publisher.h"
+#include "zego-express-player.h"
+#include "zego-express-im.h"
+#include "zego-express-preprocess.h"
+#include "zego-express-custom-audio-io.h"
 #include "zego-express-go-bridge.h"
 */
 import "C"
@@ -26,7 +32,7 @@ var (
 	engineDestroyCallback ZegoDestroyCompletionCallback
 
 	callbackLock                   sync.Mutex
-	apiCalledCallback              *IZegoApiCalledEventHandler
+	apiCalledCallback              IZegoApiCalledEventHandler
 	roomLoginCallback              = make(map[int]ZegoRoomLoginCallback)
 	roomLogoutCallback             = make(map[int]ZegoRoomLogoutCallback)
 	imSendBroadcastMessageCallback = make(map[int]ZegoIMSendBroadcastMessageCallback)
@@ -41,7 +47,7 @@ func GoOnApiCalledResult(errorCode C.int, funcName *C.char, data *C.char) {
 		if data != nil {
 			goData = C.GoString(data)
 		}
-		apiCalledCallback.OnApiCalledResult(errorCode, C.GoString(funcName), goData)
+		apiCalledCallback.OnApiCalledResult(int(errorCode), C.GoString(funcName), goData)
 	}
 }
 
@@ -138,7 +144,7 @@ func GoOnDebugError(errorCode C.int, funcName *C.char, info *C.char) {
 	if info != nil {
 		goInfo = C.GoString(info)
 	}
-	handler.OnDebugError(errorCode, C.GoString(funcName), goInfo)
+	handler.OnDebugError(int(errorCode), C.GoString(funcName), goInfo)
 }
 
 //export GoOnRoomStateUpdate
@@ -160,7 +166,7 @@ func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode
 }
 
 //export GoOnRoomStreamUpdate
-func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, streamInfoList *C.struct_zego_stream, streamInfoCount C.uint32, data *C.char) {
+func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, streamInfoList *C.struct_zego_stream, streamInfoCount C.uint, data *C.char) {
 	engineLock.RLock()
 	defer engineLock.RUnlock()
 	if globalEngine == nil {
@@ -366,7 +372,7 @@ func GoOnPlayerRecvSei(info C.struct_zego_media_side_info) {
 		return
 	}
 	goInfo := ZegoMediaSideInfo{
-		StreamID:    C.GoString(streamID),
+		StreamID:    C.GoString(&info.stream_id[0]),
 		SEIData:     cUcharPtrToGoSlice(info.sei_data, info.sei_data_length),
 		TimestampNs: int64(info.timestamp_ns),
 		ModuleType:  int(info.module_type),
@@ -393,13 +399,19 @@ func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, d
 }
 
 type engineImpl struct {
-	eventHandler     *IZegoEventHandler
-	audioDataHandler *IZegoAudioDataHandler
+	eventHandler     IZegoEventHandler
+	audioDataHandler IZegoAudioDataHandler
 }
 
-func (e *engineImpl) init(profile ZegoEngineProfile, handler *IZegoEventHandler) int {
+func (e *engineImpl) init(profile ZegoEngineProfile, handler IZegoEventHandler) int {
 	e.eventHandler = handler
-	// zego_express_set_platform_language
+	engineConfig := ZegoEngineConfig{
+		LogConfig: nil,
+		AdvancedConfig: map[string]string{
+			"thirdparty_framework_info": "golang",
+		},
+	}
+	setEngineConfig(engineConfig)
 	cProfile := C.struct_zego_engine_profile{
 		app_id:   C.uint(profile.AppID),
 		scenario: C.enum_zego_scenario(profile.Scenario),
@@ -422,11 +434,11 @@ func (e *engineImpl) LoginRoom(roomID string, user ZegoUser, config *ZegoRoomCon
 	var cRoomConfig C.struct_zego_room_config
 	var cRoomConfigPtr *C.struct_zego_room_config = nil
 	if config != nil {
-		cRoomConfig.max_member_count = config.MaxMemberCount
-		cRoomConfig.is_user_status_notify = config.IsUserStatusNotify
+		cRoomConfig.max_member_count = C.uint(config.MaxMemberCount)
+		cRoomConfig.is_user_status_notify = C.bool(config.IsUserStatusNotify)
 		setCharArray(&cRoomConfig.token[0], config.Token, C.ZEGO_EXPRESS_MAX_ROOM_TOKEN_VALUE_LEN)
-		cRoomConfig.capability_negotiation_types = config.CapabilityNegotiationTypes
-		cRoomConfig.room_type = config.RoomType
+		cRoomConfig.capability_negotiation_types = C.uint(config.CapabilityNegotiationTypes)
+		cRoomConfig.room_type = C.uint(config.RoomType)
 		cRoomConfigPtr = &cRoomConfig
 	}
 	C.zego_express_login_room_with_callback(cRoomID, cZegoUser, cRoomConfigPtr, &seq)
@@ -506,8 +518,8 @@ func (e *engineImpl) StartPublishingStream(streamID string, config ZegoPublisher
 	cConfig := C.struct_zego_publisher_config{
 		force_synchronous_network_time: C.int(config.ForceSynchronousNetworkTime),
 		stream_censorship_mode:         C.enum_zego_stream_censorship_mode(config.StreamCensorshipMode),
-		stream_censor_flag:             C.int(StreamCensorFlag),
-		codec_negotiation_type:         C.enum_zego_capability_negotiation_type(CodecNegotiationType),
+		stream_censor_flag:             C.int(config.StreamCensorFlag),
+		codec_negotiation_type:         C.enum_zego_capability_negotiation_type(config.CodecNegotiationType),
 	}
 	setCharArray(&cConfig.room_id[0], config.RoomID, C.ZEGO_EXPRESS_MAX_ROOMID_LEN)
 	setCharArray(&cConfig.stream_title[0], config.StreamTitle, C.ZEGO_EXPRESS_MAX_STREAM_TITLE_LEN)
@@ -588,7 +600,7 @@ func (e *engineImpl) FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudio
 	C.zego_express_fetch_custom_audio_render_pcm_data(cData, cLen, cParam)
 }
 
-func createEngine(profile ZegoEngineProfile, eventHandler *IZegoEventHandler) *IZegoExpressEngine {
+func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
 	engineLock.Lock()
 	defer engineLock.Unlock()
 	if globalEngine == nil {
@@ -602,7 +614,7 @@ func createEngine(profile ZegoEngineProfile, eventHandler *IZegoEventHandler) *I
 	return globalEngine
 }
 
-func destroyEngine(engine *IZegoExpressEngine, callback ZegoDestroyCompletionCallback) {
+func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCallback) {
 	engineLock.Lock()
 	defer engineLock.Unlock()
 	if engine != nil && engine == globalEngine {
@@ -612,7 +624,7 @@ func destroyEngine(engine *IZegoExpressEngine, callback ZegoDestroyCompletionCal
 	}
 }
 
-func getEngine() *IZegoExpressEngine {
+func getEngine() IZegoExpressEngine {
 	engineLock.RLock()
 	defer engineLock.RUnlock()
 	return globalEngine
@@ -656,7 +668,7 @@ func getVersion() string {
 	return C.GoString(cVersion)
 }
 
-func setApiCalledCallback(callback *IZegoApiCalledEventHandler) {
+func setApiCalledCallback(callback IZegoApiCalledEventHandler) {
 	callbackLock.Lock()
 	defer callbackLock.Unlock()
 	apiCalledCallback = callback
