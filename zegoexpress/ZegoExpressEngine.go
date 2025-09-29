@@ -152,7 +152,7 @@ const (
 	ZegoAudioSampleRate22K ZegoAudioSampleRate = 22050
 	ZegoAudioSampleRate24K ZegoAudioSampleRate = 24000
 	ZegoAudioSampleRate32K ZegoAudioSampleRate = 32000
-	ZegoAudioSampleRate44K ZegoAudioSampleRate = 44000
+	ZegoAudioSampleRate44K ZegoAudioSampleRate = 44100
 	ZegoAudioSampleRate48K ZegoAudioSampleRate = 48000
 )
 
@@ -201,8 +201,8 @@ type ZegoLogConfig struct {
 	LogCount uint32
 }
 
-func NewZegoLogConfig() *ZegoLogConfig {
-	return &ZegoLogConfig{
+func NewZegoLogConfig() ZegoLogConfig {
+	return ZegoLogConfig{
 		LogSize: 5 * 1024 * 1024,
 		LogCount: 3,
 	}
