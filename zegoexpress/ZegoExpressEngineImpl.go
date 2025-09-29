@@ -2,7 +2,7 @@ package zegoexpress
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/lib/include
-#cgo LDFLAGS: -lZegoExpressEngine -lZegoExpressGoBridge -Wl,-rpath=${SRCDIR}/lib
+#cgo LDFLAGS: -L{SRCDIR}/lib -lZegoExpressEngine -lZegoExpressGoBridge -Wl,-rpath=${SRCDIR}/lib
 #include <stdlib.h>
 #include <string.h>
 #include "zego-express-engine.h"
