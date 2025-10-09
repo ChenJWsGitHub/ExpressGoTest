@@ -353,11 +353,13 @@ type IZegoEventHandler interface {
 	OnPublisherStateUpdate(streamID string, state ZegoPublisherState, errorCode int, extendedData string)
 	OnPublisherQualityUpdate(streamID string, quality ZegoPublishStreamQuality)
 	OnPublisherStreamEvent(eventID ZegoStreamEvent, streamID string, extendedData string)
+	OnPublisherSendAudioFirstFrame(channel ZegoPublishChannel)
 
 	OnPlayerStateUpdate(streamID string, state ZegoPlayerState, errorCode int, extendedData string)
 	OnPlayerQualityUpdate(streamID string, quality ZegoPlayStreamQuality)
 	OnPlayerRecvMediaSideInfo(info ZegoMediaSideInfo)
 	OnPlayerStreamEvent(eventID ZegoStreamEvent, streamID string, extendedData string)
+	OnPlayerRecvAudioFirstFrame(streamID string)
 }
 
 type IZegoAudioDataHandler interface {

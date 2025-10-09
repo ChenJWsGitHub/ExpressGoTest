@@ -30,10 +30,12 @@ extern void GoOnRoomTokenWillExpire(char *room_id, int remain_time_in_second);
 extern void GoOnPublisherStateUpdate(char *stream_id, enum zego_publisher_state state, zego_error error_code, char *extend_data);
 extern void GoOnPublisherQualityUpdate(char *stream_id, struct zego_publish_stream_quality quality);
 extern void GoOnPublisherStreamEvent(enum zego_stream_event event_id, char *stream_id, char *extra_info);
+extern void GoOnPublisherSendAudioFirstFrame(enum zego_publish_channel channel);
 extern void GoOnPlayerStateUpdate(char *stream_id, enum zego_player_state state, zego_error error_code, char *extend_data);
 extern void GoOnPlayerQualityUpdate(char *stream_id, struct zego_play_stream_quality quality);
 extern void GoOnPlayerRecvSei(struct zego_media_side_info info);
 extern void GoOnPlayerStreamEvent(enum zego_stream_event event_id, char *stream_id, char *extra_info);
+extern void GoOnPlayerRecvAudioFirstFrame(char *stream_id);
 
 extern void GoOnMediaPlayerStateUpdate(enum zego_media_player_state state, zego_error error_code, enum zego_media_player_instance_index instance_index);
 extern void GoOnMediaPlayerNetworkEvent(enum zego_media_player_network_event event, enum zego_media_player_instance_index instance_index);
@@ -97,6 +99,10 @@ static void bridge_go_on_publisher_stream_event(enum zego_stream_event event_id,
     GoOnPublisherStreamEvent(event_id, (char *)stream_id, (char *)extra_info);
 }
 
+static void bridge_go_on_publisher_send_audio_first_frame(enum zego_publish_channel channel, void *user_context) {
+    GoOnPublisherSendAudioFirstFrame(channel);
+}
+
 static void bridge_go_on_player_state_update(const char *stream_id, enum zego_player_state state, zego_error error_code, const char *extend_data, void *user_context) {
     GoOnPlayerStateUpdate((char *)stream_id, state, error_code, (char *)extend_data);
 }
@@ -111,6 +117,10 @@ static void bridge_go_on_player_recv_sei(struct zego_media_side_info info, void 
 
 static void bridge_go_on_player_stream_event(enum zego_stream_event event_id, const char *stream_id, const char *extra_info, void *user_context) {
     GoOnPlayerStreamEvent(event_id, (char *)stream_id, (char *)extra_info);
+}
+
+static void bridge_go_on_player_recv_audio_first_frame(const char *stream_id, void *user_context) {
+    GoOnPlayerRecvAudioFirstFrame((char *)stream_id);
 }
 
 static void bridge_go_on_media_player_state_update(enum zego_media_player_state state, zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
@@ -163,10 +173,12 @@ static void zego_express_go_bridge_init() {
     zego_register_publisher_state_update_callback(bridge_go_on_publisher_state_update, NULL);
     zego_register_publisher_quality_update_callback(bridge_go_on_publisher_quality_update, NULL);
     zego_register_publisher_stream_event_callback(bridge_go_on_publisher_stream_event, NULL);
+		zego_register_publisher_send_audio_first_frame_callback(bridge_go_on_publisher_send_audio_first_frame, NULL);
     zego_register_player_state_update_callback(bridge_go_on_player_state_update, NULL);
     zego_register_player_quality_update_callback(bridge_go_on_player_quality_update, NULL);
     zego_register_player_recv_media_side_info_callback(bridge_go_on_player_recv_sei, NULL);
     zego_register_player_stream_event_callback(bridge_go_on_player_stream_event, NULL);
+		zego_register_player_recv_audio_first_frame_callback(bridge_go_on_player_recv_audio_first_frame, NULL);
 		zego_register_media_player_state_update_callback(bridge_go_on_media_player_state_update, NULL);
 		zego_register_media_player_network_event_callback(bridge_go_on_media_player_network_event, NULL);
 		zego_register_media_player_playing_progress_callback(bridge_go_on_media_player_playing_progress, NULL);
@@ -460,6 +472,20 @@ func GoOnPublisherStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char
 	handler.OnPublisherStreamEvent(ZegoStreamEvent(eventID), C.GoString(streamID), goData)
 }
 
+//export GoOnPublisherSendAudioFirstFrame
+func GoOnPublisherSendAudioFirstFrame(channel C.enum_zego_publish_channel) {
+	engineLock.RLock()
+	defer engineLock.RUnlock()
+	if globalEngine == nil {
+		return
+	}
+	handler := globalEngine.eventHandler
+	if handler == nil {
+		return
+	}
+	handler.OnPublisherSendAudioFirstFrame(ZegoPublishChannel(channel))
+}
+
 //export GoOnPlayerStateUpdate
 func GoOnPlayerStateUpdate(streamID *C.char, state C.enum_zego_player_state, errorCode C.zego_error, data *C.char) {
 	engineLock.RLock()
@@ -565,6 +591,20 @@ func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, d
 		goData = C.GoString(data)
 	}
 	handler.OnPlayerStreamEvent(ZegoStreamEvent(eventID), C.GoString(streamID), goData)
+}
+
+//export GoOnPlayerRecvAudioFirstFrame
+func GoOnPlayerRecvAudioFirstFrame(streamID *C.char) {
+	engineLock.RLock()
+	defer engineLock.RUnlock()
+	if globalEngine == nil {
+		return
+	}
+	handler := globalEngine.eventHandler
+	if handler == nil {
+		return
+	}
+	handler.OnPlayerRecvAudioFirstFrame(C.GoString(streamID))
 }
 
 //export GoOnMediaPlayerStateUpdate
