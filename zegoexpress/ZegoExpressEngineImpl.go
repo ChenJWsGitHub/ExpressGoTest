@@ -6,6 +6,7 @@ package zegoexpress
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include "zego-express-errcode.h"
 #include "zego-express-engine.h"
 #include "zego-express-room.h"
 #include "zego-express-publisher.h"
@@ -13,6 +14,7 @@ package zegoexpress
 #include "zego-express-im.h"
 #include "zego-express-preprocess.h"
 #include "zego-express-custom-audio-io.h"
+#include "zego-express-mediaplayer.h"
 
 // 声明由Go实现的函数
 extern void GoOnApiCalledResult(int, char*, char*);
@@ -33,6 +35,16 @@ extern void GoOnPlayerQualityUpdate(char *stream_id, struct zego_play_stream_qua
 extern void GoOnPlayerRecvSei(struct zego_media_side_info info);
 extern void GoOnPlayerStreamEvent(enum zego_stream_event event_id, char *stream_id, char *extra_info);
 
+extern void GoOnMediaPlayerStateUpdate(enum zego_media_player_state state, zego_error error_code, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerNetworkEvent(enum zego_media_player_network_event event, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerPlayingProgress(unsigned long long millisecond, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerRenderingProgress(unsigned long long millisecond, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerRecvSEI(unsigned char *data, unsigned int data_length, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerFirstFrameEvent(enum zego_media_player_first_frame_event event, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerAudioFrame(unsigned char *data, unsigned int data_length, const struct zego_audio_frame_param param, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerLoadFileResult(zego_error error_code, enum zego_media_player_instance_index instance_index);
+extern void GoOnMediaPlayerSeekTo(zego_seq seq, zego_error error_code, enum zego_media_player_instance_index instance_index);
+
 static void bridge_go_on_api_called_result(int error_code, const char *func_name, const char *info, void *user_context) {
     GoOnApiCalledResult(error_code, (char *)func_name, (char *)info);
 }
@@ -50,7 +62,7 @@ static void bridge_go_on_im_send_broadcast_message_result(const char *room_id, u
 }
 
 static void bridge_go_on_player_audio_data(const unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param, const char *stream_id, void *user_context) {
-    GoOnPlayerAudioData((char *)data, data_length, param, (char *)stream_id);
+    GoOnPlayerAudioData((unsigned char *)data, data_length, param, (char *)stream_id);
 }
 
 static void bridge_go_on_debug_error(int error_code, const char *func_name, const char *info, void *user_context) {
@@ -101,6 +113,42 @@ static void bridge_go_on_player_stream_event(enum zego_stream_event event_id, co
     GoOnPlayerStreamEvent(event_id, (char *)stream_id, (char *)extra_info);
 }
 
+static void bridge_go_on_media_player_state_update(enum zego_media_player_state state, zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerStateUpdate(state, error_code, instance_index);
+}
+
+static void bridge_go_on_media_player_network_event(enum zego_media_player_network_event event, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerNetworkEvent(event, instance_index);
+}
+
+static void bridge_go_on_media_player_playing_progress(unsigned long long millisecond, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerPlayingProgress(millisecond, instance_index);
+}
+
+static void bridge_go_on_media_player_rendering_progress(unsigned long long millisecond, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerRenderingProgress(millisecond, instance_index);
+}
+
+static void bridge_go_on_media_player_recv_sei(const unsigned char *data, unsigned int data_length, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerRecvSEI((char *)data, data_length, instance_index);
+}
+
+static void bridge_go_on_media_player_first_frame_event(enum zego_media_player_first_frame_event event, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerFirstFrameEvent(event, instance_index);
+}
+
+static void bridge_go_on_media_player_audio_frame(unsigned char *data, unsigned int data_length, const struct zego_audio_frame_param param, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerAudioFrame((char *)data, data_length, param, instance_index);
+}
+
+static void bridge_go_on_mediaplayer_load_file_result(zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerLoadFileResult(error_code, instance_index);
+}
+
+static void bridge_go_on_media_player_seek_to(zego_seq seq, zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
+	GoOnMediaPlayerSeekTo(seq, error_code, instance_index);
+}
+
 static void zego_express_go_bridge_init() {
     zego_register_api_called_result_callback(bridge_go_on_api_called_result, NULL);
     zego_register_room_login_result_callback(bridge_go_login_callback, NULL);
@@ -119,11 +167,21 @@ static void zego_express_go_bridge_init() {
     zego_register_player_quality_update_callback(bridge_go_on_player_quality_update, NULL);
     zego_register_player_recv_media_side_info_callback(bridge_go_on_player_recv_sei, NULL);
     zego_register_player_stream_event_callback(bridge_go_on_player_stream_event, NULL);
+		zego_register_media_player_state_update_callback(bridge_go_on_media_player_state_update, NULL);
+		zego_register_media_player_network_event_callback(bridge_go_on_media_player_network_event, NULL);
+		zego_register_media_player_playing_progress_callback(bridge_go_on_media_player_playing_progress, NULL);
+		zego_register_media_player_rendering_progress_callback(bridge_go_on_media_player_rendering_progress, NULL);
+		zego_register_media_player_recv_sei_callback(bridge_go_on_media_player_recv_sei, NULL);
+		zego_register_media_player_first_frame_event_callback(bridge_go_on_media_player_first_frame_event, NULL);
+		zego_register_media_player_audio_frame_callback(bridge_go_on_media_player_audio_frame, NULL);
+		zego_register_media_player_load_resource_callback(bridge_go_on_mediaplayer_load_file_result, NULL);
+		zego_register_media_player_seek_to_callback(bridge_go_on_media_player_seek_to, NULL);
 }
 
 */
 import "C"
 import (
+	"container/list"
 	"fmt"
 	"sync"
 	"unsafe"
@@ -144,6 +202,9 @@ var (
 	roomLoginCallback              = make(map[int]ZegoRoomLoginCallback)
 	roomLogoutCallback             = make(map[int]ZegoRoomLogoutCallback)
 	imSendBroadcastMessageCallback = make(map[int]ZegoIMSendBroadcastMessageCallback)
+
+	mediaPlayerLock    sync.Mutex
+	mediaPlayerImplMap = make(map[int]*mediaPlayerImpl)
 )
 
 //export GoOnApiCalledResult
@@ -429,23 +490,23 @@ func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream
 		return
 	}
 	goQuality := ZegoPlayStreamQuality{
-		VideoRecvFPS:             float64(quality.video_recv_fps),
-		VideoDejitterFPS:         float64(quality.video_dejitter_fps),
-		VideoDecodeFPS:           float64(quality.video_decode_fps),
-		VideoRenderFPS:           float64(quality.video_render_fps),
-		VideoKBPS:                float64(quality.video_kbps),
-		VideoBreakRate:           float64(quality.video_break_rate),
-		AudioRecvFPS:             float64(quality.audio_recv_fps),
-		AudioDejitterFPS:         float64(quality.audio_dejitter_fps),
-		AudioDecodeFPS:           float64(quality.audio_decode_fps),
-		AudioRenderFPS:           float64(quality.audio_render_fps),
-		AudioKBPS:                float64(quality.audio_kbps),
-		AudioBreakRate:           float64(quality.audio_break_rate),
-		Mos:                      float64(quality.mos),
-		Rtt:                      int(quality.rtt),
-		PacketLostRate:           float64(quality.packet_lost_rate),
-		PeerToPeerDelay:          int(quality.peer_to_peer_delay),
-		PeerToPeerPacketLostRate: float64(quality.peer_to_peer_packet_lost_rate),
+		VideoRecvFPS:              float64(quality.video_recv_fps),
+		VideoDejitterFPS:          float64(quality.video_dejitter_fps),
+		VideoDecodeFPS:            float64(quality.video_decode_fps),
+		VideoRenderFPS:            float64(quality.video_render_fps),
+		VideoKBPS:                 float64(quality.video_kbps),
+		VideoBreakRate:            float64(quality.video_break_rate),
+		AudioRecvFPS:              float64(quality.audio_recv_fps),
+		AudioDejitterFPS:          float64(quality.audio_dejitter_fps),
+		AudioDecodeFPS:            float64(quality.audio_decode_fps),
+		AudioRenderFPS:            float64(quality.audio_render_fps),
+		AudioKBPS:                 float64(quality.audio_kbps),
+		AudioBreakRate:            float64(quality.audio_break_rate),
+		Mos:                       float64(quality.mos),
+		Rtt:                       int(quality.rtt),
+		PacketLostRate:            float64(quality.packet_lost_rate),
+		PeerToPeerDelay:           int(quality.peer_to_peer_delay),
+		PeerToPeerPacketLostRate:  float64(quality.peer_to_peer_packet_lost_rate),
 		Level:                     ZegoStreamQualityLevel(quality.level),
 		Delay:                     int(quality.delay),
 		AvTimestampDiff:           int(quality.av_timestamp_diff),
@@ -504,6 +565,129 @@ func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, d
 		goData = C.GoString(data)
 	}
 	handler.OnPlayerStreamEvent(ZegoStreamEvent(eventID), C.GoString(streamID), goData)
+}
+
+//export GoOnMediaPlayerStateUpdate
+func GoOnMediaPlayerStateUpdate(state C.enum_zego_media_player_state, errorCode C.zego_error, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.eventHandler
+		if handler != nil {
+			handler.OnMediaPlayerStateUpdate(mediaPlayer, ZegoMediaPlayerState(state), int(errorCode))
+		}
+	}
+}
+
+//export GoOnMediaPlayerNetworkEvent
+func GoOnMediaPlayerNetworkEvent(event C.enum_zego_media_player_network_event, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.eventHandler
+		if handler != nil {
+			handler.OnMediaPlayerNetworkEvent(mediaPlayer, ZegoMediaPlayerNetworkEvent(event))
+		}
+	}
+}
+
+//export GoOnMediaPlayerPlayingProgress
+func GoOnMediaPlayerPlayingProgress(millisecond C.ulonglong, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.eventHandler
+		if handler != nil {
+			handler.OnMediaPlayerPlayingProgress(mediaPlayer, uint64(millisecond))
+		}
+	}
+}
+
+//export GoOnMediaPlayerRenderingProgress
+func GoOnMediaPlayerRenderingProgress(millisecond C.ulonglong, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.eventHandler
+		if handler != nil {
+			handler.OnMediaPlayerRenderingProgress(mediaPlayer, uint64(millisecond))
+		}
+	}
+}
+
+//export GoOnMediaPlayerRecvSEI
+func GoOnMediaPlayerRecvSEI(data *C.uchar, dataLen C.uint, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.eventHandler
+		if handler != nil {
+			goData := cUcharPtrToGoSlice(data, dataLen)
+			handler.OnMediaPlayerRecvSEI(mediaPlayer, goData)
+		}
+	}
+}
+
+//export GoOnMediaPlayerFirstFrameEvent
+func GoOnMediaPlayerFirstFrameEvent(event C.enum_zego_media_player_first_frame_event, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.eventHandler
+		if handler != nil {
+			handler.OnMediaPlayerFirstFrameEvent(mediaPlayer, ZegoMediaPlayerFirstFrameEvent(event))
+		}
+	}
+}
+
+//export GoOnMediaPlayerAudioFrame
+func GoOnMediaPlayerAudioFrame(data *C.uchar, dataLen C.uint, param C.struct_zego_audio_frame_param, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		handler := mediaPlayer.audioHandler
+		if handler != nil {
+			goData := cUcharPtrToGoSlice(data, dataLen)
+			goParam := ZegoAudioFrameParam{
+				SampleRate: ZegoAudioSampleRate(param.sample_rate),
+				Channel:    ZegoAudioChannel(param.channel),
+			}
+			handler.OnAudioFrame(mediaPlayer, goData, goParam)
+		}
+	}
+}
+
+//export GoOnMediaPlayerLoadFileResult
+func GoOnMediaPlayerLoadFileResult(errorCode C.zego_error, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		callbacks := mediaPlayer.loadResourceCallbacks
+		if callbacks.Len() > 0 {
+			callback := callbacks.Front().Value
+			callbacks.Remove(callbacks.Front())
+			if callback != nil {
+				if f, ok := callback.(ZegoMediaPlayerLoadResourceCallback); ok {
+					f(int(errorCode))
+				}
+			}
+		}
+	}
+}
+
+//export GoOnMediaPlayerSeekTo
+func GoOnMediaPlayerSeekTo(seq C.zego_seq, errorCode C.zego_error, index C.enum_zego_media_player_instance_index) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+		callbacks := mediaPlayer.seekToCallbacks
+		if callback, ok := callbacks[int(seq)]; ok {
+			if callback != nil {
+				callback(int(errorCode))
+			}
+			delete(callbacks, int(seq))
+		}
+	}
 }
 
 type engineImpl struct {
@@ -706,6 +890,131 @@ func (e *engineImpl) FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudio
 	cData, cLen := goSliceToCUchar(data)
 	cParam := convertAudioFrameParam(param)
 	C.zego_express_fetch_custom_audio_render_pcm_data(cData, cLen, cParam)
+}
+
+func (e *engineImpl) CreateMediaPlayer() IZegoMediaPlayer {
+	var index C.enum_zego_media_player_instance_index = C.zego_media_player_instance_index_null
+	C.zego_express_create_media_player(&index)
+	if index == C.zego_media_player_instance_index_null {
+		return nil
+	}
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	mediaPlayer := new(mediaPlayerImpl)
+	mediaPlayer.instanceIndex = int(index)
+	mediaPlayer.loadResourceCallbacks = list.New()
+	mediaPlayer.seekToCallbacks = make(map[int]ZegoMediaPlayerSeekToCallback)
+	mediaPlayerImplMap[int(index)] = mediaPlayer
+	return mediaPlayer
+}
+
+func (e *engineImpl) DestroyMediaPlayer(mediaPlayer IZegoMediaPlayer) {
+	if mediaPlayer == nil {
+		return
+	}
+	index := mediaPlayer.GetIndex()
+
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	if _, ok := mediaPlayerImplMap[index]; ok {
+		C.zego_express_destroy_media_player(C.enum_zego_media_player_instance_index(index))
+		delete(mediaPlayerImplMap, index)
+	}
+}
+
+type mediaPlayerImpl struct {
+	eventHandler          IZegoMediaPlayerEventHandler
+	audioHandler          IZegoMediaPlayerAudioHandler
+	instanceIndex         int
+	loadResourceCallbacks *list.List
+	seekToCallbacks       map[int]ZegoMediaPlayerSeekToCallback
+}
+
+func (mediaPlayer *mediaPlayerImpl) SetEventHandler(handler IZegoMediaPlayerEventHandler) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	mediaPlayer.eventHandler = handler
+}
+
+func (mediaPlayer *mediaPlayerImpl) SetAudioHandler(handler IZegoMediaPlayerAudioHandler) {
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	mediaPlayer.audioHandler = handler
+}
+
+func (mediaPlayer *mediaPlayerImpl) LoadResource(path string, callback ZegoMediaPlayerLoadResourceCallback) {
+	cPath := StringToCString(path)
+	defer FreeCString(cPath)
+	result := C.zego_express_media_player_load_resource(cPath, C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+	if result != C.ZEGO_ERRCODE_COMMON_SUCCESS {
+		if callback != nil {
+			callback(int(result))
+		}
+		return
+	}
+	mediaPlayerLock.Lock()
+	defer mediaPlayerLock.Unlock()
+	mediaPlayer.loadResourceCallbacks.PushBack(callback)
+}
+
+func (mediaPlayer *mediaPlayerImpl) Start() {
+	C.zego_express_media_player_start(C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) Stop() {
+	C.zego_express_media_player_stop(C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) Pause() {
+	C.zego_express_media_player_pause(C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) Resume() {
+	C.zego_express_media_player_resume(C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) SeekTo(millisecond uint64, callback ZegoMediaPlayerSeekToCallback) {
+	cSeq := C.zego_express_get_increase_seq()
+	mediaPlayerLock.Lock()
+	mediaPlayer.seekToCallbacks[int(cSeq)] = callback
+	mediaPlayerLock.Unlock()
+	C.zego_express_media_player_seek_to(C.ulonglong(millisecond), C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex), &cSeq)
+}
+
+func (mediaPlayer *mediaPlayerImpl) EnableRepeat(enable bool) {
+	C.zego_express_media_player_enable_repeat(C.bool(enable), C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) EnableAux(enable bool) {
+	C.zego_express_media_player_enable_aux(C.bool(enable), C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) SetVolume(volume int) {
+	C.zego_express_media_player_set_volume(C.int(volume), C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) SetPlayVolume(volume int) {
+	C.zego_express_media_player_set_play_volume(C.int(volume), C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) SetPublishVolume(volume int) {
+	C.zego_express_media_player_set_publish_volume(C.int(volume), C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex))
+}
+
+func (mediaPlayer *mediaPlayerImpl) GetPlayVolume() int {
+	var volume C.int
+	C.zego_express_media_player_get_play_volume(C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex), &volume)
+	return int(volume)
+}
+
+func (mediaPlayer *mediaPlayerImpl) GetPublishVolume() int {
+	var volume C.int
+	C.zego_express_media_player_get_publish_volume(C.enum_zego_media_player_instance_index(mediaPlayer.instanceIndex), &volume)
+	return int(volume)
+}
+
+func (mediaPlayer *mediaPlayerImpl) GetIndex() int {
+	return mediaPlayer.instanceIndex
 }
 
 func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {

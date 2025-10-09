@@ -10,14 +10,14 @@ const (
 type ZegoScenario int
 
 const (
-  ZegoScenarioDefault ZegoScenario = 3 + iota
-  ZegoScenarioStandardVideoCall
-  ZegoScenarioHighQualityVideoCall
-  ZegoScenarioStandardChatroom
-  ZegoScenarioHighQualityChatroom
-  ZegoScenarioBroadcast
-  ZegoScenarioKaraoke
-  ZegoScenarioStandardVoiceCall
+	ZegoScenarioDefault ZegoScenario = 3 + iota
+	ZegoScenarioStandardVideoCall
+	ZegoScenarioHighQualityVideoCall
+	ZegoScenarioStandardChatroom
+	ZegoScenarioHighQualityChatroom
+	ZegoScenarioBroadcast
+	ZegoScenarioKaraoke
+	ZegoScenarioStandardVoiceCall
 )
 
 type ZegoRoomState int
@@ -147,13 +147,13 @@ type ZegoAudioSampleRate int
 
 const (
 	ZegoAudioSampleRateUnknown ZegoAudioSampleRate = 0
-	ZegoAudioSampleRate8K ZegoAudioSampleRate = 8000
-	ZegoAudioSampleRate16K ZegoAudioSampleRate = 16000
-	ZegoAudioSampleRate22K ZegoAudioSampleRate = 22050
-	ZegoAudioSampleRate24K ZegoAudioSampleRate = 24000
-	ZegoAudioSampleRate32K ZegoAudioSampleRate = 32000
-	ZegoAudioSampleRate44K ZegoAudioSampleRate = 44100
-	ZegoAudioSampleRate48K ZegoAudioSampleRate = 48000
+	ZegoAudioSampleRate8K      ZegoAudioSampleRate = 8000
+	ZegoAudioSampleRate16K     ZegoAudioSampleRate = 16000
+	ZegoAudioSampleRate22K     ZegoAudioSampleRate = 22050
+	ZegoAudioSampleRate24K     ZegoAudioSampleRate = 24000
+	ZegoAudioSampleRate32K     ZegoAudioSampleRate = 32000
+	ZegoAudioSampleRate44K     ZegoAudioSampleRate = 44100
+	ZegoAudioSampleRate48K     ZegoAudioSampleRate = 48000
 )
 
 type ZegoStreamEvent int
@@ -184,26 +184,49 @@ const (
 	ZegoPlayerStatePlaying
 )
 
+type ZegoMediaPlayerState int
+
+const (
+	ZegoMediaPlayerStateNoPlay ZegoMediaPlayerState = iota
+	ZegoMediaPlayerStatePlaying
+	ZegoMediaPlayerStatePauing
+	ZegoMediaPlayerStatePlayEnded
+)
+
+type ZegoMediaPlayerNetworkEvent int
+
+const (
+	ZegoMediaPlayerNetworkEventBufferBegin ZegoMediaPlayerNetworkEvent = iota
+	ZegoMediaPlayerNetworkEventBufferEnded
+)
+
+type ZegoMediaPlayerFirstFrameEvent int
+
+const (
+	ZegoMediaPlayerFirstFrameEventVideoRendered ZegoMediaPlayerFirstFrameEvent = iota
+	ZegoMediaPlayerFirstFrameEventAudioRendered
+)
+
 type ZegoEngineProfile struct {
-  AppID uint32
-  AppSign string
-  Scenario ZegoScenario
+	AppID    uint32
+	AppSign  string
+	Scenario ZegoScenario
 }
 
 type ZegoEngineConfig struct {
-	LogConfig *ZegoLogConfig
+	LogConfig      *ZegoLogConfig
 	AdvancedConfig map[string]string
 }
 
 type ZegoLogConfig struct {
-	LogPath string
-	LogSize uint64
+	LogPath  string
+	LogSize  uint64
 	LogCount uint32
 }
 
 func NewZegoLogConfig() ZegoLogConfig {
 	return ZegoLogConfig{
-		LogSize: 5 * 1024 * 1024,
+		LogSize:  5 * 1024 * 1024,
 		LogCount: 3,
 	}
 }
@@ -214,11 +237,11 @@ type ZegoUser struct {
 }
 
 type ZegoRoomConfig struct {
-	MaxMemberCount uint32
-	IsUserStatusNotify bool
-	Token string
+	MaxMemberCount             uint32
+	IsUserStatusNotify         bool
+	Token                      string
 	CapabilityNegotiationTypes uint32
-	RoomType uint32
+	RoomType                   uint32
 }
 
 type ZegoStream struct {
@@ -228,12 +251,12 @@ type ZegoStream struct {
 }
 
 type ZegoPublisherConfig struct {
-	RoomID string
+	RoomID                      string
 	ForceSynchronousNetworkTime int
-	StreamCensorshipMode ZegoStreamCensorshipMode
-	StreamCensorFlag int
-	CodecNegotiationType ZegoCapabilityNegotiationType
-	StreamTitle string
+	StreamCensorshipMode        ZegoStreamCensorshipMode
+	StreamCensorFlag            int
+	CodecNegotiationType        ZegoCapabilityNegotiationType
+	StreamTitle                 string
 }
 
 type ZegoAudioConfig struct {
@@ -248,7 +271,7 @@ type ZegoCustomAudioConfig struct {
 
 type ZegoAudioFrameParam struct {
 	SampleRate ZegoAudioSampleRate
-	Channel ZegoAudioChannel
+	Channel    ZegoAudioChannel
 }
 
 type ZegoPublishStreamQuality struct {
@@ -308,15 +331,15 @@ type ZegoPlayStreamQuality struct {
 }
 
 type ZegoMediaSideInfo struct {
-  StreamID string
-  SEIData []uint8
-  TimestampNs int64
-  ModuleType int
+	StreamID    string
+	SEIData     []uint8
+	TimestampNs int64
+	ModuleType  int
 }
 
 type ZegoRoomStreamList struct {
 	PublishStreamList []ZegoStream
-	PlayStreamList []ZegoStream
+	PlayStreamList    []ZegoStream
 }
 
 type IZegoEventHandler interface {
@@ -333,8 +356,8 @@ type IZegoEventHandler interface {
 
 	OnPlayerStateUpdate(streamID string, state ZegoPlayerState, errorCode int, extendedData string)
 	OnPlayerQualityUpdate(streamID string, quality ZegoPlayStreamQuality)
-  OnPlayerRecvMediaSideInfo(info ZegoMediaSideInfo)
-  OnPlayerStreamEvent(eventID ZegoStreamEvent, streamID string, extendedData string)
+	OnPlayerRecvMediaSideInfo(info ZegoMediaSideInfo)
+	OnPlayerStreamEvent(eventID ZegoStreamEvent, streamID string, extendedData string)
 }
 
 type IZegoAudioDataHandler interface {
@@ -343,6 +366,41 @@ type IZegoAudioDataHandler interface {
 
 type IZegoApiCalledEventHandler interface {
 	OnApiCalledResult(errorCode int, funcName string, info string)
+}
+
+type IZegoMediaPlayerEventHandler interface {
+	OnMediaPlayerStateUpdate(mediaPlayer IZegoMediaPlayer, state ZegoMediaPlayerState, errorCode int)
+	OnMediaPlayerNetworkEvent(mediaPlayer IZegoMediaPlayer, networkEvent ZegoMediaPlayerNetworkEvent)
+	OnMediaPlayerPlayingProgress(mediaPlayer IZegoMediaPlayer, millisecond uint64)
+	OnMediaPlayerRenderingProgress(mediaPlayer IZegoMediaPlayer, millisecond uint64)
+	OnMediaPlayerRecvSEI(mediaPlayer IZegoMediaPlayer, data []uint8)
+	OnMediaPlayerFirstFrameEvent(mediaPlayer IZegoMediaPlayer, event ZegoMediaPlayerFirstFrameEvent)
+}
+
+type IZegoMediaPlayerAudioHandler interface {
+	OnAudioFrame(mediaPlayer IZegoMediaPlayer, data []uint8, param ZegoAudioFrameParam)
+}
+
+type ZegoMediaPlayerLoadResourceCallback func(errorCode int)
+type ZegoMediaPlayerSeekToCallback func(errorCode int)
+
+type IZegoMediaPlayer interface {
+	SetEventHandler(handler IZegoMediaPlayerEventHandler)
+	SetAudioHandler(handler IZegoMediaPlayerAudioHandler)
+	LoadResource(path string, callback ZegoMediaPlayerLoadResourceCallback)
+	Start()
+	Stop()
+	Pause()
+	Resume()
+	SeekTo(millisecond uint64, callback ZegoMediaPlayerSeekToCallback)
+	EnableRepeat(enable bool)
+	EnableAux(enable bool)
+	SetVolume(volume int)
+	SetPlayVolume(volume int)
+	SetPublishVolume(volume int)
+	GetPlayVolume() int
+	GetPublishVolume() int
+	GetIndex() int
 }
 
 type ZegoRoomLoginCallback func(errorCode int, extendedData string)
@@ -373,6 +431,9 @@ type IZegoExpressEngine interface {
 
 	SendCustomAudioCapturePCMData(data []uint8, param ZegoAudioFrameParam, channel ZegoPublishChannel)
 	FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudioFrameParam)
+
+	CreateMediaPlayer() IZegoMediaPlayer
+	DestroyMediaPlayer(mediaPlayer IZegoMediaPlayer)
 }
 
 func CreateEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
@@ -380,6 +441,7 @@ func CreateEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZe
 }
 
 type ZegoDestroyCompletionCallback func()
+
 func DestroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCallback) {
 	destroyEngine(engine, callback)
 }
