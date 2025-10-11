@@ -738,8 +738,6 @@ func GoOnMediaPlayerSeekTo(seq C.zego_seq, errorCode C.zego_error, index C.enum_
 
 //export GoOnEngineUninit
 func GoOnEngineUninit() {
-	engineLock.Lock()
-	defer engineLock.Unlock()
 	if engineDestroyCallback != nil {
 		engineDestroyCallback()
 		engineDestroyCallback = nil
