@@ -211,9 +211,10 @@ func init() {
 }
 
 var (
-	engineLock            sync.RWMutex
-	globalEngine          *engineImpl
-	engineDestroyCallback ZegoDestroyCompletionCallback
+	engineLock                sync.RWMutex
+	globalEngine              *engineImpl
+	engineDestroyCallbackLock sync.Mutex
+	engineDestroyCallback     ZegoDestroyCompletionCallback
 
 	callbackLock                   sync.Mutex
 	apiCalledCallback              IZegoApiCalledEventHandler
@@ -738,6 +739,8 @@ func GoOnMediaPlayerSeekTo(seq C.zego_seq, errorCode C.zego_error, index C.enum_
 
 //export GoOnEngineUninit
 func GoOnEngineUninit() {
+	engineDestroyCallbackLock.Lock()
+	defer engineDestroyCallbackLock.Unlock()
 	if engineDestroyCallback != nil {
 		engineDestroyCallback()
 		engineDestroyCallback = nil
@@ -1089,7 +1092,9 @@ func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 	engineLock.Lock()
 	defer engineLock.Unlock()
 	if engine != nil && engine == globalEngine {
+		engineDestroyCallbackLock.Lock()
 		engineDestroyCallback = callback
+		engineDestroyCallbackLock.Unlock()
 		C.zego_express_engine_uninit_async()
 		globalEngine = nil
 	}
