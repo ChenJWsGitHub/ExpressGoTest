@@ -46,6 +46,7 @@ extern void GoOnMediaPlayerFirstFrameEvent(enum zego_media_player_first_frame_ev
 extern void GoOnMediaPlayerAudioFrame(unsigned char *data, unsigned int data_length, const struct zego_audio_frame_param param, enum zego_media_player_instance_index instance_index);
 extern void GoOnMediaPlayerLoadFileResult(zego_error error_code, enum zego_media_player_instance_index instance_index);
 extern void GoOnMediaPlayerSeekTo(zego_seq seq, zego_error error_code, enum zego_media_player_instance_index instance_index);
+extern void GoOnEngineUninit();
 
 static void bridge_go_on_api_called_result(int error_code, const char *func_name, const char *info, void *user_context) {
     GoOnApiCalledResult(error_code, (char *)func_name, (char *)info);
@@ -124,39 +125,43 @@ static void bridge_go_on_player_recv_audio_first_frame(const char *stream_id, vo
 }
 
 static void bridge_go_on_media_player_state_update(enum zego_media_player_state state, zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerStateUpdate(state, error_code, instance_index);
+    GoOnMediaPlayerStateUpdate(state, error_code, instance_index);
 }
 
 static void bridge_go_on_media_player_network_event(enum zego_media_player_network_event event, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerNetworkEvent(event, instance_index);
+    GoOnMediaPlayerNetworkEvent(event, instance_index);
 }
 
 static void bridge_go_on_media_player_playing_progress(unsigned long long millisecond, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerPlayingProgress(millisecond, instance_index);
+    GoOnMediaPlayerPlayingProgress(millisecond, instance_index);
 }
 
 static void bridge_go_on_media_player_rendering_progress(unsigned long long millisecond, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerRenderingProgress(millisecond, instance_index);
+    GoOnMediaPlayerRenderingProgress(millisecond, instance_index);
 }
 
 static void bridge_go_on_media_player_recv_sei(const unsigned char *data, unsigned int data_length, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerRecvSEI((char *)data, data_length, instance_index);
+    GoOnMediaPlayerRecvSEI((char *)data, data_length, instance_index);
 }
 
 static void bridge_go_on_media_player_first_frame_event(enum zego_media_player_first_frame_event event, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerFirstFrameEvent(event, instance_index);
+    GoOnMediaPlayerFirstFrameEvent(event, instance_index);
 }
 
 static void bridge_go_on_media_player_audio_frame(unsigned char *data, unsigned int data_length, const struct zego_audio_frame_param param, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerAudioFrame((char *)data, data_length, param, instance_index);
+    GoOnMediaPlayerAudioFrame((char *)data, data_length, param, instance_index);
 }
 
 static void bridge_go_on_mediaplayer_load_file_result(zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerLoadFileResult(error_code, instance_index);
+    GoOnMediaPlayerLoadFileResult(error_code, instance_index);
 }
 
 static void bridge_go_on_media_player_seek_to(zego_seq seq, zego_error error_code, enum zego_media_player_instance_index instance_index, void *user_context) {
-	GoOnMediaPlayerSeekTo(seq, error_code, instance_index);
+    GoOnMediaPlayerSeekTo(seq, error_code, instance_index);
+}
+
+static void bridge_go_on_engine_uninit(void *user_context) {
+	GoOnEngineUninit();
 }
 
 static void zego_express_go_bridge_init() {
@@ -173,21 +178,22 @@ static void zego_express_go_bridge_init() {
     zego_register_publisher_state_update_callback(bridge_go_on_publisher_state_update, NULL);
     zego_register_publisher_quality_update_callback(bridge_go_on_publisher_quality_update, NULL);
     zego_register_publisher_stream_event_callback(bridge_go_on_publisher_stream_event, NULL);
-		zego_register_publisher_send_audio_first_frame_callback(bridge_go_on_publisher_send_audio_first_frame, NULL);
+    zego_register_publisher_send_audio_first_frame_callback(bridge_go_on_publisher_send_audio_first_frame, NULL);
     zego_register_player_state_update_callback(bridge_go_on_player_state_update, NULL);
     zego_register_player_quality_update_callback(bridge_go_on_player_quality_update, NULL);
     zego_register_player_recv_media_side_info_callback(bridge_go_on_player_recv_sei, NULL);
     zego_register_player_stream_event_callback(bridge_go_on_player_stream_event, NULL);
-		zego_register_player_recv_audio_first_frame_callback(bridge_go_on_player_recv_audio_first_frame, NULL);
-		zego_register_media_player_state_update_callback(bridge_go_on_media_player_state_update, NULL);
-		zego_register_media_player_network_event_callback(bridge_go_on_media_player_network_event, NULL);
-		zego_register_media_player_playing_progress_callback(bridge_go_on_media_player_playing_progress, NULL);
-		zego_register_media_player_rendering_progress_callback(bridge_go_on_media_player_rendering_progress, NULL);
-		zego_register_media_player_recv_sei_callback(bridge_go_on_media_player_recv_sei, NULL);
-		zego_register_media_player_first_frame_event_callback(bridge_go_on_media_player_first_frame_event, NULL);
-		zego_register_media_player_audio_frame_callback(bridge_go_on_media_player_audio_frame, NULL);
-		zego_register_media_player_load_resource_callback(bridge_go_on_mediaplayer_load_file_result, NULL);
-		zego_register_media_player_seek_to_callback(bridge_go_on_media_player_seek_to, NULL);
+    zego_register_player_recv_audio_first_frame_callback(bridge_go_on_player_recv_audio_first_frame, NULL);
+    zego_register_media_player_state_update_callback(bridge_go_on_media_player_state_update, NULL);
+    zego_register_media_player_network_event_callback(bridge_go_on_media_player_network_event, NULL);
+    zego_register_media_player_playing_progress_callback(bridge_go_on_media_player_playing_progress, NULL);
+    zego_register_media_player_rendering_progress_callback(bridge_go_on_media_player_rendering_progress, NULL);
+    zego_register_media_player_recv_sei_callback(bridge_go_on_media_player_recv_sei, NULL);
+    zego_register_media_player_first_frame_event_callback(bridge_go_on_media_player_first_frame_event, NULL);
+    zego_register_media_player_audio_frame_callback(bridge_go_on_media_player_audio_frame, NULL);
+    zego_register_media_player_load_resource_callback(bridge_go_on_mediaplayer_load_file_result, NULL);
+    zego_register_media_player_seek_to_callback(bridge_go_on_media_player_seek_to, NULL);
+    zego_register_engine_uninit_callback(bridge_go_on_engine_uninit, NULL);
 }
 
 */
@@ -727,6 +733,16 @@ func GoOnMediaPlayerSeekTo(seq C.zego_seq, errorCode C.zego_error, index C.enum_
 			}
 			delete(callbacks, int(seq))
 		}
+	}
+}
+
+//export GoOnEngineUninit
+func GoOnEngineUninit() {
+	engineLock.Lock()
+	defer engineLock.Unlock()
+	if engineDestroyCallback != nil {
+		engineDestroyCallback()
+		engineDestroyCallback = nil
 	}
 }
 
