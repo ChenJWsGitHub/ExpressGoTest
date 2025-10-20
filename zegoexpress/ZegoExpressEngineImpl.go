@@ -1209,10 +1209,10 @@ func setEngineConfig(config ZegoEngineConfig) {
 	}
 	C.zego_express_set_engine_config(cEngineConfig)
 
-	engineLock.Lock()
-	defer engineLock.Unlock()
 	if value, exists := config.AdvancedConfig["max_publish_channels"]; exists {
 		if count, err := strconv.Atoi(value); err == nil {
+			engineLock.Lock()
+			defer engineLock.Unlock()
 			maxPublishChannelCount = count
 		}
 	}
