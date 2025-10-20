@@ -778,8 +778,8 @@ func GoOnEngineUninit() {
 }
 
 type engineImpl struct {
-	eventHandler     IZegoEventHandler
-	audioDataHandler IZegoAudioDataHandler
+	eventHandler              IZegoEventHandler
+	audioDataHandler          IZegoAudioDataHandler
 	customAudioProcessHandler IZegoCustomAudioProcessHandler
 }
 
@@ -977,9 +977,9 @@ func (e *engineImpl) StartPlayingStream(streamID string, config *ZegoPlayerConfi
 		cCdnConfigPtr = &cCdnConfig
 	}
 	cConfig := C.struct_zego_player_config{
-		resource_mode: C.enum_zego_stream_resource_mode(config.ResourceMode),
-		cdn_config: cCdnConfigPtr,
-		video_codec_id: C.zego_video_codec_id_unknown,
+		resource_mode:        C.enum_zego_stream_resource_mode(config.ResourceMode),
+		cdn_config:           cCdnConfigPtr,
+		video_codec_id:       C.zego_video_codec_id_unknown,
 		source_resource_type: C.zego_resource_type_rtc,
 	}
 	setCharArray(&cConfig.room_id[0], config.RoomID, C.ZEGO_EXPRESS_MAX_ROOMID_LEN)
@@ -1147,7 +1147,7 @@ func (mediaPlayer *mediaPlayerImpl) GetIndex() int {
 	return mediaPlayer.instanceIndex
 }
 
-func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
+func createEngineInner(profile ZegoEngineProfile, eventHandler IZegoEventHandler) bool {
 	engineLock.Lock()
 	defer engineLock.Unlock()
 	if globalEngine == nil {
@@ -1156,10 +1156,18 @@ func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZe
 		if result != ZegoErrorCodeCommonSuccess {
 			globalEngine = nil
 			eventHandler.OnDebugError(result, "CreateEngine", "CreateEngine failed")
-		} else {
-			for i := 0; i < maxPublishChannelCount; i++ {
-				C.zego_express_enable_camera(C.bool(false), C.enum_zego_exp_notify_device_state_mode(0), C.enum_zego_publish_channel(i))
-			}
+			return false
+		}
+		return true
+	}
+	return false
+}
+
+func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
+	result := createEngineInner(profile, eventHandler)
+	if result {
+		for i := 0; i < maxPublishChannelCount; i++ {
+			C.zego_express_enable_camera(C.bool(false), C.zego_exp_notify_device_state_mode_open, C.enum_zego_publish_channel(i))
 		}
 	}
 	return globalEngine
