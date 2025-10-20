@@ -159,6 +159,23 @@ const (
 	ZegoCapabilityNegotiationTypePublisher
 )
 
+// Supported httpDNS service types.
+type ZegoHttpDNSType int
+
+const (
+	// None.
+	ZegoHttpDNSTypeNone ZegoHttpDNSType = iota
+
+	// wangsu httpdns.
+	ZegoHttpDNSTypeWangsu
+
+	// tencent httpdns.
+	ZegoHttpDNSTypeTencent
+
+	// aliyun httpdns.
+	ZegoHttpDNSTypeAliyun
+)
+
 // Update type.
 type ZegoUpdateType int
 
@@ -357,6 +374,23 @@ const (
 	ZegoStreamEventPlayEnd
 )
 
+// Stream Resource Mode
+type ZegoStreamResourceMode int
+
+const (
+	// Default mode. The SDK will automatically select the streaming resource according to the cdnConfig parameters set by the player config and the ready-made background configuration.
+	ZegoStreamResourceModeDefault ZegoStreamResourceMode = iota
+
+	// Playing stream only from CDN.
+	ZegoStreamResourceModeOnlyCDN
+
+	// Playing stream only from L3.
+	ZegoStreamResourceModeOnlyL3
+
+	// Playing stream only from RTC.
+	ZegoStreamResourceModeOnlyRTC
+)
+
 // Playing stream status.
 type ZegoPlayerState int
 
@@ -526,6 +560,46 @@ type ZegoPublisherConfig struct {
 	StreamTitle string
 }
 
+// CDN config object.
+//
+// Includes CDN URL and authentication parameter string
+type ZegoCDNConfig struct {
+	// CDN URL
+	Url string
+
+	// Auth param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+	AuthParam string
+
+	// URL supported protocols, candidate values are "tcp" and "quic". If there are more than one, separate them with English commas and try them in order. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+	Protocol string
+
+	// QUIC version。 If [protocol] has the QUIC protocol, this information needs to be filled in. If there are multiple version numbers, separate them with commas. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+	QuicVersion string
+
+	// customized httpdns service. This feature is only supported for playing stream currently.
+	Httpdns ZegoHttpDNSType
+
+	// QUIC establishes link mode. If the value is 1, quic 0 rtt is used preferentially to establish link. Otherwise, the link is established normally. If [protocol] has the QUIC protocol, this value takes effect.
+	QuicConnectMode int
+
+	// custom param of URL. Please contact ZEGO technical support if you need to use it, otherwise this parameter can be ignored (set to null or empty string).
+	CustomParam string
+}
+
+// Advanced player configuration.
+//
+// Configure stream resource mode, CDN configuration and other advanced configurations.
+type ZegoPlayerConfig struct {
+	// Stream resource mode.
+	ResourceMode ZegoStreamResourceMode
+
+	// The CDN configuration for playing stream. If set, the stream is play according to the URL instead of the streamID. After that, the streamID is only used as the ID of SDK internal callback.
+	CdnConfig *ZegoCDNConfig
+
+	// The Room ID. It only needs to be filled in the multi-room mode, which indicates which room this stream needs to be bound to. This parameter is ignored in single room mode.
+	RoomID string
+}
+
 // Audio configuration.
 //
 // Configure audio bitrate, audio channel, audio encoding for publishing stream
@@ -555,6 +629,20 @@ type ZegoAudioFrameParam struct {
 
 	// Audio channel, default is Mono
 	Channel ZegoAudioChannel
+}
+
+// Customize the audio processing configuration object.
+//
+// Including custom audio acquisition type, sampling rate, channel number, sampling number and other parameters
+type ZegoCustomAudioProcessConfig struct {
+	// Sampling rate, the sampling rate of the input data expected by the audio pre-processing module in App. If 0, the default is the SDK internal sampling rate.
+	SampleRate ZegoAudioSampleRate
+
+	// Number of sound channels, the expected number of sound channels for input data of the audio pre-processing module in App. If 0, the default is the number of internal channels in the SDK
+	Channel ZegoAudioChannel
+
+	// The number of samples required to encode a frame; if samples = 0, the SDK will use the internal sample number, and the SDK will pass the audio data to the external pre-processing module. If the samples! = 0 (the effective value of samples is between [160, 2048]), and the SDK will send audio data to the external preprocessing module that sets the length of sample number.
+	Samples int
 }
 
 // Published stream quality information.
@@ -938,10 +1026,25 @@ type IZegoAudioDataHandler interface {
 	// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
 	//
 	// @param data Audio data in PCM format.
-	// @param dataLength Length of the data.
 	// @param param Parameters of the audio frame.
 	// @param streamID Corresponding stream ID.
 	OnPlayerAudioData(data []uint8, param ZegoAudioFrameParam, streamID string)
+}
+
+type IZegoCustomAudioProcessHandler interface {
+	// Custom audio processing remote playing stream PCM audio frame callback.
+	//
+	// Available: Since 2.13.0
+	// Description: In this callback, you can receive the PCM audio frames of remote playing stream. Developers can modify the audio frame data, as well as the audio channels and sample rate. The timestamp can be used for data synchronization, such as lyrics, etc.
+	// When to trigger: You need to call [enableCustomAudioRemoteProcessing] to enable the function first, and call [startPlayingStream] to trigger this callback function.
+	// Restrictions: None.
+	// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
+	//
+	// @param data Audio data in PCM format.
+	// @param param Parameters of the audio frame.
+	// @param streamID Corresponding stream ID.
+	// @param timestamp The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds.
+	OnProcessRemoteAudioData(data []uint8, param *ZegoAudioFrameParam, streamID string, timestamp float64)
 }
 
 type IZegoApiCalledEventHandler interface {
@@ -1017,7 +1120,6 @@ type IZegoMediaPlayerEventHandler interface {
 	//
 	// @param mediaPlayer Callback player object.
 	// @param data SEI content.
-	// @param dataLength SEI content length.
 	OnMediaPlayerRecvSEI(mediaPlayer IZegoMediaPlayer, data []uint8)
 
 	// The callback triggered when the media player plays the first frame.
@@ -1044,7 +1146,6 @@ type IZegoMediaPlayerAudioHandler interface {
 	//
 	// @param mediaPlayer Callback player object.
 	// @param data Raw data of audio frames.
-	// @param dataLength Data length.
 	// @param param audio frame flip mode.
 	OnAudioFrame(mediaPlayer IZegoMediaPlayer, data []uint8, param ZegoAudioFrameParam)
 }
@@ -1383,7 +1484,6 @@ type IZegoExpressEngine interface {
 	// Related APIs: After the pusher sends the SEI, the puller can obtain the SEI content by monitoring the callback of [onPlayerRecvSEI].
 	//
 	// @param data SEI data.
-	// @param dataLength SEI data length.
 	// @param channel Publish stream channel.
 	SendSEI(data []uint8, channel ZegoPublishChannel)
 
@@ -1433,7 +1533,8 @@ type IZegoExpressEngine interface {
 	// @param streamID Stream ID, a string of up to 256 characters.
 	//   Caution:
 	//   Only support numbers, English characters and '-', '_'.
-	StartPlayingStream(streamID string)
+	// @param config Advanced player configuration Room [roomID] in [ZegoPlayerConfig] is the login roomID.
+	StartPlayingStream(streamID string, config *ZegoPlayerConfig)
 
 	// Stops playing a stream.
 	//
@@ -1458,7 +1559,6 @@ type IZegoExpressEngine interface {
 	// Related APIs: Enable the custom audio IO function [enableCustomAudioIO], and start the push stream [startPublishingStream].
 	//
 	// @param data PCM buffer data.
-	// @param dataLength The total length of the buffer data.
 	// @param param The param of this PCM audio frame.
 	// @param channel Publish channel for capturing audio frames.
 	SendCustomAudioCapturePCMData(data []uint8, param ZegoAudioFrameParam, channel ZegoPublishChannel)
@@ -1472,10 +1572,32 @@ type IZegoExpressEngine interface {
 	// Restrictions: None.
 	// Related APIs: Enable the custom audio IO function [enableCustomAudioIO], and start the play stream [startPlayingStream].
 	//
-	// @param data A block of memory for storing audio PCM data that requires user to manage the memory block's lifecycle, the SDK will copy the audio frame rendering data to this memory block.
-	// @param dataLength The length of the audio data to be fetch this time (dataLength = duration * sampleRate * channels * 2(16 bit depth i.e. 2 Btye)).
+	// @param data A block of memory for storing audio PCM data that requires user to manage the memory block's lifecycle, the SDK will copy the audio frame rendering data to this memory block. (dataLength = duration * sampleRate * channels * 2(16 bit depth i.e. 2 Btye)).
 	// @param param Specify the parameters of the fetched audio frame. sampleRate in ZegoAudioFrameParam must assignment
 	FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudioFrameParam)
+
+	// Set up callback handler for custom audio processing.
+	//
+	// Available since: 1.13.0
+	// Description: When the custom audio processing is enabled, the custom audio processing callback is set through this function, and the developer can modify the processed audio frame data in the callback.
+	// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after the audio data is collected or before the remote audio data is drawn for rendering.
+	// When to call: After creating the engine.
+	// Restrictions: None.
+	//
+	// @param handler Callback handler for custom audio processing.
+	SetCustomAudioProcessHandler(handle IZegoCustomAudioProcessHandler)
+
+	// Enable custom audio processing for SDK playback audio data.
+	//
+	// Available since: 1.13.0
+	// Description: Enable remote streaming custom audio processing, developers can receive remote streaming audio frames through [onProcessPlaybackAudioData], and can modify the audio data.
+	// Use cases: If the developer wants to implement special functions (such as voice change, bel canto, etc.) through custom processing after collecting audio data.
+	// When to call: It needs to be called before [startPublishingStream], [startPlayingStream], [startPreview], [createMediaPlayer], [createAudioEffectPlayer] and [createRealTimeSequentialDataManager] to be effective.
+	// Restrictions: None.
+	//
+	// @param enable Whether to enable custom audio processing for SDK playback audio data.
+	// @param config Custom audio processing configuration.
+	EnableCustomAudioRemoteProcessing(enable bool, config *ZegoCustomAudioProcessConfig)
 
 	// Creates a media player instance.
 	//

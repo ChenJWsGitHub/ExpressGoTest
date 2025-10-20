@@ -14,6 +14,7 @@ package zegoexpress
 #include "zego-express-im.h"
 #include "zego-express-preprocess.h"
 #include "zego-express-custom-audio-io.h"
+#include "zego-express-device.h"
 #include "zego-express-mediaplayer.h"
 
 // 声明由Go实现的函数
@@ -22,6 +23,7 @@ extern void GoLoginResultCallback(int, char*, int);
 extern void GoLogoutResultCallback(int, char*, int);
 extern void GoOnIMSendBroadcastMessageResult(zego_error, unsigned long long msg_id, int);
 extern void GoOnPlayerAudioData(unsigned char *, unsigned int, struct zego_audio_frame_param, char *);
+extern void GoOnProcessRemoteAudioData(unsigned char *, unsigned int, struct zego_audio_frame_param *, char *, double);
 extern void GoOnDebugError(int error_code, char* func_name, char* info);
 extern void GoOnRoomStateUpdate(char *room_id, enum zego_room_state state, zego_error error_code, char *extend_data);
 extern void GoOnRoomStreamUpdate(char *room_id, enum zego_update_type update_type, struct zego_stream *stream_info_list, unsigned int stream_info_count, char *extended_data);
@@ -66,6 +68,10 @@ static void bridge_go_on_im_send_broadcast_message_result(const char *room_id, u
 
 static void bridge_go_on_player_audio_data(const unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param, const char *stream_id, void *user_context) {
     GoOnPlayerAudioData((unsigned char *)data, data_length, param, (char *)stream_id);
+}
+
+static void bridge_go_on_process_remote_audio_data(unsigned char *data, unsigned int data_length, struct zego_audio_frame_param *param, const char *stream_id, double timestamp, void *user_context) {
+    GoOnProcessRemoteAudioData((unsigned char *)data, data_length, param, (char *)stream_id, timestamp);
 }
 
 static void bridge_go_on_debug_error(int error_code, const char *func_name, const char *info, void *user_context) {
@@ -170,6 +176,7 @@ static void zego_express_go_bridge_init() {
     zego_register_room_logout_result_callback(bridge_go_logout_callback, NULL);
     zego_register_im_send_broadcast_message_result_callback(bridge_go_on_im_send_broadcast_message_result, NULL);
     zego_register_player_audio_data_callback(bridge_go_on_player_audio_data, NULL);
+		zego_register_process_remote_audio_data_callback(bridge_go_on_process_remote_audio_data, NULL);
     zego_register_debug_error_callback(bridge_go_on_debug_error, NULL);
     zego_register_room_state_update_callback(bridge_go_on_room_state_update, NULL);
     zego_register_room_stream_update_callback(bridge_go_on_room_stream_update, NULL);
@@ -201,6 +208,7 @@ import "C"
 import (
 	"container/list"
 	"fmt"
+	"strconv"
 	"sync"
 	"unsafe"
 )
@@ -215,6 +223,7 @@ var (
 	globalEngine              *engineImpl
 	engineDestroyCallbackLock sync.Mutex
 	engineDestroyCallback     ZegoDestroyCompletionCallback
+	maxPublishChannelCount    int = 4
 
 	callbackLock                   sync.Mutex
 	apiCalledCallback              IZegoApiCalledEventHandler
@@ -315,6 +324,27 @@ func GoOnPlayerAudioData(data *C.uchar, dataLen C.uint, param C.struct_zego_audi
 		Channel:    ZegoAudioChannel(param.channel),
 	}
 	handler.OnPlayerAudioData(goData, goParam, C.GoString(streamID))
+}
+
+//export GoOnProcessRemoteAudioData
+func GoOnProcessRemoteAudioData(data *C.uchar, dataLen C.uint, param *C.struct_zego_audio_frame_param, streamID *C.char, timestamp float64) {
+	engineLock.RLock()
+	defer engineLock.RUnlock()
+	if globalEngine == nil {
+		return
+	}
+	handler := globalEngine.customAudioProcessHandler
+	if handler == nil {
+		return
+	}
+	goData := cUcharPtrToGoSlice(data, dataLen)
+	goParam := ZegoAudioFrameParam{
+		SampleRate: ZegoAudioSampleRate(param.sample_rate),
+		Channel:    ZegoAudioChannel(param.channel),
+	}
+	handler.OnProcessRemoteAudioData(goData, &goParam, C.GoString(streamID), timestamp)
+	param.sample_rate = C.enum_zego_audio_sample_rate(goParam.SampleRate)
+	param.channel = C.enum_zego_audio_channel(goParam.Channel)
 }
 
 //export GoOnDebugError
@@ -750,6 +780,7 @@ func GoOnEngineUninit() {
 type engineImpl struct {
 	eventHandler     IZegoEventHandler
 	audioDataHandler IZegoAudioDataHandler
+	customAudioProcessHandler IZegoCustomAudioProcessHandler
 }
 
 func (e *engineImpl) init(profile ZegoEngineProfile, handler IZegoEventHandler) int {
@@ -897,13 +928,13 @@ func (e *engineImpl) EnableAEC(enable bool) {
 }
 
 func (e *engineImpl) EnableCustomAudioIO(enable bool, config *ZegoCustomAudioConfig, channel ZegoPublishChannel) {
-	var cConfig C.struct_zego_custom_audio_config
-	var cConfigPtr *C.struct_zego_custom_audio_config = nil
+	cConfig := C.struct_zego_custom_audio_config{
+		source_type: C.zego_audio_source_type_default,
+	}
 	if config != nil {
 		cConfig.source_type = C.enum_zego_audio_source_type(config.SourceType)
-		cConfigPtr = &cConfig
 	}
-	C.zego_express_enable_custom_audio_io(C.bool(enable), cConfigPtr, C.enum_zego_publish_channel(channel))
+	C.zego_express_enable_custom_audio_io(C.bool(enable), &cConfig, C.enum_zego_publish_channel(channel))
 }
 
 func (e *engineImpl) SendSEI(data []uint8, channel ZegoPublishChannel) {
@@ -925,10 +956,34 @@ func (e *engineImpl) StopAudioDataObserver() {
 	C.zego_express_stop_audio_data_observer()
 }
 
-func (e *engineImpl) StartPlayingStream(streamID string) {
+func (e *engineImpl) StartPlayingStream(streamID string, config *ZegoPlayerConfig) {
 	cStreamID := StringToCString(streamID)
 	defer FreeCString(cStreamID)
-	C.zego_express_start_playing_stream(cStreamID, nil)
+	if config == nil {
+		C.zego_express_start_playing_stream(cStreamID, nil)
+		return
+	}
+
+	var cCdnConfig C.struct_zego_cdn_config
+	var cCdnConfigPtr *C.struct_zego_cdn_config = nil
+	if config.CdnConfig != nil {
+		setCharArray(&cCdnConfig.url[0], config.CdnConfig.Url, C.ZEGO_EXPRESS_MAX_URL_LEN)
+		setCharArray(&cCdnConfig.auth_param[0], config.CdnConfig.AuthParam, C.ZEGO_EXPRESS_MAX_COMMON_LEN)
+		setCharArray(&cCdnConfig.protocol[0], config.CdnConfig.Protocol, C.ZEGO_EXPRESS_MAX_COMMON_LEN)
+		setCharArray(&cCdnConfig.quic_version[0], config.CdnConfig.QuicVersion, C.ZEGO_EXPRESS_MAX_COMMON_LEN)
+		cCdnConfig.http_dns = C.enum_zego_http_dns_type(config.CdnConfig.Httpdns)
+		cCdnConfig.quic_connect_mode = C.int(config.CdnConfig.QuicConnectMode)
+		setCharArray(&cCdnConfig.custom_params[0], config.CdnConfig.CustomParam, C.ZEGO_EXPRESS_MAX_COMMON_LEN)
+		cCdnConfigPtr = &cCdnConfig
+	}
+	cConfig := C.struct_zego_player_config{
+		resource_mode: C.enum_zego_stream_resource_mode(config.ResourceMode),
+		cdn_config: cCdnConfigPtr,
+		video_codec_id: C.zego_video_codec_id_unknown,
+		source_resource_type: C.zego_resource_type_rtc,
+	}
+	setCharArray(&cConfig.room_id[0], config.RoomID, C.ZEGO_EXPRESS_MAX_ROOMID_LEN)
+	C.zego_express_start_playing_stream_with_config(cStreamID, nil, cConfig)
 }
 
 func (e *engineImpl) StopPlayingStream(streamID string) {
@@ -947,6 +1002,24 @@ func (e *engineImpl) FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudio
 	cData, cLen := goSliceToCUchar(data)
 	cParam := convertAudioFrameParam(param)
 	C.zego_express_fetch_custom_audio_render_pcm_data(cData, cLen, cParam)
+}
+
+func (e *engineImpl) SetCustomAudioProcessHandler(handle IZegoCustomAudioProcessHandler) {
+	engineLock.Lock()
+	defer engineLock.Unlock()
+	e.customAudioProcessHandler = handle
+}
+
+func (e *engineImpl) EnableCustomAudioRemoteProcessing(enable bool, config *ZegoCustomAudioProcessConfig) {
+	var cConfig C.struct_zego_custom_audio_process_config
+	var cConfigPtr *C.struct_zego_custom_audio_process_config = nil
+	if config != nil {
+		cConfig.sample_rate = C.enum_zego_audio_sample_rate(config.SampleRate)
+		cConfig.channel = C.enum_zego_audio_channel(config.Channel)
+		cConfig.samples = C.int(config.Samples)
+		cConfigPtr = &cConfig
+	}
+	C.zego_express_enable_custom_audio_remote_processing(C.bool(enable), cConfigPtr)
 }
 
 func (e *engineImpl) CreateMediaPlayer() IZegoMediaPlayer {
@@ -1083,6 +1156,10 @@ func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZe
 		if result != ZegoErrorCodeCommonSuccess {
 			globalEngine = nil
 			eventHandler.OnDebugError(result, "CreateEngine", "CreateEngine failed")
+		} else {
+			for i := 0; i < maxPublishChannelCount; i++ {
+				C.zego_express_enable_camera(C.bool(false), C.enum_zego_exp_notify_device_state_mode(0), C.enum_zego_publish_channel(i))
+			}
 		}
 	}
 	return globalEngine
@@ -1123,6 +1200,14 @@ func setEngineConfig(config ZegoEngineConfig) {
 		setCharArray(&cEngineConfig.advanced_config[0], advancedConfig, C.ZEGO_EXPRESS_MAX_SET_CONFIG_VALUE_LEN)
 	}
 	C.zego_express_set_engine_config(cEngineConfig)
+
+	engineLock.Lock()
+	defer engineLock.Unlock()
+	if value, exists := config.AdvancedConfig["max_publish_channels"]; exists {
+		if count, err := strconv.Atoi(value); err == nil {
+			maxPublishChannelCount = count
+		}
+	}
 }
 
 func setLogConfig(config ZegoLogConfig) {
