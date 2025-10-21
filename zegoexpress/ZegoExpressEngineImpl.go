@@ -225,6 +225,11 @@ var (
 	engineDestroyCallback     ZegoDestroyCompletionCallback
 	maxPublishChannelCount    int = 4
 
+	handlerLock               sync.RWMutex
+	eventHandler              IZegoEventHandler
+	audioDataHandler          IZegoAudioDataHandler
+	customAudioProcessHandler IZegoCustomAudioProcessHandler
+
 	callbackLock                   sync.Mutex
 	apiCalledCallback              IZegoApiCalledEventHandler
 	roomLoginCallback              = make(map[int]ZegoRoomLoginCallback)
@@ -309,12 +314,9 @@ func GoOnIMSendBroadcastMessageResult(errorCode C.zego_error, messageID C.ulongl
 
 //export GoOnPlayerAudioData
 func GoOnPlayerAudioData(data *C.uchar, dataLen C.uint, param C.struct_zego_audio_frame_param, streamID *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.audioDataHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := audioDataHandler
 	if handler == nil {
 		return
 	}
@@ -328,12 +330,9 @@ func GoOnPlayerAudioData(data *C.uchar, dataLen C.uint, param C.struct_zego_audi
 
 //export GoOnProcessRemoteAudioData
 func GoOnProcessRemoteAudioData(data *C.uchar, dataLen C.uint, param *C.struct_zego_audio_frame_param, streamID *C.char, timestamp float64) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.customAudioProcessHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := customAudioProcessHandler
 	if handler == nil {
 		return
 	}
@@ -349,12 +348,9 @@ func GoOnProcessRemoteAudioData(data *C.uchar, dataLen C.uint, param *C.struct_z
 
 //export GoOnDebugError
 func GoOnDebugError(errorCode C.int, funcName *C.char, info *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -367,12 +363,9 @@ func GoOnDebugError(errorCode C.int, funcName *C.char, info *C.char) {
 
 //export GoOnRoomStateUpdate
 func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode C.zego_error, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -385,12 +378,9 @@ func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode
 
 //export GoOnRoomStreamUpdate
 func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, streamInfoList *C.struct_zego_stream, streamInfoCount C.uint, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -412,12 +402,9 @@ func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, st
 
 //export GoOnRoomStateChanged
 func GoOnRoomStateChanged(roomID *C.char, reason C.enum_zego_room_state_changed_reason, errorCode C.zego_error, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -430,12 +417,9 @@ func GoOnRoomStateChanged(roomID *C.char, reason C.enum_zego_room_state_changed_
 
 //export GoOnRoomTokenWillExpire
 func GoOnRoomTokenWillExpire(roomID *C.char, remainTimeInSecond C.int) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -444,12 +428,9 @@ func GoOnRoomTokenWillExpire(roomID *C.char, remainTimeInSecond C.int) {
 
 //export GoOnPublisherStateUpdate
 func GoOnPublisherStateUpdate(streamID *C.char, state C.enum_zego_publisher_state, errorCode C.zego_error, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -462,12 +443,9 @@ func GoOnPublisherStateUpdate(streamID *C.char, state C.enum_zego_publisher_stat
 
 //export GoOnPublisherQualityUpdate
 func GoOnPublisherQualityUpdate(streamID *C.char, quality C.struct_zego_publish_stream_quality) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -493,12 +471,9 @@ func GoOnPublisherQualityUpdate(streamID *C.char, quality C.struct_zego_publish_
 
 //export GoOnPublisherStreamEvent
 func GoOnPublisherStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -511,12 +486,9 @@ func GoOnPublisherStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char
 
 //export GoOnPublisherSendAudioFirstFrame
 func GoOnPublisherSendAudioFirstFrame(channel C.enum_zego_publish_channel) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -525,12 +497,9 @@ func GoOnPublisherSendAudioFirstFrame(channel C.enum_zego_publish_channel) {
 
 //export GoOnPlayerStateUpdate
 func GoOnPlayerStateUpdate(streamID *C.char, state C.enum_zego_player_state, errorCode C.zego_error, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -543,12 +512,9 @@ func GoOnPlayerStateUpdate(streamID *C.char, state C.enum_zego_player_state, err
 
 //export GoOnPlayerQualityUpdate
 func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream_quality) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -594,12 +560,9 @@ func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream
 
 //export GoOnPlayerRecvSei
 func GoOnPlayerRecvSei(info C.struct_zego_media_side_info) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -614,12 +577,9 @@ func GoOnPlayerRecvSei(info C.struct_zego_media_side_info) {
 
 //export GoOnPlayerStreamEvent
 func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, data *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -632,12 +592,9 @@ func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, d
 
 //export GoOnPlayerRecvAudioFirstFrame
 func GoOnPlayerRecvAudioFirstFrame(streamID *C.char) {
-	engineLock.RLock()
-	defer engineLock.RUnlock()
-	if globalEngine == nil {
-		return
-	}
-	handler := globalEngine.eventHandler
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
 	if handler == nil {
 		return
 	}
@@ -777,14 +734,13 @@ func GoOnEngineUninit() {
 	}
 }
 
-type engineImpl struct {
-	eventHandler              IZegoEventHandler
-	audioDataHandler          IZegoAudioDataHandler
-	customAudioProcessHandler IZegoCustomAudioProcessHandler
-}
+type engineImpl struct{}
 
 func (e *engineImpl) init(profile ZegoEngineProfile, handler IZegoEventHandler) int {
-	e.eventHandler = handler
+	handlerLock.Lock()
+	eventHandler = handler
+	handlerLock.Unlock()
+
 	engineConfig := ZegoEngineConfig{
 		LogConfig: nil,
 		AdvancedConfig: map[string]string{
@@ -943,9 +899,9 @@ func (e *engineImpl) SendSEI(data []uint8, channel ZegoPublishChannel) {
 }
 
 func (e *engineImpl) SetAudioDataHandler(handler IZegoAudioDataHandler) {
-	engineLock.Lock()
-	defer engineLock.Unlock()
-	e.audioDataHandler = handler
+	handlerLock.Lock()
+	defer handlerLock.Unlock()
+	audioDataHandler = handler
 }
 
 func (e *engineImpl) StartAudioDataObserver(observerBitMask uint32, param ZegoAudioFrameParam) {
@@ -1005,9 +961,9 @@ func (e *engineImpl) FetchCustomAudioRenderPCMData(data []uint8, param ZegoAudio
 }
 
 func (e *engineImpl) SetCustomAudioProcessHandler(handle IZegoCustomAudioProcessHandler) {
-	engineLock.Lock()
-	defer engineLock.Unlock()
-	e.customAudioProcessHandler = handle
+	handlerLock.Lock()
+	defer handlerLock.Unlock()
+	customAudioProcessHandler = handle
 }
 
 func (e *engineImpl) EnableCustomAudioRemoteProcessing(enable bool, config *ZegoCustomAudioProcessConfig) {
@@ -1147,15 +1103,18 @@ func (mediaPlayer *mediaPlayerImpl) GetIndex() int {
 	return mediaPlayer.instanceIndex
 }
 
-func createEngineInner(profile ZegoEngineProfile, eventHandler IZegoEventHandler) bool {
+func createEngineInner(profile ZegoEngineProfile, handler IZegoEventHandler) bool {
 	engineLock.Lock()
 	defer engineLock.Unlock()
 	if globalEngine == nil {
 		globalEngine = new(engineImpl)
-		result := globalEngine.init(profile, eventHandler)
+		result := globalEngine.init(profile, handler)
 		if result != ZegoErrorCodeCommonSuccess {
+			handlerLock.Lock()
+			eventHandler = nil
+			handlerLock.Unlock()
 			globalEngine = nil
-			eventHandler.OnDebugError(result, "CreateEngine", "CreateEngine failed")
+			handler.OnDebugError(result, "CreateEngine", "CreateEngine failed")
 			return false
 		}
 		return true
@@ -1163,8 +1122,8 @@ func createEngineInner(profile ZegoEngineProfile, eventHandler IZegoEventHandler
 	return false
 }
 
-func createEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
-	result := createEngineInner(profile, eventHandler)
+func createEngine(profile ZegoEngineProfile, handler IZegoEventHandler) IZegoExpressEngine {
+	result := createEngineInner(profile, handler)
 	if result {
 		for i := 0; i < maxPublishChannelCount; i++ {
 			C.zego_express_enable_camera(C.bool(false), C.zego_exp_notify_device_state_mode_open, C.enum_zego_publish_channel(i))
@@ -1181,6 +1140,11 @@ func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 		engineDestroyCallback = callback
 		engineDestroyCallbackLock.Unlock()
 		C.zego_express_engine_uninit_async()
+		handlerLock.Lock()
+		eventHandler = nil
+		audioDataHandler = nil
+		customAudioProcessHandler = nil
+		handlerLock.Unlock()
 		globalEngine = nil
 	}
 }
