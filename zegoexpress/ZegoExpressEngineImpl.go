@@ -2,7 +2,6 @@ package zegoexpress
 
 /*
 #cgo CFLAGS: -I${SRCDIR}/lib/include
-#cgo LDFLAGS: -L${SRCDIR}/lib -lZegoExpressEngine -Wl,-rpath=${SRCDIR}/lib
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1193,12 +1192,6 @@ func setLogConfig(config ZegoLogConfig) {
 
 func setRoomMode(mode ZegoRoomMode) {
 	C.zego_express_set_room_mode(C.enum_zego_room_mode(mode))
-}
-
-func getVersion() string {
-	var cVersion *C.char
-	C.zego_express_get_version(&cVersion)
-	return C.GoString(cVersion)
 }
 
 func setApiCalledCallback(callback IZegoApiCalledEventHandler) {
