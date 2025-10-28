@@ -863,6 +863,36 @@ type IZegoEventHandler interface {
 	// @param extendedData Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
 	OnRoomStateUpdate(roomID string, state ZegoRoomState, errorCode int, extendedData string)
 
+	// The callback triggered when the number of other users in the room increases or decreases.
+	//
+	// Available since: 1.1.0
+	// Description: When other users in the room are online or offline, which causes the user list in the room to change, the developer will be notified through this callback.
+	// Use cases: Developers can use this callback to update the user list display in the room in real time.
+	// When to trigger:
+	//   1. When the user logs in to the room for the first time, if there are other users in the room, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd], and `userList` is the other users in the room at this time.
+	//   2. The user is already in the room. If another user logs in to the room through the [loginRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeAdd].
+	//   3. If other users log out of this room through the [logoutRoom] or [switchRoom] functions, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+	//   4. The user is already in the room. If another user is kicked out of the room from the server, the SDK will trigger a callback notification with `updateType` being [ZegoUpdateTypeDelete].
+	// Restrictions: If developers need to use ZEGO room users notifications, please ensure that the [ZegoRoomConfig] sent by each user when logging in to the room has the [isUserStatusNotify] property set to true, otherwise the callback notification will not be received.
+	// Related APIs: [loginRoom]、[logoutRoom]、[switchRoom]
+	//
+	// @param roomID Room ID where the user is logged in, a string of up to 128 bytes in length.
+	// @param updateType Update type (add/delete).
+	// @param userList List of users changed in the current room.
+	OnRoomUserUpdate(roomID string, updateType ZegoUpdateType, userList []ZegoUser)
+
+	// The callback triggered every 30 seconds to report the current number of online users.
+	//
+	// Available since: 1.7.0
+	// Description: This method will notify the user of the current number of online users in the room.
+	// Use cases: Developers can use this callback to show the number of user online in the current room.
+	// When to call /Trigger: After successfully logging in to the room.
+	// Restrictions: None.
+	// Caution: 1. This function is called back every 30 seconds. 2. Because of this design, when the number of users in the room exceeds 500, there will be some errors in the statistics of the number of online people in the room.
+	//
+	// @param roomID Room ID where the user is logged in, a string of up to 128 bytes in length.
+	OnRoomOnlineUserCountUpdate(roomID string, count int)
+
 	// The callback triggered when the number of streams published by the other users in the same room increases or decreases.
 	//
 	// Available since: 1.1.0
@@ -1460,6 +1490,31 @@ type IZegoExpressEngine interface {
 	// @param enable Whether to enable echo cancellation, true: enable, false: disable
 	EnableAEC(enable bool)
 
+	// Enables or disables automatic gain control (AGC).
+	//
+	// Available since: 1.1.0
+	// Description: After turning on this function, the SDK can automatically adjust the microphone volume to adapt to near and far sound pickups and keep the volume stable.
+	// Use case: When you need to ensure volume stability to improve call quality and user experience, you can turn on this feature.
+	// When to call: It needs to be called after [createEngine].
+	// Caution: Before this function is called, the SDK automatically determines whether to use AGC. Once this function is called, the SDK does not automatically determine whether to use AGC.
+	// Restrictions: None.
+	//
+	// @param enable Whether to enable automatic gain control, true: enable, false: disable
+	EnableAGC(enable bool)
+
+	// Enables or disables active noise suppression (ANS, aka ANC).
+	//
+	// Available since: 1.1.0
+	// Description: Enable the noise suppression can reduce the noise in the audio data and make the human voice clearer.
+	// Use case: When you need to suppress noise to improve call quality and user experience, you can turn on this feature.
+	// When to call: It needs to be called after [createEngine].
+	// Related APIs: This function has a better suppression effect on continuous noise (such as the sound of rain, white noise). If you need to turn on transient noise suppression, please use [enableTransientANS]. And the noise suppression mode can be set by [setANSMode].
+	// Caution: Before this function is called, the SDK automatically determines whether to use ANS. Once this function is called, the SDK does not automatically determine whether to use ANS.
+	// Restrictions: None.
+	//
+	// @param enable Whether to enable noise suppression, true: enable, false: disable
+	EnableANS(enable bool)
+
 	// Enables the custom audio I/O function (for the specified channel), support PCM, AAC format data.
 	//
 	// Available since: 1.10.0
@@ -1620,6 +1675,16 @@ type IZegoExpressEngine interface {
 	//
 	// @param mediaPlayer The media player instance object to be destroyed.
 	DestroyMediaPlayer(mediaPlayer IZegoMediaPlayer)
+
+	// Call the experimental API.
+	//
+	// Available since: 2.7.0
+	// Description: ZEGO provides some technical previews or special customization functions in RTC business through this API. If you need to get the use of the function or the details, please consult ZEGO technical support.
+	// When to call: After [createEngine].
+	//
+	// @param params Parameters in the format of a JSON string, please consult ZEGO technical support for details.
+	// @return Returns an argument in the format of a JSON string, please consult ZEGO technical support for details.
+	CallExperimentalAPI(params string) string
 }
 
 // Create ZegoExpressEngine singleton object and initialize SDK.

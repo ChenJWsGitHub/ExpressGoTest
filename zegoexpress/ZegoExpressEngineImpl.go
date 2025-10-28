@@ -25,6 +25,8 @@ extern void GoOnPlayerAudioData(unsigned char *, unsigned int, struct zego_audio
 extern void GoOnProcessRemoteAudioData(unsigned char *, unsigned int, struct zego_audio_frame_param *, char *, double);
 extern void GoOnDebugError(int error_code, char* func_name, char* info);
 extern void GoOnRoomStateUpdate(char *room_id, enum zego_room_state state, zego_error error_code, char *extend_data);
+extern void GoOnRoomUserUpdate(char *room_id, enum zego_update_type update_type, struct zego_user *user_list, unsigned int user_count);
+extern void GoOnRoomOnlineUserCountUpdate(char *room_id, int count);
 extern void GoOnRoomStreamUpdate(char *room_id, enum zego_update_type update_type, struct zego_stream *stream_info_list, unsigned int stream_info_count, char *extended_data);
 extern void GoOnRoomStateChanged(char *room_id, enum zego_room_state_changed_reason reason, zego_error error_code, char *extended_data);
 extern void GoOnRoomTokenWillExpire(char *room_id, int remain_time_in_second);
@@ -79,6 +81,14 @@ static void bridge_go_on_debug_error(int error_code, const char *func_name, cons
 
 static void bridge_go_on_room_state_update(const char *room_id, enum zego_room_state state, zego_error error_code, const char *extend_data, void *user_context) {
     GoOnRoomStateUpdate((char *)room_id, state, error_code, (char *)extend_data);
+}
+
+static void bridge_go_on_user_update(const char *room_id, enum zego_update_type update_type, const struct zego_user *user_list, unsigned int user_count, void *user_context) {
+    GoOnRoomUserUpdate((char *)room_id, update_type, (struct zego_user *)user_list, user_count);
+}
+
+static void bridge_go_on_room_online_user_count_update(const char *room_id, int online_user_count, void *user_context) {
+    GoOnRoomOnlineUserCountUpdate((char *)room_id, online_user_count);
 }
 
 static void bridge_go_on_room_stream_update(const char *room_id, enum zego_update_type update_type, const struct zego_stream *stream_info_list, unsigned int stream_info_count, const char *extended_data, void *user_context) {
@@ -166,7 +176,7 @@ static void bridge_go_on_media_player_seek_to(zego_seq seq, zego_error error_cod
 }
 
 static void bridge_go_on_engine_uninit(void *user_context) {
-	GoOnEngineUninit();
+    GoOnEngineUninit();
 }
 
 static void zego_express_go_bridge_init() {
@@ -175,9 +185,11 @@ static void zego_express_go_bridge_init() {
     zego_register_room_logout_result_callback(bridge_go_logout_callback, NULL);
     zego_register_im_send_broadcast_message_result_callback(bridge_go_on_im_send_broadcast_message_result, NULL);
     zego_register_player_audio_data_callback(bridge_go_on_player_audio_data, NULL);
-		zego_register_process_remote_audio_data_callback(bridge_go_on_process_remote_audio_data, NULL);
+    zego_register_process_remote_audio_data_callback(bridge_go_on_process_remote_audio_data, NULL);
     zego_register_debug_error_callback(bridge_go_on_debug_error, NULL);
     zego_register_room_state_update_callback(bridge_go_on_room_state_update, NULL);
+    zego_register_room_user_update_callback(bridge_go_on_user_update, NULL);
+    zego_register_room_online_user_count_update_callback(bridge_go_on_room_online_user_count_update, NULL);
     zego_register_room_stream_update_callback(bridge_go_on_room_stream_update, NULL);
     zego_register_room_state_changed_callback(bridge_go_on_room_state_changed, NULL);
     zego_register_room_token_will_expire_callback(bridge_go_on_room_token_will_expire, NULL);
@@ -373,6 +385,37 @@ func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode
 		goData = C.GoString(data)
 	}
 	handler.OnRoomStateUpdate(C.GoString(roomID), ZegoRoomState(state), int(errorCode), goData)
+}
+
+//export GoOnRoomUserUpdate
+func GoOnRoomUserUpdate(roomID *C.char, updateType C.enum_zego_update_type, userList *C.struct_zego_user, userCount C.uint) {
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
+	if handler == nil {
+		return
+	}
+	goUserList := make([]ZegoUser, 0)
+	if userList != nil && userCount > 0 {
+		cUsers := unsafe.Slice(userList, userCount)
+
+		for i := 0; i < int(userCount); i++ {
+			user := cUsers[i]
+			goUserList = append(goUserList, convertUser(user))
+		}
+	}
+	handler.OnRoomUserUpdate(C.GoString(roomID), ZegoUpdateType(updateType), goUserList)
+}
+
+//export GoOnRoomOnlineUserCountUpdate
+func GoOnRoomOnlineUserCountUpdate(roomID *C.char, count C.int) {
+	handlerLock.RLock()
+	defer handlerLock.RUnlock()
+	handler := eventHandler
+	if handler == nil {
+		return
+	}
+	handler.OnRoomOnlineUserCountUpdate(C.GoString(roomID), int(count))
 }
 
 //export GoOnRoomStreamUpdate
@@ -882,6 +925,14 @@ func (e *engineImpl) EnableAEC(enable bool) {
 	C.zego_express_enable_aec(C.bool(enable))
 }
 
+func (e *engineImpl) EnableAGC(enable bool) {
+	C.zego_express_enable_agc(C.bool(enable))
+}
+
+func (e *engineImpl) EnableANS(enable bool) {
+	C.zego_express_enable_ans(C.bool(enable))
+}
+
 func (e *engineImpl) EnableCustomAudioIO(enable bool, config *ZegoCustomAudioConfig, channel ZegoPublishChannel) {
 	cConfig := C.struct_zego_custom_audio_config{
 		source_type: C.zego_audio_source_type_default,
@@ -1005,6 +1056,16 @@ func (e *engineImpl) DestroyMediaPlayer(mediaPlayer IZegoMediaPlayer) {
 		C.zego_express_destroy_media_player(C.enum_zego_media_player_instance_index(index))
 		delete(mediaPlayerImplMap, index)
 	}
+}
+
+func (e *engineImpl) CallExperimentalAPI(params string) string {
+	cParams := StringToCString(params)
+	defer FreeCString(cParams)
+	var tempResult *C.char = nil
+	C.zego_express_call_experimental_api(cParams, &tempResult)
+	result := C.GoString(tempResult)
+	C.zego_express_free_call_experimental_api_result(tempResult)
+	return result
 }
 
 type mediaPlayerImpl struct {
