@@ -227,6 +227,11 @@ import (
 func init() {
 	fmt.Println("zegoexpress init")
 	C.zego_express_go_bridge_init()
+
+	gCallbackHandler = &callbackHandler{
+		callbackChan: make(chan func(), 131072), // 1024 * 1024 / 8 ~ 2MB
+	}
+	go gCallbackHandler.processLoop()
 }
 
 var (
@@ -243,12 +248,15 @@ var (
 
 	callbackLock                   sync.Mutex
 	apiCalledCallback              IZegoApiCalledEventHandler
+	callbackEventHandler           IZegoCallbackEventHandler
 	roomLoginCallback              = make(map[int]ZegoRoomLoginCallback)
 	roomLogoutCallback             = make(map[int]ZegoRoomLogoutCallback)
 	imSendBroadcastMessageCallback = make(map[int]ZegoIMSendBroadcastMessageCallback)
 
 	mediaPlayerLock    sync.Mutex
 	mediaPlayerImplMap = make(map[int]*mediaPlayerImpl)
+
+	gCallbackHandler *callbackHandler
 )
 
 //export GoOnApiCalledResult
@@ -266,61 +274,70 @@ func GoOnApiCalledResult(errorCode C.int, funcName *C.char, data *C.char) {
 
 //export GoLoginResultCallback
 func GoLoginResultCallback(errorCode C.zego_error, extendedData *C.char, seq C.zego_seq) {
-	callbackLock.Lock()
-	defer callbackLock.Unlock()
-
-	callback, ok := roomLoginCallback[int(seq)]
-	if !ok {
-		return
+	goExtendedData := ""
+	if extendedData != nil {
+		goExtendedData = C.GoString(extendedData)
 	}
+	callbackFunc := func() {
+		callbackLock.Lock()
+		defer callbackLock.Unlock()
 
-	if callback != nil {
-		goExtendedData := ""
-		if extendedData != nil {
-			goExtendedData = C.GoString(extendedData)
+		callback, ok := roomLoginCallback[int(seq)]
+		if !ok {
+			return
 		}
-		callback(int(errorCode), goExtendedData)
-	}
 
-	delete(roomLoginCallback, int(seq))
+		if callback != nil {
+			callback(int(errorCode), goExtendedData)
+		}
+
+		delete(roomLoginCallback, int(seq))
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoLogoutResultCallback
 func GoLogoutResultCallback(errorCode C.zego_error, extendedData *C.char, seq C.zego_seq) {
-	callbackLock.Lock()
-	defer callbackLock.Unlock()
-
-	callback, ok := roomLogoutCallback[int(seq)]
-	if !ok {
-		return
+	goExtendedData := ""
+	if extendedData != nil {
+		goExtendedData = C.GoString(extendedData)
 	}
+	callbackFunc := func() {
+		callbackLock.Lock()
+		defer callbackLock.Unlock()
 
-	if callback != nil {
-		goExtendedData := ""
-		if extendedData != nil {
-			goExtendedData = C.GoString(extendedData)
+		callback, ok := roomLogoutCallback[int(seq)]
+		if !ok {
+			return
 		}
-		callback(int(errorCode), goExtendedData)
-	}
 
-	delete(roomLogoutCallback, int(seq))
+		if callback != nil {
+			callback(int(errorCode), goExtendedData)
+		}
+
+		delete(roomLogoutCallback, int(seq))
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnIMSendBroadcastMessageResult
 func GoOnIMSendBroadcastMessageResult(errorCode C.zego_error, messageID C.ulonglong, seq C.zego_seq) {
-	callbackLock.Lock()
-	defer callbackLock.Unlock()
+	callbackFunc := func() {
+		callbackLock.Lock()
+		defer callbackLock.Unlock()
 
-	callback, ok := imSendBroadcastMessageCallback[int(seq)]
-	if !ok {
-		return
+		callback, ok := imSendBroadcastMessageCallback[int(seq)]
+		if !ok {
+			return
+		}
+
+		if callback != nil {
+			callback(int(errorCode), uint64(messageID))
+		}
+
+		delete(imSendBroadcastMessageCallback, int(seq))
 	}
-
-	if callback != nil {
-		callback(int(errorCode), uint64(messageID))
-	}
-
-	delete(imSendBroadcastMessageCallback, int(seq))
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPlayerAudioData
@@ -374,27 +391,26 @@ func GoOnDebugError(errorCode C.int, funcName *C.char, info *C.char) {
 
 //export GoOnRoomStateUpdate
 func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode C.zego_error, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goRoomID := C.GoString(roomID)
 	goData := ""
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnRoomStateUpdate(C.GoString(roomID), ZegoRoomState(state), int(errorCode), goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnRoomStateUpdate(goRoomID, ZegoRoomState(state), int(errorCode), goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnRoomUserUpdate
 func GoOnRoomUserUpdate(roomID *C.char, updateType C.enum_zego_update_type, userList *C.struct_zego_user, userCount C.uint) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goRoomID := C.GoString(roomID)
 	goUserList := make([]ZegoUser, 0)
 	if userList != nil && userCount > 0 {
 		cUsers := unsafe.Slice(userList, userCount)
@@ -404,28 +420,36 @@ func GoOnRoomUserUpdate(roomID *C.char, updateType C.enum_zego_update_type, user
 			goUserList = append(goUserList, convertUser(user))
 		}
 	}
-	handler.OnRoomUserUpdate(C.GoString(roomID), ZegoUpdateType(updateType), goUserList)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnRoomUserUpdate(goRoomID, ZegoUpdateType(updateType), goUserList)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnRoomOnlineUserCountUpdate
 func GoOnRoomOnlineUserCountUpdate(roomID *C.char, count C.int) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
+	goRoomID := C.GoString(roomID)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnRoomOnlineUserCountUpdate(goRoomID, int(count))
 	}
-	handler.OnRoomOnlineUserCountUpdate(C.GoString(roomID), int(count))
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnRoomStreamUpdate
 func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, streamInfoList *C.struct_zego_stream, streamInfoCount C.uint, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goRoomID := C.GoString(roomID)
 	streamList := make([]ZegoStream, 0)
 	if streamInfoList != nil && streamInfoCount > 0 {
 		cStreams := unsafe.Slice(streamInfoList, streamInfoCount)
@@ -439,58 +463,74 @@ func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, st
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnRoomStreamUpdate(C.GoString(roomID), ZegoUpdateType(updateType), streamList, goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnRoomStreamUpdate(goRoomID, ZegoUpdateType(updateType), streamList, goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnRoomStateChanged
 func GoOnRoomStateChanged(roomID *C.char, reason C.enum_zego_room_state_changed_reason, errorCode C.zego_error, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goRoomID := C.GoString(roomID)
 	goData := ""
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnRoomStateChanged(C.GoString(roomID), ZegoRoomStateChangedReason(reason), int(errorCode), goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnRoomStateChanged(goRoomID, ZegoRoomStateChangedReason(reason), int(errorCode), goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnRoomTokenWillExpire
 func GoOnRoomTokenWillExpire(roomID *C.char, remainTimeInSecond C.int) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
+	goRoomID := C.GoString(roomID)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnRoomTokenWillExpire(goRoomID, int(remainTimeInSecond))
 	}
-	handler.OnRoomTokenWillExpire(C.GoString(roomID), int(remainTimeInSecond))
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPublisherStateUpdate
 func GoOnPublisherStateUpdate(streamID *C.char, state C.enum_zego_publisher_state, errorCode C.zego_error, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnPublisherStateUpdate(C.GoString(streamID), ZegoPublisherState(state), int(errorCode), goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPublisherStateUpdate(goStreamID, ZegoPublisherState(state), int(errorCode), goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPublisherQualityUpdate
 func GoOnPublisherQualityUpdate(streamID *C.char, quality C.struct_zego_publish_stream_quality) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goStreamID := C.GoString(streamID)
 	goQuality := ZegoPublishStreamQuality{
 		VideoCaptureFPS:  float64(quality.video_capture_fps),
 		VideoEncodeFPS:   float64(quality.video_encode_fps),
@@ -508,58 +548,73 @@ func GoOnPublisherQualityUpdate(streamID *C.char, quality C.struct_zego_publish_
 		AudioSendBytes:   float64(quality.audio_send_bytes),
 		VideoSendBytes:   float64(quality.video_send_bytes),
 	}
-	handler.OnPublisherQualityUpdate(C.GoString(streamID), goQuality)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPublisherQualityUpdate(goStreamID, goQuality)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPublisherStreamEvent
 func GoOnPublisherStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnPublisherStreamEvent(ZegoStreamEvent(eventID), C.GoString(streamID), goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPublisherStreamEvent(ZegoStreamEvent(eventID), goStreamID, goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPublisherSendAudioFirstFrame
 func GoOnPublisherSendAudioFirstFrame(channel C.enum_zego_publish_channel) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPublisherSendAudioFirstFrame(ZegoPublishChannel(channel))
 	}
-	handler.OnPublisherSendAudioFirstFrame(ZegoPublishChannel(channel))
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPlayerStateUpdate
 func GoOnPlayerStateUpdate(streamID *C.char, state C.enum_zego_player_state, errorCode C.zego_error, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnPlayerStateUpdate(C.GoString(streamID), ZegoPlayerState(state), int(errorCode), goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPlayerStateUpdate(goStreamID, ZegoPlayerState(state), int(errorCode), goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPlayerQualityUpdate
 func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream_quality) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goStreamID := C.GoString(streamID)
 	goQuality := ZegoPlayStreamQuality{
 		VideoRecvFPS:              float64(quality.video_recv_fps),
 		VideoDejitterFPS:          float64(quality.video_dejitter_fps),
@@ -597,7 +652,16 @@ func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream
 		MuteVideo:                 int(quality.mute_video),
 		MuteAudio:                 int(quality.mute_audio),
 	}
-	handler.OnPlayerQualityUpdate(C.GoString(streamID), goQuality)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPlayerQualityUpdate(goStreamID, goQuality)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPlayerRecvSei
@@ -619,52 +683,66 @@ func GoOnPlayerRecvSei(info C.struct_zego_media_side_info) {
 
 //export GoOnPlayerStreamEvent
 func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, data *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
-	}
+	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
 		goData = C.GoString(data)
 	}
-	handler.OnPlayerStreamEvent(ZegoStreamEvent(eventID), C.GoString(streamID), goData)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPlayerStreamEvent(ZegoStreamEvent(eventID), goStreamID, goData)
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnPlayerRecvAudioFirstFrame
 func GoOnPlayerRecvAudioFirstFrame(streamID *C.char) {
-	handlerLock.RLock()
-	defer handlerLock.RUnlock()
-	handler := eventHandler
-	if handler == nil {
-		return
+	goStreamID := C.GoString(streamID)
+	callbackFunc := func() {
+		handlerLock.RLock()
+		defer handlerLock.RUnlock()
+		handler := eventHandler
+		if handler == nil {
+			return
+		}
+		handler.OnPlayerRecvAudioFirstFrame(goStreamID)
 	}
-	handler.OnPlayerRecvAudioFirstFrame(C.GoString(streamID))
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnMediaPlayerStateUpdate
 func GoOnMediaPlayerStateUpdate(state C.enum_zego_media_player_state, errorCode C.zego_error, index C.enum_zego_media_player_instance_index) {
-	mediaPlayerLock.Lock()
-	defer mediaPlayerLock.Unlock()
-	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
-		handler := mediaPlayer.eventHandler
-		if handler != nil {
-			handler.OnMediaPlayerStateUpdate(mediaPlayer, ZegoMediaPlayerState(state), int(errorCode))
+	callbackFunc := func() {
+		mediaPlayerLock.Lock()
+		defer mediaPlayerLock.Unlock()
+		if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+			handler := mediaPlayer.eventHandler
+			if handler != nil {
+				handler.OnMediaPlayerStateUpdate(mediaPlayer, ZegoMediaPlayerState(state), int(errorCode))
+			}
 		}
 	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnMediaPlayerNetworkEvent
 func GoOnMediaPlayerNetworkEvent(event C.enum_zego_media_player_network_event, index C.enum_zego_media_player_instance_index) {
-	mediaPlayerLock.Lock()
-	defer mediaPlayerLock.Unlock()
-	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
-		handler := mediaPlayer.eventHandler
-		if handler != nil {
-			handler.OnMediaPlayerNetworkEvent(mediaPlayer, ZegoMediaPlayerNetworkEvent(event))
+	callbackFunc := func() {
+		mediaPlayerLock.Lock()
+		defer mediaPlayerLock.Unlock()
+		if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+			handler := mediaPlayer.eventHandler
+			if handler != nil {
+				handler.OnMediaPlayerNetworkEvent(mediaPlayer, ZegoMediaPlayerNetworkEvent(event))
+			}
 		}
 	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnMediaPlayerPlayingProgress
@@ -706,14 +784,17 @@ func GoOnMediaPlayerRecvSEI(data *C.uchar, dataLen C.uint, index C.enum_zego_med
 
 //export GoOnMediaPlayerFirstFrameEvent
 func GoOnMediaPlayerFirstFrameEvent(event C.enum_zego_media_player_first_frame_event, index C.enum_zego_media_player_instance_index) {
-	mediaPlayerLock.Lock()
-	defer mediaPlayerLock.Unlock()
-	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
-		handler := mediaPlayer.eventHandler
-		if handler != nil {
-			handler.OnMediaPlayerFirstFrameEvent(mediaPlayer, ZegoMediaPlayerFirstFrameEvent(event))
+	callbackFunc := func() {
+		mediaPlayerLock.Lock()
+		defer mediaPlayerLock.Unlock()
+		if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+			handler := mediaPlayer.eventHandler
+			if handler != nil {
+				handler.OnMediaPlayerFirstFrameEvent(mediaPlayer, ZegoMediaPlayerFirstFrameEvent(event))
+			}
 		}
 	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnMediaPlayerAudioFrame
@@ -735,45 +816,54 @@ func GoOnMediaPlayerAudioFrame(data *C.uchar, dataLen C.uint, param C.struct_zeg
 
 //export GoOnMediaPlayerLoadFileResult
 func GoOnMediaPlayerLoadFileResult(errorCode C.zego_error, index C.enum_zego_media_player_instance_index) {
-	mediaPlayerLock.Lock()
-	defer mediaPlayerLock.Unlock()
-	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
-		callbacks := mediaPlayer.loadResourceCallbacks
-		if callbacks.Len() > 0 {
-			callback := callbacks.Front().Value
-			callbacks.Remove(callbacks.Front())
-			if callback != nil {
-				if f, ok := callback.(ZegoMediaPlayerLoadResourceCallback); ok {
-					f(int(errorCode))
+	callbackFunc := func() {
+		mediaPlayerLock.Lock()
+		defer mediaPlayerLock.Unlock()
+		if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+			callbacks := mediaPlayer.loadResourceCallbacks
+			if callbacks.Len() > 0 {
+				callback := callbacks.Front().Value
+				callbacks.Remove(callbacks.Front())
+				if callback != nil {
+					if f, ok := callback.(ZegoMediaPlayerLoadResourceCallback); ok {
+						f(int(errorCode))
+					}
 				}
 			}
 		}
 	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnMediaPlayerSeekTo
 func GoOnMediaPlayerSeekTo(seq C.zego_seq, errorCode C.zego_error, index C.enum_zego_media_player_instance_index) {
-	mediaPlayerLock.Lock()
-	defer mediaPlayerLock.Unlock()
-	if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
-		callbacks := mediaPlayer.seekToCallbacks
-		if callback, ok := callbacks[int(seq)]; ok {
-			if callback != nil {
-				callback(int(errorCode))
+	callbackFunc := func() {
+		mediaPlayerLock.Lock()
+		defer mediaPlayerLock.Unlock()
+		if mediaPlayer, ok := mediaPlayerImplMap[int(index)]; ok {
+			callbacks := mediaPlayer.seekToCallbacks
+			if callback, ok := callbacks[int(seq)]; ok {
+				if callback != nil {
+					callback(int(errorCode))
+				}
+				delete(callbacks, int(seq))
 			}
-			delete(callbacks, int(seq))
 		}
 	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 //export GoOnEngineUninit
 func GoOnEngineUninit() {
-	engineDestroyCallbackLock.Lock()
-	defer engineDestroyCallbackLock.Unlock()
-	if engineDestroyCallback != nil {
-		engineDestroyCallback()
-		engineDestroyCallback = nil
+	callbackFunc := func() {
+		engineDestroyCallbackLock.Lock()
+		defer engineDestroyCallbackLock.Unlock()
+		if engineDestroyCallback != nil {
+			engineDestroyCallback()
+			engineDestroyCallback = nil
+		}
 	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 type engineImpl struct{}
@@ -1261,6 +1351,12 @@ func setApiCalledCallback(callback IZegoApiCalledEventHandler) {
 	apiCalledCallback = callback
 }
 
+func setCallbackEventHandler(handler IZegoCallbackEventHandler) {
+	callbackLock.Lock()
+	defer callbackLock.Unlock()
+	callbackEventHandler = handler
+}
+
 /// Utils
 
 func setCharArray(dest *C.char, src string, maxLen C.size_t) {
@@ -1321,4 +1417,30 @@ func goSliceToCUchar(data []uint8) (*C.uchar, C.uint) {
 		cLen = C.uint(len(data))
 	}
 	return cData, cLen
+}
+
+type callbackHandler struct {
+	callbackChan chan func()
+}
+
+func (h *callbackHandler) processLoop() {
+	for callback := range h.callbackChan {
+		callback()
+	}
+}
+
+func (h *callbackHandler) dispatchInCallbackGoroutine(callbackFunc func()){
+	if h.callbackChan == nil {
+		return
+	}
+	select {
+	case h.callbackChan <- callbackFunc:
+		return;
+	default:
+		callbackLock.Lock()
+		defer callbackLock.Unlock()
+		if callbackEventHandler != nil {
+			callbackEventHandler.OnCallbackDiscarded()
+		}
+	}
 }

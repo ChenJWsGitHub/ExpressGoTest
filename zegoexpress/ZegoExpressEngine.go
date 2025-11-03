@@ -1092,6 +1092,17 @@ type IZegoApiCalledEventHandler interface {
 	OnApiCalledResult(errorCode int, funcName string, info string)
 }
 
+type IZegoCallbackEventHandler interface {
+	// Notification callback discarded
+	//
+	// Available since: 3.23.0
+	// Description: When the callback production rate consistently exceeds the consumption rate and callback tasks accumulate to a certain level, the SDK will trigger this callback and execute the abandonment of the original callback.
+	// Trigger: The callback triggered when tasks pile up in the callback goroutine and the callback is discarded.
+	// Restrictions: None.
+	// Caution: If this callback is triggered, it is recommended to check whether time-consuming operations are being performed within the callback goroutine and optimize them accordingly.
+	OnCallbackDiscarded()
+}
+
 type IZegoMediaPlayerEventHandler interface {
 	// MediaPlayer playback status callback.
 	//
@@ -1795,4 +1806,16 @@ func GetVersion() string {
 // @param callback Method execution result callback.
 func SetApiCalledCallback(callback IZegoApiCalledEventHandler) {
 	setApiCalledCallback(callback)
+}
+
+// Set callback event handler.
+//
+// Available since: 3.23.0
+// Description: Set callback event handler.
+// When to call: Any time.
+// Restrictions: None.
+//
+// @param handler Callback event handler.
+func SetCallbackEventHandler(handler IZegoCallbackEventHandler) {
+	setCallbackEventHandler(handler)
 }
