@@ -21,6 +21,7 @@ extern void GoOnApiCalledResult(int, char*, char*);
 extern void GoLoginResultCallback(int, char*, int);
 extern void GoLogoutResultCallback(int, char*, int);
 extern void GoOnIMSendBroadcastMessageResult(zego_error, unsigned long long msg_id, int);
+extern void GoOnPublisherUpdateStreamExtraInfoResult(zego_error, int);
 extern void GoOnPlayerAudioData(unsigned char *, unsigned int, struct zego_audio_frame_param, char *);
 extern void GoOnProcessRemoteAudioData(unsigned char *, unsigned int, struct zego_audio_frame_param *, char *, double);
 extern void GoOnDebugError(int error_code, char* func_name, char* info);
@@ -65,6 +66,10 @@ static void bridge_go_logout_callback(zego_error code, const char *ext_data, con
 
 static void bridge_go_on_im_send_broadcast_message_result(const char *room_id, unsigned long long message_id, zego_error error_code, zego_seq seq, void *user_context) {
     GoOnIMSendBroadcastMessageResult(error_code, message_id, seq);
+}
+
+static void bridge_go_on_publisher_update_stream_extra_info_result(zego_error error_code, zego_seq seq, void *user_context) {
+    GoOnPublisherUpdateStreamExtraInfoResult(error_code, seq);
 }
 
 static void bridge_go_on_player_audio_data(const unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param, const char *stream_id, void *user_context) {
@@ -184,6 +189,7 @@ static void zego_express_go_bridge_init() {
     zego_register_room_login_result_callback(bridge_go_login_callback, NULL);
     zego_register_room_logout_result_callback(bridge_go_logout_callback, NULL);
     zego_register_im_send_broadcast_message_result_callback(bridge_go_on_im_send_broadcast_message_result, NULL);
+    zego_register_publisher_update_stream_extra_info_result_callback(bridge_go_on_publisher_update_stream_extra_info_result, NULL);
     zego_register_player_audio_data_callback(bridge_go_on_player_audio_data, NULL);
     zego_register_process_remote_audio_data_callback(bridge_go_on_process_remote_audio_data, NULL);
     zego_register_debug_error_callback(bridge_go_on_debug_error, NULL);
@@ -252,6 +258,7 @@ var (
 	roomLoginCallback              = make(map[int]ZegoRoomLoginCallback)
 	roomLogoutCallback             = make(map[int]ZegoRoomLogoutCallback)
 	imSendBroadcastMessageCallback = make(map[int]ZegoIMSendBroadcastMessageCallback)
+	setStreamExtraInfoCallback     = make(map[int]ZegoPublisherSetStreamExtraInfoCallback)
 
 	mediaPlayerLock    sync.Mutex
 	mediaPlayerImplMap = make(map[int]*mediaPlayerImpl)
@@ -336,6 +343,26 @@ func GoOnIMSendBroadcastMessageResult(errorCode C.zego_error, messageID C.ulongl
 		}
 
 		delete(imSendBroadcastMessageCallback, int(seq))
+	}
+	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
+}
+
+//export GoOnPublisherUpdateStreamExtraInfoResult
+func GoOnPublisherUpdateStreamExtraInfoResult(errorCode C.zego_error, seq C.zego_seq) {
+	callbackFunc := func() {
+		callbackLock.Lock()
+		defer callbackLock.Unlock()
+
+		callback, ok := setStreamExtraInfoCallback[int(seq)]
+		if !ok {
+			return
+		}
+
+		if callback != nil {
+			callback(int(errorCode))
+		}
+
+		delete(setStreamExtraInfoCallback, int(seq))
 	}
 	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
@@ -1002,6 +1029,20 @@ func (e *engineImpl) StopPublishingStream(channel ZegoPublishChannel) {
 	C.zego_express_stop_publishing_stream(C.enum_zego_publish_channel(channel))
 }
 
+func (e *engineImpl) SetStreamExtraInfo(extraInfo string, callback ZegoPublisherSetStreamExtraInfoCallback, channel ZegoPublishChannel) {
+	var seq C.int
+
+	cExtraInfo := StringToCString(extraInfo)
+	defer FreeCString(cExtraInfo)
+
+	C.zego_express_set_stream_extra_info(cExtraInfo, C.enum_zego_publish_channel(channel), &seq)
+	if callback != nil {
+		callbackLock.Lock()
+		defer callbackLock.Unlock()
+		setStreamExtraInfoCallback[int(seq)] = callback
+	}
+}
+
 func (e *engineImpl) SetAudioConfig(config ZegoAudioConfig, channel ZegoPublishChannel) {
 	cConfig := C.struct_zego_audio_config{
 		bitrate:  C.int(config.Bitrate),
@@ -1429,13 +1470,13 @@ func (h *callbackHandler) processLoop() {
 	}
 }
 
-func (h *callbackHandler) dispatchInCallbackGoroutine(callbackFunc func()){
+func (h *callbackHandler) dispatchInCallbackGoroutine(callbackFunc func()) {
 	if h.callbackChan == nil {
 		return
 	}
 	select {
 	case h.callbackChan <- callbackFunc:
-		return;
+		return
 	default:
 		callbackLock.Lock()
 		defer callbackLock.Unlock()

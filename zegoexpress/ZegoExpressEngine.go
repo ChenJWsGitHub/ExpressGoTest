@@ -1325,6 +1325,11 @@ type ZegoRoomLogoutCallback func(errorCode int, extendedData string)
 // @param messageID ID of this message
 type ZegoIMSendBroadcastMessageCallback func(errorCode int, messageID uint64)
 
+// Callback for setting stream extra information.
+//
+// @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+type ZegoPublisherSetStreamExtraInfoCallback func(errorCode int)
+
 type IZegoExpressEngine interface {
 	// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
 	//
@@ -1474,6 +1479,19 @@ type IZegoExpressEngine interface {
 	//
 	// @param channel Publish stream channel.
 	StopPublishingStream(channel ZegoPublishChannel)
+
+	// Sets the extra information of the stream being published for the specified publish channel.
+	//
+	// Available since: 1.1.0
+	// Description: Use this function to set the extra info of the stream. The stream extra information is an extra information identifier of the stream ID. Unlike the stream ID, which cannot be modified during the publishing process, the stream extra information can be modified midway through the stream corresponding to the stream ID. Developers can synchronize variable content related to stream IDs based on stream additional information.
+	// When to call: After the engine is created [createEngine], Called before and after [startPublishingStream] can both take effect.
+	// Restrictions: None.
+	// Related callbacks: Users can obtain the execution result of the function through [ZegoPublisherSetStreamExtraInfoCallback] callback.
+	//
+	// @param extraInfo Stream extra information, a string of up to 1024 characters.
+	// @param callback Set stream extra information execution result notification.
+	// @param channel Publish stream channel.
+	SetStreamExtraInfo(extraInfo string, callback ZegoPublisherSetStreamExtraInfoCallback, channel ZegoPublishChannel)
 
 	// Sets up the audio configurations for the specified publish channel.
 	//
