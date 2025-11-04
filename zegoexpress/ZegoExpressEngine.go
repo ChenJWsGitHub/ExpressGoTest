@@ -460,9 +460,6 @@ type ZegoEngineProfile struct {
 
 // Advanced engine configuration.
 type ZegoEngineConfig struct {
-	// @deprecated This property has been deprecated since version 2.3.0, please use the [setLogConfig] function instead.
-	LogConfig *ZegoLogConfig
-
 	// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
 	AdvancedConfig map[string]string
 }
@@ -910,6 +907,20 @@ type IZegoEventHandler interface {
 	// @param streamList Updated stream list.
 	// @param extendedData Extended information with stream updates.When receiving a stream deletion notification, the developer can convert the string into a json object to get the stream_delete_reason field, which is an array of stream deletion reasons, and the stream_delete_reason[].code field may have the following values: 1 (the user actively stops publishing stream) ; 2 (user heartbeat timeout); 3 (user repeated login); 4 (user kicked out); 5 (user disconnected); 6 (removed by the server).
 	OnRoomStreamUpdate(roomID string, updateType ZegoUpdateType, streamList []ZegoStream, extendedData string)
+
+	// The callback triggered when there is an update on the extra information of the streams published by other users in the same room.
+	//
+	// Available since: 1.1.0
+	// Description: All users in the room will be notified by this callback when the extra information of the stream in the room is updated.
+	// Use cases: Users can realize some business functions through the characteristics of stream extra information consistent with stream life cycle.
+	// When to call /Trigger: When a user publishing the stream update the extra information of the stream in the same room, other users in the same room will receive the callback.
+	// Restrictions: None.
+	// Caution: Unlike the stream ID, which cannot be modified during the publishing process, the stream extra information can be updated during the life cycle of the corresponding stream ID.
+	// Related APIs: Users who publish stream can set extra stream information through [setStreamExtraInfo].
+	//
+	// @param roomID Room ID where the user is logged in, a string of up to 128 bytes in length.
+	// @param streamList List of streams that the extra info was updated.
+	OnRoomStreamExtraInfoUpdate(roomID string, streamList []ZegoStream)
 
 	// Notification of the room connection state changes, including specific reasons for state change.
 	//
@@ -1748,18 +1759,6 @@ type ZegoDestroyCompletionCallback func()
 // @param callback Notification callback for destroy engine completion. Developers can listen to this callback to ensure that device hardware resources are released. If the developer only uses SDK to implement audio and video functions, this parameter can be passed [nullptr].
 func DestroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCallback) {
 	destroyEngine(engine, callback)
-}
-
-// Returns the singleton instance of ZegoExpressEngine.
-//
-// Available since: 1.1.0
-// Description: If the engine has not been created or has been destroyed, returns [nullptr].
-// When to call: After creating the engine, before destroying the engine.
-// Restrictions: None.
-//
-// @return Engine singleton instance
-func GetEngine() IZegoExpressEngine {
-	return getEngine()
 }
 
 // Set advanced engine configuration.
