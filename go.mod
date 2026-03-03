@@ -1,3 +1,3 @@
-module github.com/ChenJWsGitHub/ExpressGoTest/v2
+module github.com/ChenJWsGitHub/ExpressGoTest
 
 go 1.21.13
