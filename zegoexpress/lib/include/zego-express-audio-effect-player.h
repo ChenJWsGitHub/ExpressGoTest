@@ -17,10 +17,10 @@ ZEGO_BEGIN_DECLS
 /// @param instance_index [in/out] audio effect player instance, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_create_audio_effect_player(
-    enum zego_audio_effect_player_instance_index *instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index *instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_create_audio_effect_player)(
-    enum zego_audio_effect_player_instance_index *instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index *instance_index);
 #endif
 
 /// Destroys a audio effect player instance.
@@ -34,10 +34,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_audio_effect_player)(
 /// @param instance_index audio effect instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_audio_effect_player(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_destroy_audio_effect_player)(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Start playing audio effect.
@@ -54,11 +54,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_audio_effect_player)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_start(
-    unsigned int audio_effect_id, const char *path, struct zego_audio_effect_play_config *config,
+    zego_handle handle, unsigned int audio_effect_id, const char *path,
+    struct zego_audio_effect_play_config *config,
     enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_start)(
-    unsigned int audio_effect_id, const char *path, struct zego_audio_effect_play_config *config,
+    zego_handle handle, unsigned int audio_effect_id, const char *path,
+    struct zego_audio_effect_play_config *config,
     enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
@@ -72,11 +74,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_start)(
 /// @param audio_effect_id ID for the audio effect.
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_stop(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_audio_effect_player_stop(zego_handle handle, unsigned int audio_effect_id,
+                                      enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_stop)(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Pause playing audio effect.
@@ -89,11 +93,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_stop)(
 /// @param audio_effect_id ID for the audio effect.
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_pause(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_audio_effect_player_pause(zego_handle handle, unsigned int audio_effect_id,
+                                       enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_pause)(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Resume playing audio effect.
@@ -107,10 +113,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_pause)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_resume(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_resume)(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Stop playing all audio effect.
@@ -123,10 +131,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_resume)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_stop_all(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_stop_all)(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Pause playing all audio effect.
@@ -139,10 +147,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_stop_all)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_pause_all(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_pause_all)(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Resume playing all audio effect.
@@ -155,10 +163,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_pause_all)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_resume_all(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_resume_all)(
-    enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Set the specified playback progress.
@@ -174,11 +182,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_resume_all)(
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_seek_to(
-    unsigned int audio_effect_id, unsigned long long millisecond,
+    zego_handle handle, unsigned int audio_effect_id, unsigned long long millisecond,
     enum zego_audio_effect_player_instance_index instance_index, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_seek_to)(
-    unsigned int audio_effect_id, unsigned long long millisecond,
+    zego_handle handle, unsigned int audio_effect_id, unsigned long long millisecond,
     enum zego_audio_effect_player_instance_index instance_index, zego_seq *sequence);
 #endif
 
@@ -194,11 +202,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_seek_to)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_volume(
-    unsigned int audio_effect_id, int volume,
+    zego_handle handle, unsigned int audio_effect_id, int volume,
     enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_volume)(
-    unsigned int audio_effect_id, int volume,
+    zego_handle handle, unsigned int audio_effect_id, int volume,
     enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
@@ -214,11 +222,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_volume)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_play_volume(
-    unsigned int audio_effect_id, int volume,
+    zego_handle handle, unsigned int audio_effect_id, int volume,
     enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_play_volume)(
-    unsigned int audio_effect_id, int volume,
+    zego_handle handle, unsigned int audio_effect_id, int volume,
     enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
@@ -234,11 +242,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_play_volume
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_publish_volume(
-    unsigned int audio_effect_id, int volume,
+    zego_handle handle, unsigned int audio_effect_id, int volume,
     enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_publish_volume)(
-    unsigned int audio_effect_id, int volume,
+    zego_handle handle, unsigned int audio_effect_id, int volume,
     enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
@@ -253,10 +261,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_publish_vol
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_volume_all(
-    int volume, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_volume_all)(
-    int volume, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Set local play volume for all audio effect.
@@ -270,10 +278,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_volume_all)
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_play_volume_all(
-    int volume, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_play_volume_all)(
-    int volume, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Set publish volume for all audio effect.
@@ -287,10 +295,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_play_volume
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_publish_volume_all(
-    int volume, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_publish_volume_all)(
-    int volume, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Set the playback speed for a given audio effect. Both the local play speed and the publish speed are set. (separate settings are not supported).
@@ -305,11 +313,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_publish_vol
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_set_play_speed(
-    unsigned int audio_effect_id, float speed,
+    zego_handle handle, unsigned int audio_effect_id, float speed,
     enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_play_speed)(
-    unsigned int audio_effect_id, float speed,
+    zego_handle handle, unsigned int audio_effect_id, float speed,
     enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
@@ -326,11 +334,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_set_play_speed)
 /// @param total_duration [in/out] The total duration of the specified audio effect resource.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_get_total_duration(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index,
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index,
     unsigned long long *total_duration);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_get_total_duration)(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index,
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index,
     unsigned long long *total_duration);
 #endif
 
@@ -347,11 +357,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_get_total_durat
 /// @param current_progress [in/out] Current playback progress.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_get_current_progress(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index,
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index,
     unsigned long long *current_progress);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_get_current_progress)(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index,
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index,
     unsigned long long *current_progress);
 #endif
 
@@ -369,11 +381,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_get_current_pro
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_load_resource(
-    unsigned int audio_effect_id, const char *path,
+    zego_handle handle, unsigned int audio_effect_id, const char *path,
     enum zego_audio_effect_player_instance_index instance_index, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_load_resource)(
-    unsigned int audio_effect_id, const char *path,
+    zego_handle handle, unsigned int audio_effect_id, const char *path,
     enum zego_audio_effect_player_instance_index instance_index, zego_seq *sequence);
 #endif
 
@@ -389,10 +401,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_load_resource)(
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_unload_resource(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_unload_resource)(
-    unsigned int audio_effect_id, enum zego_audio_effect_player_instance_index instance_index);
+    zego_handle handle, unsigned int audio_effect_id,
+    enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
 /// Update the position of the audio effect player (audio source).
@@ -408,11 +422,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_unload_resource
 /// @param instance_index audio effect instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_effect_player_update_position(
-    unsigned int audio_effect_id, const float position[3],
+    zego_handle handle, unsigned int audio_effect_id, const float position[3],
     enum zego_audio_effect_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_update_position)(
-    unsigned int audio_effect_id, const float position[3],
+    zego_handle handle, unsigned int audio_effect_id, const float position[3],
     enum zego_audio_effect_player_instance_index instance_index);
 #endif
 
@@ -429,15 +443,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_update_position
 /// @param instance_index audio effect instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_effect_play_state_update)(
-    unsigned int audio_effect_id, enum zego_audio_effect_play_state state, zego_error error_code,
-    enum zego_audio_effect_player_instance_index instance_index, void *user_context);
+    zego_handle handle, unsigned int audio_effect_id, enum zego_audio_effect_play_state state,
+    zego_error error_code, enum zego_audio_effect_player_instance_index instance_index,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_effect_play_state_update_callback(
-    zego_on_audio_effect_play_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_effect_play_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_effect_play_state_update_callback)(
-    zego_on_audio_effect_play_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_effect_play_state_update callback_func, void *user_context);
 #endif
 
 /// Callback for audio effect player loads resources.
@@ -447,15 +462,17 @@ typedef void(EXP_CALL *pfnzego_register_audio_effect_play_state_update_callback)
 /// @param instance_index Audio effect player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_effect_player_load_resource)(
-    zego_seq seq, zego_error error_code,
+    zego_handle handle, zego_seq seq, zego_error error_code,
     enum zego_audio_effect_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_effect_player_load_resource_callback(
-    zego_on_audio_effect_player_load_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_effect_player_load_resource callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_effect_player_load_resource_callback)(
-    zego_on_audio_effect_player_load_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_effect_player_load_resource callback_func,
+    void *user_context);
 #endif
 
 /// Callback for audio effect player seek to playback progress.
@@ -465,15 +482,15 @@ typedef void(EXP_CALL *pfnzego_register_audio_effect_player_load_resource_callba
 /// @param instance_index Audio effect player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_effect_player_seek_to)(
-    zego_seq seq, zego_error error_code,
+    zego_handle handle, zego_seq seq, zego_error error_code,
     enum zego_audio_effect_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_effect_player_seek_to_callback(
-    zego_on_audio_effect_player_seek_to callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_effect_player_seek_to callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_effect_player_seek_to_callback)(
-    zego_on_audio_effect_player_seek_to callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_effect_player_seek_to callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

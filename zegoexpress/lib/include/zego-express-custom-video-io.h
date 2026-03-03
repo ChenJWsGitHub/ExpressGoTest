@@ -20,10 +20,10 @@ ZEGO_BEGIN_DECLS
 /// @param config custom video render config
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_video_render(
-    bool enable, struct zego_custom_video_render_config *config);
+    zego_handle handle, bool enable, struct zego_custom_video_render_config *config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_video_render)(
-    bool enable, struct zego_custom_video_render_config *config);
+    zego_handle handle, bool enable, struct zego_custom_video_render_config *config);
 #endif
 
 /// Enables or disables captured video to custom video rendering.
@@ -41,10 +41,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_video_render)(
 /// @param channel publish channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_captured_video_custom_video_render(
-    bool enable, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_captured_video_custom_video_render)(
-    bool enable, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_publish_channel channel);
 #endif
 
 /// Enables or disables remote playback video to custom video rendering.
@@ -61,11 +61,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_captured_video_custom_video_
 /// @param enable enable or disable
 /// @param stream_id Stream ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_enable_remote_video_custom_video_render(bool enable, const char *stream_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_remote_video_custom_video_render(
+    zego_handle handle, bool enable, const char *stream_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_remote_video_custom_video_render)(
-    bool enable, const char *stream_id);
+    zego_handle handle, bool enable, const char *stream_id);
 #endif
 
 /// Enables or disables custom video capture (for the specified channel).
@@ -84,11 +84,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_remote_video_custom_video_re
 /// @param channel publish channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_video_capture(
-    bool enable, struct zego_custom_video_capture_config *config,
+    zego_handle handle, bool enable, struct zego_custom_video_capture_config *config,
     enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_video_capture)(
-    bool enable, struct zego_custom_video_capture_config *config,
+    zego_handle handle, bool enable, struct zego_custom_video_capture_config *config,
     enum zego_publish_channel channel);
 #endif
 
@@ -108,14 +108,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_video_capture)(
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_raw_data(
-    const unsigned char *data, unsigned int data_length, const struct zego_video_frame_param params,
-    unsigned long long reference_time_millisecond, unsigned int reference_time_scale,
-    enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
+    const struct zego_video_frame_param params, unsigned long long reference_time_millisecond,
+    unsigned int reference_time_scale, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_raw_data)(
-    const unsigned char *data, unsigned int data_length, const struct zego_video_frame_param params,
-    unsigned long long reference_time_millisecond, unsigned int reference_time_scale,
-    enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
+    const struct zego_video_frame_param params, unsigned long long reference_time_millisecond,
+    unsigned int reference_time_scale, enum zego_publish_channel channel);
 #endif
 
 /// Sends the video frames (Texture Data) produced by custom video capture to the SDK (for the specified channel).
@@ -134,11 +134,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_raw_data)
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_texture_data(
-    int texture_id, int width, int height, double reference_time_millisecond,
+    zego_handle handle, int texture_id, int width, int height, double reference_time_millisecond,
     enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_texture_data)(
-    int texture_id, int width, int height, double reference_time_millisecond,
+    zego_handle handle, int texture_id, int width, int height, double reference_time_millisecond,
     enum zego_publish_channel channel);
 #endif
 
@@ -157,11 +157,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_texture_d
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_d3d_texture_data(
-    void *texture, int rotation, unsigned long long reference_time_millisecond,
+    zego_handle handle, void *texture, int rotation, unsigned long long reference_time_millisecond,
     unsigned int reference_time_scale, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_d3d_texture_data)(
-    void *texture, int rotation, unsigned long long reference_time_millisecond,
+    zego_handle handle, void *texture, int rotation, unsigned long long reference_time_millisecond,
     unsigned int reference_time_scale, enum zego_publish_channel channel);
 #endif
 
@@ -175,10 +175,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_d3d_textu
 /// @param surface_text [in/out] SurfaceTexture instance.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_get_custom_video_capture_surface_texture(
-    enum zego_publish_channel channel, void **surface_text);
+    zego_handle handle, enum zego_publish_channel channel, void **surface_text);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_custom_video_capture_surface_texture)(
-    enum zego_publish_channel channel, void **surface_text);
+    zego_handle handle, enum zego_publish_channel channel, void **surface_text);
 #endif
 
 /// Sends the video frames (CVPixelBuffer) produced by custom video capture to the SDK (for the specified channel).
@@ -195,10 +195,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_custom_video_capture_surface_te
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_pixel_buffer(
-    void *buffer, double timestamp, enum zego_publish_channel channel);
+    zego_handle handle, void *buffer, double timestamp, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_pixel_buffer)(
-    void *buffer, double timestamp, enum zego_publish_channel channel);
+    zego_handle handle, void *buffer, double timestamp, enum zego_publish_channel channel);
 #endif
 
 /// Sends the video frames (Encoded Data) produced by custom video capture to the SDK (for the specified channel).
@@ -217,12 +217,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_pixel_buf
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_encoded_data(
-    const unsigned char *data, unsigned int data_length,
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
     const struct zego_video_encoded_frame_param params, double reference_time_millisecond,
     enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_encoded_data)(
-    const unsigned char *data, unsigned int data_length,
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
     const struct zego_video_encoded_frame_param params, double reference_time_millisecond,
     enum zego_publish_channel channel);
 #endif
@@ -239,10 +239,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_encoded_d
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_custom_video_capture_fill_mode(
-    enum zego_view_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_view_mode mode, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_fill_mode)(
-    enum zego_view_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_view_mode mode, enum zego_publish_channel channel);
 #endif
 
 /// Sets the video flip mode of custom video capture (for the specified channel). This function takes effect only if the custom video buffer type is Texture2D.
@@ -257,10 +257,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_fill_mode)
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_custom_video_capture_flip_mode(
-    enum zego_video_flip_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_video_flip_mode mode, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_flip_mode)(
-    enum zego_video_flip_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_video_flip_mode mode, enum zego_publish_channel channel);
 #endif
 
 /// Sets the video rotation of custom video capture (for the specified channel).
@@ -275,11 +275,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_flip_mode)
 /// @param rotation Clockwise angle.
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_custom_video_capture_rotation(int rotation, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_custom_video_capture_rotation(
+    zego_handle handle, int rotation, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_rotation)(
-    int rotation, enum zego_publish_channel channel);
+    zego_handle handle, int rotation, enum zego_publish_channel channel);
 #endif
 
 /// Sets device state of custom video capture (for the specified channel).
@@ -296,10 +296,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_rotation)(
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_custom_video_capture_device_state(
-    bool is_enable, enum zego_remote_device_state state, enum zego_publish_channel channel);
+    zego_handle handle, bool is_enable, enum zego_remote_device_state state,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_device_state)(
-    bool is_enable, enum zego_remote_device_state state, enum zego_publish_channel channel);
+    zego_handle handle, bool is_enable, enum zego_remote_device_state state,
+    enum zego_publish_channel channel);
 #endif
 
 /// Sets the video transform matrix of custom video capture (for the specified channel).
@@ -316,10 +318,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_device_sta
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_custom_video_capture_transform_matrix(
-    float matrix[16], enum zego_publish_channel channel);
+    zego_handle handle, float matrix[16], enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_transform_matrix)(
-    float matrix[16], enum zego_publish_channel channel);
+    zego_handle handle, float matrix[16], enum zego_publish_channel channel);
 #endif
 
 /// Set the region of interest (ROI) for encoder of custom video capture (for the specified channel).
@@ -336,10 +338,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_transform_
 /// @param channel Publish channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_custom_video_capture_region_of_interest(
-    struct zego_roi_rect *rect_list, unsigned int rect_count, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_roi_rect *rect_list, unsigned int rect_count,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_region_of_interest)(
-    struct zego_roi_rect *rect_list, unsigned int rect_count, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_roi_rect *rect_list, unsigned int rect_count,
+    enum zego_publish_channel channel);
 #endif
 
 /// Reset the texture-related context cached by the SDK, such as EglContext. This function only takes effect when the custom video buffer type is Texture2D or TextureExternalOES.
@@ -355,11 +359,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_region_of_
 ///
 /// @param channel Publish channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_reset_custom_video_capture_texture_context(enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_reset_custom_video_capture_texture_context(
+    zego_handle handle, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_reset_custom_video_capture_texture_context)(
-    enum zego_publish_channel channel);
+    zego_handle handle, enum zego_publish_channel channel);
 #endif
 
 /// Customize the notification of the start of video capture.
@@ -374,15 +378,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_reset_custom_video_capture_texture_
 ///
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
-typedef void (*zego_on_custom_video_capture_start)(enum zego_publish_channel channel,
+typedef void (*zego_on_custom_video_capture_start)(zego_handle handle,
+                                                   enum zego_publish_channel channel,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_capture_start_callback(
-    zego_on_custom_video_capture_start callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_start callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_capture_start_callback)(
-    zego_on_custom_video_capture_start callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_start callback_func, void *user_context);
 #endif
 
 /// Customize the notification of the end of the collection.
@@ -397,15 +402,16 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_capture_start_callback)(
 ///
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
-typedef void (*zego_on_custom_video_capture_stop)(enum zego_publish_channel channel,
+typedef void (*zego_on_custom_video_capture_stop)(zego_handle handle,
+                                                  enum zego_publish_channel channel,
                                                   void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_capture_stop_callback(
-    zego_on_custom_video_capture_stop callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_stop callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_capture_stop_callback)(
-    zego_on_custom_video_capture_stop callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_stop callback_func, void *user_context);
 #endif
 
 /// When network changes are detected during custom video capture, the developer is notified that traffic control is required, and the encoding configuration is adjusted according to the recommended parameters of the SDK.
@@ -421,15 +427,17 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_capture_stop_callback)(
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_capture_encoded_data_traffic_control)(
-    struct zego_traffic_control_info traffic_control_info, enum zego_publish_channel channel,
-    void *user_context);
+    zego_handle handle, struct zego_traffic_control_info traffic_control_info,
+    enum zego_publish_channel channel, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_capture_encoded_data_traffic_control_callback(
-    zego_on_custom_video_capture_encoded_data_traffic_control callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_encoded_data_traffic_control callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_capture_encoded_data_traffic_control_callback)(
-    zego_on_custom_video_capture_encoded_data_traffic_control callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_encoded_data_traffic_control callback_func,
+    void *user_context);
 #endif
 
 /// Callback for frame rate change during custom video capture.
@@ -441,15 +449,16 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_capture_encoded_data_traffi
 /// @param fps Frame rate.
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
-typedef void (*zego_on_custom_video_capture_frame_rate)(int fps, enum zego_publish_channel channel,
+typedef void (*zego_on_custom_video_capture_frame_rate)(zego_handle handle, int fps,
+                                                        enum zego_publish_channel channel,
                                                         void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_capture_frame_rate_callback(
-    zego_on_custom_video_capture_frame_rate callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_frame_rate callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_capture_frame_rate_callback)(
-    zego_on_custom_video_capture_frame_rate callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_capture_frame_rate callback_func, void *user_context);
 #endif
 
 /// When custom video rendering is enabled, the original video frame data collected by the local preview is called back.
@@ -467,15 +476,18 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_capture_frame_rate_callback
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_render_captured_frame_data)(
-    unsigned char **data, unsigned int *data_length, const struct zego_video_frame_param param,
-    enum zego_video_flip_mode flip_mode, enum zego_publish_channel channel, void *user_context);
+    zego_handle handle, unsigned char **data, unsigned int *data_length,
+    const struct zego_video_frame_param param, enum zego_video_flip_mode flip_mode,
+    enum zego_publish_channel channel, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_render_captured_frame_data_callback(
-    zego_on_custom_video_render_captured_frame_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_captured_frame_data callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_render_captured_frame_data_callback)(
-    zego_on_custom_video_render_captured_frame_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_captured_frame_data callback_func,
+    void *user_context);
 #endif
 
 /// When custom video rendering is enabled, the remote end pulls the original video frame data to call back, and distinguishes different streams by streamID.
@@ -492,15 +504,17 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_render_captured_frame_data_
 /// @param param Video frame parameters.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_render_remote_frame_data)(
-    const char *stream_id, unsigned char **data, unsigned int *data_length,
+    zego_handle handle, const char *stream_id, unsigned char **data, unsigned int *data_length,
     const struct zego_video_frame_param param, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_render_remote_frame_data_callback(
-    zego_on_custom_video_render_remote_frame_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_remote_frame_data callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_data_callback)(
-    zego_on_custom_video_render_remote_frame_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_remote_frame_data callback_func,
+    void *user_context);
 #endif
 
 /// Custom video rendering local preview video frame CVPixelBuffer data callback.
@@ -518,15 +532,17 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_data_ca
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_render_captured_frame_pixel_buffer)(
-    void *buffer, const struct zego_video_frame_param param, enum zego_video_flip_mode flip_mode,
-    enum zego_publish_channel channel, void *user_context);
+    zego_handle handle, void *buffer, const struct zego_video_frame_param param,
+    enum zego_video_flip_mode flip_mode, enum zego_publish_channel channel, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_render_captured_frame_pixel_buffer_callback(
-    zego_on_custom_video_render_captured_frame_pixel_buffer callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_captured_frame_pixel_buffer callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_render_captured_frame_pixel_buffer_callback)(
-    zego_on_custom_video_render_captured_frame_pixel_buffer callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_captured_frame_pixel_buffer callback_func,
+    void *user_context);
 #endif
 
 /// Custom video rendering remote playing stream video frame CVPixelBuffer data callback.
@@ -543,15 +559,17 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_render_captured_frame_pixel
 /// @param param Video frame param.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_render_remote_frame_pixel_buffer)(
-    const char *stream_id, void *buffer, const struct zego_video_frame_param param,
-    void *user_context);
+    zego_handle handle, const char *stream_id, void *buffer,
+    const struct zego_video_frame_param param, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_render_remote_frame_pixel_buffer_callback(
-    zego_on_custom_video_render_remote_frame_pixel_buffer callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_remote_frame_pixel_buffer callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_pixel_buffer_callback)(
-    zego_on_custom_video_render_remote_frame_pixel_buffer callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_remote_frame_pixel_buffer callback_func,
+    void *user_context);
 #endif
 
 /// Custom video rendering remote playing stream video frame undecoded data callback.
@@ -568,16 +586,18 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_pixel_b
 /// @param stream_id Stream ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_render_remote_frame_encoded_data)(
-    const unsigned char *data, unsigned int data_length,
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
     const struct zego_video_encoded_frame_param param,
     unsigned long long reference_time_millisecond, const char *stream_id, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_render_remote_frame_encoded_data_callback(
-    zego_on_custom_video_render_remote_frame_encoded_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_remote_frame_encoded_data callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_encoded_data_callback)(
-    zego_on_custom_video_render_remote_frame_encoded_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_render_remote_frame_encoded_data callback_func,
+    void *user_context);
 #endif
 
 /// Enables or disables custom video processing, and support specifying the publish channel.
@@ -596,11 +616,11 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_encoded
 /// @param channel Publishing stream channel.Required: No.Default value: Main publish channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_video_processing(
-    bool enable, struct zego_custom_video_process_config *config,
+    zego_handle handle, bool enable, struct zego_custom_video_process_config *config,
     enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_video_processing)(
-    bool enable, struct zego_custom_video_process_config *config,
+    zego_handle handle, bool enable, struct zego_custom_video_process_config *config,
     enum zego_publish_channel channel);
 #endif
 
@@ -621,12 +641,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_video_processing)(
 /// @param channel Publishing stream channel.Required: No.Default value: Main publish channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_processed_raw_data(
-    const unsigned char **data, unsigned int *data_length, struct zego_video_frame_param params,
-    unsigned long long reference_time_millisecond, enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char **data, unsigned int *data_length,
+    struct zego_video_frame_param params, unsigned long long reference_time_millisecond,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_raw_data)(
-    const unsigned char **data, unsigned int *data_length, struct zego_video_frame_param params,
-    unsigned long long reference_time_millisecond, enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char **data, unsigned int *data_length,
+    struct zego_video_frame_param params, unsigned long long reference_time_millisecond,
+    enum zego_publish_channel channel);
 #endif
 
 /// Send the original video data after the pre-processing of the custom video to the SDK, support other channels to push the stream, and support specified data usage.
@@ -647,14 +669,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_raw_dat
 /// @param channel Publishing stream channel.Required: No.Default value: Main publish channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_processed_raw_data_v2(
-    const unsigned char **data, unsigned int *data_length, struct zego_video_frame_param params,
-    unsigned long long reference_time_millisecond, enum zego_processed_data_usage_type usage,
-    enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char **data, unsigned int *data_length,
+    struct zego_video_frame_param params, unsigned long long reference_time_millisecond,
+    enum zego_processed_data_usage_type usage, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_raw_data_v2)(
-    const unsigned char **data, unsigned int *data_length, struct zego_video_frame_param params,
-    unsigned long long reference_time_millisecond, enum zego_processed_data_usage_type usage,
-    enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char **data, unsigned int *data_length,
+    struct zego_video_frame_param params, unsigned long long reference_time_millisecond,
+    enum zego_processed_data_usage_type usage, enum zego_publish_channel channel);
 #endif
 
 /// Send the [CVPixelBuffer] type video data after the custom video processing to the SDK (for the specified channel).
@@ -672,10 +694,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_raw_dat
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_processed_cv_pixel_buffer(
-    void *buffer, unsigned long long timestamp, enum zego_publish_channel channel);
+    zego_handle handle, void *buffer, unsigned long long timestamp,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_cv_pixel_buffer)(
-    void *buffer, unsigned long long timestamp, enum zego_publish_channel channel);
+    zego_handle handle, void *buffer, unsigned long long timestamp,
+    enum zego_publish_channel channel);
 #endif
 
 /// Send the [CVPixelBuffer] type video data after the custom video processing to the SDK (for the specified channel), and support specified data usage.
@@ -694,12 +718,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_cv_pixe
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_processed_cv_pixel_buffer_v2(
-    void *buffer, unsigned long long timestamp, enum zego_processed_data_usage_type usage,
-    enum zego_publish_channel channel);
+    zego_handle handle, void *buffer, unsigned long long timestamp,
+    enum zego_processed_data_usage_type usage, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_cv_pixel_buffer_v2)(
-    void *buffer, unsigned long long timestamp, enum zego_processed_data_usage_type usage,
-    enum zego_publish_channel channel);
+    zego_handle handle, void *buffer, unsigned long long timestamp,
+    enum zego_processed_data_usage_type usage, enum zego_publish_channel channel);
 #endif
 
 /// Send the [Texture] type video data after the pre-processing of the custom video to the SDK (for the specified channel).
@@ -719,12 +743,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_cv_pixe
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_processed_texture_data(
-    int texture_id, int width, int height, unsigned long long reference_time_millisecond,
-    enum zego_publish_channel channel);
+    zego_handle handle, int texture_id, int width, int height,
+    unsigned long long reference_time_millisecond, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_texture_data)(
-    int texture_id, int width, int height, unsigned long long reference_time_millisecond,
-    enum zego_publish_channel channel);
+    zego_handle handle, int texture_id, int width, int height,
+    unsigned long long reference_time_millisecond, enum zego_publish_channel channel);
 #endif
 
 /// Send the [Texture] type video data after the pre-processing of the custom video to the SDK (for the specified channel), and support specified data usage.
@@ -745,12 +769,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_texture
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_processed_texture_data_v2(
-    int texture_id, int width, int height, unsigned long long reference_time_millisecond,
-    enum zego_processed_data_usage_type usage, enum zego_publish_channel channel);
+    zego_handle handle, int texture_id, int width, int height,
+    unsigned long long reference_time_millisecond, enum zego_processed_data_usage_type usage,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_texture_data_v2)(
-    int texture_id, int width, int height, unsigned long long reference_time_millisecond,
-    enum zego_processed_data_usage_type usage, enum zego_publish_channel channel);
+    zego_handle handle, int texture_id, int width, int height,
+    unsigned long long reference_time_millisecond, enum zego_processed_data_usage_type usage,
+    enum zego_publish_channel channel);
 #endif
 
 /// The SDK informs the developer that it is about to start custom video processing.
@@ -764,15 +790,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_texture
 ///
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
-typedef void (*zego_on_custom_video_process_start)(enum zego_publish_channel channel,
+typedef void (*zego_on_custom_video_process_start)(zego_handle handle,
+                                                   enum zego_publish_channel channel,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_process_start_callback(
-    zego_on_custom_video_process_start callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_start callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_process_start_callback)(
-    zego_on_custom_video_process_start callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_start callback_func, void *user_context);
 #endif
 
 /// The SDK informs the developer to stop custom video processing.
@@ -786,15 +813,16 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_process_start_callback)(
 ///
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
-typedef void (*zego_on_custom_video_process_stop)(enum zego_publish_channel channel,
+typedef void (*zego_on_custom_video_process_stop)(zego_handle handle,
+                                                  enum zego_publish_channel channel,
                                                   void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_process_stop_callback(
-    zego_on_custom_video_process_stop callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_stop callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_process_stop_callback)(
-    zego_on_custom_video_process_stop callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_stop callback_func, void *user_context);
 #endif
 
 /// Get SurfaceTexture for output data (for the specified channel).
@@ -813,10 +841,12 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_process_stop_callback)(
 /// @param surface_text [in/out] SurfaceTexture instance.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_get_custom_video_process_output_surface_texture(
-    int width, int height, enum zego_publish_channel channel, void **surface_text);
+    zego_handle handle, int width, int height, enum zego_publish_channel channel,
+    void **surface_text);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_custom_video_process_output_surface_texture)(
-    int width, int height, enum zego_publish_channel channel, void **surface_text);
+    zego_handle handle, int width, int height, enum zego_publish_channel channel,
+    void **surface_text);
 #endif
 
 /// Call back when the original video data is obtained.
@@ -835,17 +865,19 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_custom_video_process_output_sur
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_process_captured_unprocessed_raw_data)(
-    const unsigned char **data, unsigned int *data_length,
+    zego_handle handle, const unsigned char **data, unsigned int *data_length,
     const struct zego_video_frame_param param, unsigned long long reference_time_millisecond,
     enum zego_publish_channel channel, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_process_captured_unprocessed_raw_data_callback(
-    zego_on_custom_video_process_captured_unprocessed_raw_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_captured_unprocessed_raw_data callback_func,
+    void *user_context);
 #else
 typedef void(
     EXP_CALL *pfnzego_register_custom_video_process_captured_unprocessed_raw_data_callback)(
-    zego_on_custom_video_process_captured_unprocessed_raw_data callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_captured_unprocessed_raw_data callback_func,
+    void *user_context);
 #endif
 
 /// Call back when the original video data of type [CVPixelBuffer] is obtained.
@@ -862,17 +894,19 @@ typedef void(
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_process_captured_unprocessed_cvpixelbuffer)(
-    void *buffer, unsigned long long reference_time_millisecond, enum zego_publish_channel channel,
-    void *user_context);
+    zego_handle handle, void *buffer, unsigned long long reference_time_millisecond,
+    enum zego_publish_channel channel, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL
 zego_register_custom_video_process_captured_unprocessed_cvpixelbuffer_callback(
+    zego_handle handle,
     zego_on_custom_video_process_captured_unprocessed_cvpixelbuffer callback_func,
     void *user_context);
 #else
 typedef void(
     EXP_CALL *pfnzego_register_custom_video_process_captured_unprocessed_cvpixelbuffer_callback)(
+    zego_handle handle,
     zego_on_custom_video_process_captured_unprocessed_cvpixelbuffer callback_func,
     void *user_context);
 #endif
@@ -893,17 +927,20 @@ typedef void(
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
 typedef void (*zego_on_custom_video_process_captured_unprocessed_texture_data)(
-    int texture_id, int width, int height, unsigned long long reference_time_millisecond,
-    enum zego_publish_channel channel, void *user_context);
+    zego_handle handle, int texture_id, int width, int height,
+    unsigned long long reference_time_millisecond, enum zego_publish_channel channel,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL
 zego_register_custom_video_process_captured_unprocessed_texture_data_callback(
+    zego_handle handle,
     zego_on_custom_video_process_captured_unprocessed_texture_data callback_func,
     void *user_context);
 #else
 typedef void(
     EXP_CALL *pfnzego_register_custom_video_process_captured_unprocessed_texture_data_callback)(
+    zego_handle handle,
     zego_on_custom_video_process_captured_unprocessed_texture_data callback_func,
     void *user_context);
 #endif
@@ -922,14 +959,17 @@ typedef void(
 /// @param user_context Context of user.
 /// @return SurfaceTexture instance.
 typedef void *(*zego_on_custom_video_process_get_input_surface_texture)(
-    int width, int height, enum zego_publish_channel channel, void *user_context);
+    zego_handle handle, int width, int height, enum zego_publish_channel channel,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_custom_video_process_get_input_surface_texture_callback(
-    zego_on_custom_video_process_get_input_surface_texture callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_get_input_surface_texture callback_func,
+    void *user_context);
 #else
 typedef void *(EXP_CALL *pfnzego_register_custom_video_process_get_input_surface_texture_callback)(
-    zego_on_custom_video_process_get_input_surface_texture callback_func, void *user_context);
+    zego_handle handle, zego_on_custom_video_process_get_input_surface_texture callback_func,
+    void *user_context);
 #endif
 
 /// Acquiring video frame texture for custom Unity rendering and rendering it on the Unity main thread or rendering thread.
@@ -946,10 +986,10 @@ typedef void *(EXP_CALL *pfnzego_register_custom_video_process_get_input_surface
 /// @param texture [in/out] ZegoUnityTexture instance.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_get_unity_captured_texture(
-    enum zego_publish_channel channel, struct zego_unity_texture *texture);
+    zego_handle handle, enum zego_publish_channel channel, struct zego_unity_texture *texture);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_unity_captured_texture)(
-    enum zego_publish_channel channel, struct zego_unity_texture *texture);
+    zego_handle handle, enum zego_publish_channel channel, struct zego_unity_texture *texture);
 #endif
 
 /// Release the video frame texture used for custom Unity rendering.
@@ -965,10 +1005,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_unity_captured_texture)(
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_release_unity_captured_texture(enum zego_publish_channel channel);
+zego_express_release_unity_captured_texture(zego_handle handle, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_release_unity_captured_texture)(
-    enum zego_publish_channel channel);
+    zego_handle handle, enum zego_publish_channel channel);
 #endif
 
 /// Acquiring video frame texture for custom Unity rendering and rendering it on the Unity main thread or rendering thread.
@@ -984,11 +1024,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_release_unity_captured_texture)(
 /// @param stream_id Stream ID.
 /// @param texture [in/out] ZegoUnityTexture instance.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_get_unity_played_texture(const char *stream_id, struct zego_unity_texture *texture);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_unity_played_texture(
+    zego_handle handle, const char *stream_id, struct zego_unity_texture *texture);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_unity_played_texture)(
-    const char *stream_id, struct zego_unity_texture *texture);
+    zego_handle handle, const char *stream_id, struct zego_unity_texture *texture);
 #endif
 
 /// Release the video frame texture used for custom Unity rendering.
@@ -1003,9 +1043,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_unity_played_texture)(
 ///
 /// @param stream_id Stream ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_release_unity_played_texture(const char *stream_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_release_unity_played_texture(zego_handle handle,
+                                                                          const char *stream_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_release_unity_played_texture)(const char *stream_id);
+typedef zego_error(EXP_CALL *pfnzego_express_release_unity_played_texture)(zego_handle handle,
+                                                                           const char *stream_id);
 #endif
 
 /// Trigger when the [SurfaceTexture] is created.
@@ -1016,14 +1058,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_release_unity_played_texture)(const
 /// @param seq Increased seq.
 /// @param error_code Error code.
 /// @param user_context Context of user.
-typedef void (*zego_on_unity_surface_texture_created)(int seq, int error_code, void *user_context);
+typedef void (*zego_on_unity_surface_texture_created)(zego_handle handle, int seq, int error_code,
+                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_unity_surface_texture_created_callback(
-    zego_on_unity_surface_texture_created callback_func, void *user_context);
+    zego_handle handle, zego_on_unity_surface_texture_created callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_unity_surface_texture_created_callback)(
-    zego_on_unity_surface_texture_created callback_func, void *user_context);
+    zego_handle handle, zego_on_unity_surface_texture_created callback_func, void *user_context);
 #endif
 
 /// Trigger when the [SurfaceTexture] is destroyed.
@@ -1033,14 +1076,15 @@ typedef void(EXP_CALL *pfnzego_register_unity_surface_texture_created_callback)(
 ///
 /// @param seq Increased seq.
 /// @param user_context Context of user.
-typedef void (*zego_on_unity_surface_texture_destroyed)(int seq, void *user_context);
+typedef void (*zego_on_unity_surface_texture_destroyed)(zego_handle handle, int seq,
+                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_unity_surface_texture_destroyed_callback(
-    zego_on_unity_surface_texture_destroyed callback_func, void *user_context);
+    zego_handle handle, zego_on_unity_surface_texture_destroyed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_unity_surface_texture_destroyed_callback)(
-    zego_on_unity_surface_texture_destroyed callback_func, void *user_context);
+    zego_handle handle, zego_on_unity_surface_texture_destroyed callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

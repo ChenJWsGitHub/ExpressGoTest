@@ -19,13 +19,14 @@ ZEGO_BEGIN_DECLS
 /// @return List of capture source info objects.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API struct zego_screen_capture_source_info *EXP_CALL
-zego_express_get_screen_capture_sources(int thumbnail_width, int thumbnail_height, int icon_width,
-                                        int icon_height, int *source_count);
+zego_express_get_screen_capture_sources(zego_handle handle, int thumbnail_width,
+                                        int thumbnail_height, int icon_width, int icon_height,
+                                        int *source_count);
 #else
 typedef struct zego_screen_capture_source_info *(
-    EXP_CALL *pfnzego_express_get_screen_capture_sources)(int thumbnail_width, int thumbnail_height,
-                                                          int icon_width, int icon_height,
-                                                          int *source_count);
+    EXP_CALL *pfnzego_express_get_screen_capture_sources)(zego_handle handle, int thumbnail_width,
+                                                          int thumbnail_height, int icon_width,
+                                                          int icon_height, int *source_count);
 #endif
 
 /// Release screen capture source list
@@ -38,10 +39,10 @@ typedef struct zego_screen_capture_source_info *(
 /// @param source_count Screen capture source count
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_free_screen_capture_source_list(
-    struct zego_screen_capture_source_info *source_list, int source_count);
+    zego_handle handle, struct zego_screen_capture_source_info *source_list, int source_count);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_free_screen_capture_source_list)(
-    struct zego_screen_capture_source_info *source_list, int source_count);
+    zego_handle handle, struct zego_screen_capture_source_info *source_list, int source_count);
 #endif
 
 /// Create the screen capture source
@@ -57,10 +58,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_free_screen_capture_source_list)(
 /// @return The screen capture instance index, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API int EXP_CALL zego_express_create_screen_capture_source(
-    void *source_id, enum zego_screen_capture_source_type source_type);
+    zego_handle handle, void *source_id, enum zego_screen_capture_source_type source_type);
 #else
 typedef int(EXP_CALL *pfnzego_express_create_screen_capture_source)(
-    void *source_id, enum zego_screen_capture_source_type source_type);
+    zego_handle handle, void *source_id, enum zego_screen_capture_source_type source_type);
 #endif
 
 /// Destroy the screen capture source instance
@@ -72,9 +73,11 @@ typedef int(EXP_CALL *pfnzego_express_create_screen_capture_source)(
 /// Restrictions: After destroy the instance, you need to release the [ZegoScreenCaptureSource] instance object you hold by yourself, and don’t call the function of this instance object after the destruction.
 /// Platform differences: Only supports Windows and macOS.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_screen_capture_source(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_screen_capture_source(zego_handle handle,
+                                                                           int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_destroy_screen_capture_source)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_destroy_screen_capture_source)(zego_handle handle,
+                                                                            int instance_index);
 #endif
 
 /// Create the screen capture source
@@ -90,10 +93,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_screen_capture_source)(int 
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_update_capture_source(
-    void *source_id, enum zego_screen_capture_source_type source_type, int instance_index);
+    zego_handle handle, void *source_id, enum zego_screen_capture_source_type source_type,
+    int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_update_capture_source)(
-    void *source_id, enum zego_screen_capture_source_type source_type, int instance_index);
+    zego_handle handle, void *source_id, enum zego_screen_capture_source_type source_type,
+    int instance_index);
 #endif
 
 /// Start screen capture.
@@ -104,9 +109,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_update_capture_sourc
 ///
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_start_capture(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_start_capture(zego_handle handle,
+                                                                          int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_start_capture)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_start_capture)(zego_handle handle,
+                                                                           int instance_index);
 #endif
 
 /// Stop screen capture.
@@ -116,9 +123,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_start_capture)(int i
 ///
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_stop_capture(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_stop_capture(zego_handle handle,
+                                                                         int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture)(zego_handle handle,
+                                                                          int instance_index);
 #endif
 
 /// Gets the rectangle of the screen capture source.
@@ -131,10 +140,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture)(int in
 /// @return Rect information about the capture resource.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API struct zego_rect EXP_CALL
-zego_express_screen_capture_get_capture_source_rect(int instance_index);
+zego_express_screen_capture_get_capture_source_rect(zego_handle handle, int instance_index);
 #else
 typedef struct zego_rect(EXP_CALL *pfnzego_express_screen_capture_get_capture_source_rect)(
-    int instance_index);
+    zego_handle handle, int instance_index);
 #endif
 
 /// Update the area captured by the screen.
@@ -147,11 +156,11 @@ typedef struct zego_rect(EXP_CALL *pfnzego_express_screen_capture_get_capture_so
 /// @param rect The position of the area to be captured relative to the entire screen or window.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_screen_capture_update_capture_region(struct zego_rect rect, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_update_capture_region(
+    zego_handle handle, struct zego_rect rect, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_update_capture_region)(
-    struct zego_rect rect, int instance_index);
+    zego_handle handle, struct zego_rect rect, int instance_index);
 #endif
 
 /// Update the streaming area of ​​the screen capture.
@@ -165,11 +174,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_update_capture_regio
 /// @param rect The position of the area to be pushed relative to the upper left corner of the capture screen, the actual capture screen size can be obtained through [onAvailableFrame].
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_screen_capture_update_publish_region(struct zego_rect rect, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_update_publish_region(
+    zego_handle handle, struct zego_rect rect, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_update_publish_region)(
-    struct zego_rect rect, int instance_index);
+    zego_handle handle, struct zego_rect rect, int instance_index);
 #endif
 
 /// Sets the filtered list of windows.
@@ -183,11 +192,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_update_publish_regio
 /// @param count the number of lists.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_screen_capture_set_exclude_window_list(void **list, int count, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_set_exclude_window_list(
+    zego_handle handle, void **list, int count, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_set_exclude_window_list)(
-    void **list, int count, int instance_index);
+    zego_handle handle, void **list, int count, int instance_index);
 #endif
 
 /// Whether to activate the promotion of the window to the foreground.
@@ -200,11 +209,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_set_exclude_window_l
 /// @param active Whether to activate the window. true to activate the window, false to not activate the window, the default is true.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_screen_capture_enable_window_activate(bool active, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_window_activate(
+    zego_handle handle, bool active, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_window_activate)(
-    bool active, int instance_index);
+    zego_handle handle, bool active, int instance_index);
 #endif
 
 /// Set whether to show the cursor
@@ -214,14 +223,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_window_activa
 /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
 /// Restrictions: Only available on Windows/macOS.
 ///
-/// @param visible Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is false.
+/// @param visible Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is true.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_screen_capture_enable_cursor_visible(bool visible, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_cursor_visible(
+    zego_handle handle, bool visible, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_cursor_visible)(
-    bool visible, int instance_index);
+    zego_handle handle, bool visible, int instance_index);
 #endif
 
 /// Set whether to highlight the capture area
@@ -236,28 +245,30 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_cursor_visibl
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_hight_light(
-    bool enable, struct zego_layer_border_config config, int instance_index);
+    zego_handle handle, bool enable, struct zego_layer_border_config config, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_hight_light)(
-    bool enable, struct zego_layer_border_config config, int instance_index);
+    zego_handle handle, bool enable, struct zego_layer_border_config config, int instance_index);
 #endif
 
-/// Whether to collect the sound of the window process during window collection
+/// Set whether to collect sound
 ///
-/// Available since: 3.13.0
-/// Description: Whether to collect the sound of the window process during window collection.
-/// When to call: Before starting the collection [startScreencapture]. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeCustom, and the screen acquisition and streaming channels are the same.
-/// Restrictions: Only applicable to Windows 10 and above versions.
+/// Available since: 3.23.0
+/// Description: Set whether to collect sound.
+/// When to call: At any time, it takes effect after starting screen capture. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeScreenCapture, and the screen acquisition and streaming channels are the same.
+/// Restrictions: Only applicable to Windows 8 and above versions.
 ///
 /// @param enable Whether to collect sound. true for collection, false for no collection, default false.
-/// @param audio_param Audio collection parameters.
+/// @param config Audio collection parameters.
 /// @param instance_index The screen capture source instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_audio_capture(
-    bool enable, struct zego_audio_frame_param audio_param, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_audio_capture_with_config(
+    zego_handle handle, bool enable, struct zego_screen_capture_audio_config config,
+    int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture)(
-    bool enable, struct zego_audio_frame_param audio_param, int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture_with_config)(
+    zego_handle handle, bool enable, struct zego_screen_capture_audio_config config,
+    int instance_index);
 #endif
 
 /// Callback for screen capture data
@@ -273,15 +284,17 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture
 /// @param instance_index Screen capture source instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_source_available_frame)(
-    const void *data, unsigned int data_length, const struct zego_video_frame_param param,
-    int instance_index, void *user_context);
+    zego_handle handle, const void *data, unsigned int data_length,
+    const struct zego_video_frame_param param, int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_screen_capture_source_available_frame_callback(
-    zego_on_screen_capture_source_available_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_source_available_frame callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_source_available_frame_callback)(
-    zego_on_screen_capture_source_available_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_source_available_frame callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when a screen capture source exception occurred
@@ -296,15 +309,17 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_source_available_frame_ca
 /// @param instance_index Screen capture source instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_source_exception_occurred)(
-    enum zego_screen_capture_source_exception_type exception_type, int instance_index,
-    void *user_context);
+    zego_handle handle, enum zego_screen_capture_source_exception_type exception_type,
+    int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_screen_capture_source_exception_occurred_callback(
-    zego_on_screen_capture_source_exception_occurred callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_source_exception_occurred callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_source_exception_occurred_callback)(
-    zego_on_screen_capture_source_exception_occurred callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_source_exception_occurred callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when a screen capture source capture type exception occurred
@@ -320,19 +335,19 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_source_exception_occurred
 /// @param instance_index Screen capture source instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_source_capture_type_exception_occurred)(
-    enum zego_screen_capture_source_type source_type,
+    zego_handle handle, enum zego_screen_capture_source_type source_type,
     enum zego_screen_capture_source_exception_type exception_type, int instance_index,
     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL
 zego_register_screen_capture_source_capture_type_exception_occurred_callback(
-    zego_on_screen_capture_source_capture_type_exception_occurred callback_func,
+    zego_handle handle, zego_on_screen_capture_source_capture_type_exception_occurred callback_func,
     void *user_context);
 #else
 typedef void(
     EXP_CALL *pfnzego_register_screen_capture_source_capture_type_exception_occurred_callback)(
-    zego_on_screen_capture_source_capture_type_exception_occurred callback_func,
+    zego_handle handle, zego_on_screen_capture_source_capture_type_exception_occurred callback_func,
     void *user_context);
 #endif
 
@@ -347,15 +362,17 @@ typedef void(
 /// @param instance_index Screen capture source instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_window_state_changed)(
-    enum zego_screen_capture_window_state window_state, struct zego_rect window_rect,
-    int instance_index, void *user_context);
+    zego_handle handle, enum zego_screen_capture_window_state window_state,
+    struct zego_rect window_rect, int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_screen_capture_window_state_changed_callback(
-    zego_on_screen_capture_window_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_window_state_changed callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_window_state_changed_callback)(
-    zego_on_screen_capture_window_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_window_state_changed callback_func,
+    void *user_context);
 #endif
 
 /// The callback will be triggered when the state of the capture target window change.
@@ -367,15 +384,16 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_window_state_changed_call
 /// @param capture_rect Capture source rect.
 /// @param instance_index Screen capture source instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_screen_capture_rect_changed)(struct zego_rect capture_rect,
+typedef void (*zego_on_screen_capture_rect_changed)(zego_handle handle,
+                                                    struct zego_rect capture_rect,
                                                     int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_screen_capture_rect_changed_callback(
-    zego_on_screen_capture_rect_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_rect_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_rect_changed_callback)(
-    zego_on_screen_capture_rect_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_rect_changed callback_func, void *user_context);
 #endif
 
 /// Set the App Group configuration item.
@@ -388,10 +406,10 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_rect_changed_callback)(
 /// @param group_id The host app and the extension app should belong to the same App Group, and the AppGroupID needs to be passed in here.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_screen_capture_set_app_group_id_ios(const char *group_id);
+zego_express_screen_capture_set_app_group_id_ios(zego_handle handle, const char *group_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_set_app_group_id_ios)(
-    const char *group_id);
+    zego_handle handle, const char *group_id);
 #endif
 
 /// Start screen capture, in-app capture only.
@@ -403,11 +421,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_set_app_group_id_ios
 ///
 /// @param config Screen capture parameter configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_start_screen_capture_in_app_ios(struct zego_screen_capture_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_screen_capture_in_app_ios(
+    zego_handle handle, struct zego_screen_capture_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_screen_capture_in_app_ios)(
-    struct zego_screen_capture_config config);
+    zego_handle handle, struct zego_screen_capture_config config);
 #endif
 
 /// Start screen capture.
@@ -418,11 +436,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_screen_capture_in_app_ios)(
 ///
 /// @param config Screen capture parameter configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_start_screen_capture_mobile(struct zego_screen_capture_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_screen_capture_mobile(
+    zego_handle handle, struct zego_screen_capture_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_screen_capture_mobile)(
-    struct zego_screen_capture_config config);
+    zego_handle handle, struct zego_screen_capture_config config);
 #endif
 
 /// Stop screen capture.
@@ -430,9 +448,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_screen_capture_mobile)(
 /// Available since: 3.1.0
 /// Description: Stop screen capture.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_stop_capture_mobile();
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_stop_capture_mobile(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture_mobile)();
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture_mobile)(
+    zego_handle handle);
 #endif
 
 /// Update screen capture parameter configuration.
@@ -444,11 +463,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture_mobile)
 ///
 /// @param config Screen capture parameter configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_update_screen_capture_config_mobile(struct zego_screen_capture_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_update_screen_capture_config_mobile(
+    zego_handle handle, struct zego_screen_capture_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_update_screen_capture_config_mobile)(
-    struct zego_screen_capture_config config);
+    zego_handle handle, struct zego_screen_capture_config config);
 #endif
 
 /// The callback triggered when a screen capture source exception occurred.
@@ -462,14 +481,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_update_screen_capture_config_mobile
 /// @param exception_type Screen capture exception type.
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_mobile_exception_occurred)(
-    enum zego_screen_capture_exception_type exception_type, void *user_context);
+    zego_handle handle, enum zego_screen_capture_exception_type exception_type, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_screen_capture_mobile_exception_occurred_callback(
-    zego_on_screen_capture_mobile_exception_occurred callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_mobile_exception_occurred callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_mobile_exception_occurred_callback)(
-    zego_on_screen_capture_mobile_exception_occurred callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_mobile_exception_occurred callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when start screen capture.
@@ -481,14 +502,33 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_mobile_exception_occurred
 /// Restrictions: Only available on Android and iOS.
 ///
 /// @param user_context Context of user.
-typedef void (*zego_on_screen_capture_mobile_start)(void *user_context);
+typedef void (*zego_on_screen_capture_mobile_start)(zego_handle handle, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_screen_capture_mobile_start_callback(
-    zego_on_screen_capture_mobile_start callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_mobile_start callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_screen_capture_mobile_start_callback)(
-    zego_on_screen_capture_mobile_start callback_func, void *user_context);
+    zego_handle handle, zego_on_screen_capture_mobile_start callback_func, void *user_context);
+#endif
+
+/// [Deprecated] Whether to collect the sound of the window process during window collection
+///
+/// Available since: 3.13.0
+/// Description: Whether to collect the sound of the window process during window collection.
+/// When to call: Before starting the collection [startScreencapture]. [setAudioSource] Set the acquisition source to ZegoAudioSourceTypeCustom, and the screen acquisition and streaming channels are the same.
+/// Restrictions: Only applicable to Windows 10 and above versions.
+///
+/// @deprecated Deprecated since 3.23.0, please use the method with the same name with [config] parameter instead.
+/// @param enable Whether to collect sound. true for collection, false for no collection, default false.
+/// @param audio_param Audio collection parameters.
+/// @param instance_index The screen capture source instance index.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_enable_audio_capture(
+    zego_handle handle, bool enable, struct zego_audio_frame_param audio_param, int instance_index);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_audio_capture)(
+    zego_handle handle, bool enable, struct zego_audio_frame_param audio_param, int instance_index);
 #endif
 
 ZEGO_END_DECLS

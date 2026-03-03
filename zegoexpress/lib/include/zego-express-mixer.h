@@ -19,10 +19,12 @@ ZEGO_BEGIN_DECLS
 /// @param task Mixing task object. Required: Yes.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_mixer_task(struct zego_mixer_task task,
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_mixer_task(zego_handle handle,
+                                                              struct zego_mixer_task task,
                                                               zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_mixer_task)(struct zego_mixer_task task,
+typedef zego_error(EXP_CALL *pfnzego_express_start_mixer_task)(zego_handle handle,
+                                                               struct zego_mixer_task task,
                                                                zego_seq *sequence);
 #endif
 
@@ -39,10 +41,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_mixer_task)(struct zego_mixer
 /// @param task Mixing task object. Required: Yes.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_mixer_task(struct zego_mixer_task task,
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_mixer_task(zego_handle handle,
+                                                             struct zego_mixer_task task,
                                                              zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_mixer_task)(struct zego_mixer_task task,
+typedef zego_error(EXP_CALL *pfnzego_express_stop_mixer_task)(zego_handle handle,
+                                                              struct zego_mixer_task task,
                                                               zego_seq *sequence);
 #endif
 
@@ -60,11 +64,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_mixer_task)(struct zego_mixer_
 /// @param task Auto mix stream task object
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_auto_mixer_task(struct zego_auto_mixer_task task,
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_auto_mixer_task(zego_handle handle,
+                                                                   struct zego_auto_mixer_task task,
                                                                    zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_auto_mixer_task)(
-    struct zego_auto_mixer_task task, zego_seq *sequence);
+    zego_handle handle, struct zego_auto_mixer_task task, zego_seq *sequence);
 #endif
 
 /// Stops an auto stream mixing task.
@@ -80,10 +85,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_auto_mixer_task)(
 /// @param task Auto mix stream task object
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_auto_mixer_task(struct zego_auto_mixer_task task,
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_auto_mixer_task(zego_handle handle,
+                                                                  struct zego_auto_mixer_task task,
                                                                   zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_auto_mixer_task)(struct zego_auto_mixer_task task,
+typedef zego_error(EXP_CALL *pfnzego_express_stop_auto_mixer_task)(zego_handle handle,
+                                                                   struct zego_auto_mixer_task task,
                                                                    zego_seq *sequence);
 #endif
 
@@ -102,15 +109,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_auto_mixer_task)(struct zego_a
 /// @param info_count List count of information that the current CDN is being mixed.
 /// @param user_context User context. Value range: It is a custom pointer, which can be [NULL].
 typedef void (*zego_on_mixer_relay_cdn_state_update)(
-    const char *task_id, const struct zego_stream_relay_cdn_info *info_list,
+    zego_handle handle, const char *task_id, const struct zego_stream_relay_cdn_info *info_list,
     unsigned int info_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_mixer_relay_cdn_state_update_callback(
-    zego_on_mixer_relay_cdn_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_relay_cdn_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_mixer_relay_cdn_state_update_callback)(
-    zego_on_mixer_relay_cdn_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_relay_cdn_state_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the sound level of any input stream changes in the stream mixing process.
@@ -127,15 +134,15 @@ typedef void(EXP_CALL *pfnzego_register_mixer_relay_cdn_state_update_callback)(
 /// @param info_count Count of mixing stream sound level.
 /// @param user_context User context. Value range: It is a custom pointer, which can be [NULL].
 typedef void (*zego_on_mixer_sound_level_update)(
-    const struct zego_mixer_sound_level_info *sound_levels, unsigned int info_count,
-    void *user_context);
+    zego_handle handle, const struct zego_mixer_sound_level_info *sound_levels,
+    unsigned int info_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_mixer_sound_level_update_callback(
-    zego_on_mixer_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_sound_level_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_mixer_sound_level_update_callback)(
-    zego_on_mixer_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_sound_level_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the sound level of any input stream changes in the auto stream mixing process.
@@ -150,14 +157,15 @@ typedef void(EXP_CALL *pfnzego_register_mixer_sound_level_update_callback)(
 /// @param info_count Count of mixing stream sound level
 /// @param user_context Context of user.
 typedef void (*zego_on_auto_mixer_sound_level_update)(
-    const struct zego_sound_level_info *sound_levels, unsigned int info_count, void *user_context);
+    zego_handle handle, const struct zego_sound_level_info *sound_levels, unsigned int info_count,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_auto_mixer_sound_level_update_callback(
-    zego_on_auto_mixer_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_auto_mixer_sound_level_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_auto_mixer_sound_level_update_callback)(
-    zego_on_auto_mixer_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_auto_mixer_sound_level_update callback_func, void *user_context);
 #endif
 
 /// Results of starting a mixer task.
@@ -166,15 +174,15 @@ typedef void(EXP_CALL *pfnzego_register_auto_mixer_sound_level_update_callback)(
 /// @param seq Sequence.
 /// @param extended_data Extended Information
 /// @param user_context Context of user.
-typedef void (*zego_on_mixer_start_result)(zego_error error_code, zego_seq seq,
+typedef void (*zego_on_mixer_start_result)(zego_handle handle, zego_error error_code, zego_seq seq,
                                            const char *extended_data, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_mixer_start_result_callback(
-    zego_on_mixer_start_result callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_start_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_mixer_start_result_callback)(
-    zego_on_mixer_start_result callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_start_result callback_func, void *user_context);
 #endif
 
 /// Results of stoping a mixer task.
@@ -182,14 +190,15 @@ typedef void(EXP_CALL *pfnzego_register_mixer_start_result_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_mixer_stop_result)(zego_error error_code, zego_seq seq, void *user_context);
+typedef void (*zego_on_mixer_stop_result)(zego_handle handle, zego_error error_code, zego_seq seq,
+                                          void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_mixer_stop_result_callback(
-    zego_on_mixer_stop_result callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_stop_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_mixer_stop_result_callback)(
-    zego_on_mixer_stop_result callback_func, void *user_context);
+    zego_handle handle, zego_on_mixer_stop_result callback_func, void *user_context);
 #endif
 
 /// Results of starting a auto mixer task.
@@ -198,15 +207,16 @@ typedef void(EXP_CALL *pfnzego_register_mixer_stop_result_callback)(
 /// @param seq Sequence.
 /// @param extended_data Extended Information
 /// @param user_context Context of user.
-typedef void (*zego_on_auto_mixer_start_result)(zego_error error_code, zego_seq seq,
-                                                const char *extended_data, void *user_context);
+typedef void (*zego_on_auto_mixer_start_result)(zego_handle handle, zego_error error_code,
+                                                zego_seq seq, const char *extended_data,
+                                                void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_auto_mixer_start_result_callback(
-    zego_on_auto_mixer_start_result callback_func, void *user_context);
+    zego_handle handle, zego_on_auto_mixer_start_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_auto_mixer_start_result_callback)(
-    zego_on_auto_mixer_start_result callback_func, void *user_context);
+    zego_handle handle, zego_on_auto_mixer_start_result callback_func, void *user_context);
 #endif
 
 /// Results of stoping a auto mixer task.
@@ -214,15 +224,15 @@ typedef void(EXP_CALL *pfnzego_register_auto_mixer_start_result_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_auto_mixer_stop_result)(zego_error error_code, zego_seq seq,
-                                               void *user_context);
+typedef void (*zego_on_auto_mixer_stop_result)(zego_handle handle, zego_error error_code,
+                                               zego_seq seq, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_auto_mixer_stop_result_callback(
-    zego_on_auto_mixer_stop_result callback_func, void *user_context);
+    zego_handle handle, zego_on_auto_mixer_stop_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_auto_mixer_stop_result_callback)(
-    zego_on_auto_mixer_stop_result callback_func, void *user_context);
+    zego_handle handle, zego_on_auto_mixer_stop_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

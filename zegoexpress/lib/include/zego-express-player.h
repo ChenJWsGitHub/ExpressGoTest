@@ -20,10 +20,12 @@ ZEGO_BEGIN_DECLS
 ///   Only support numbers, English characters and '-', '_'.
 /// @param canvas The view used to display the play audio and video stream's image. When the view is set to [NULL], no video is displayed, only audio is played.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_playing_stream(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_playing_stream(zego_handle handle,
+                                                                  const char *stream_id,
                                                                   struct zego_canvas *canvas);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream)(zego_handle handle,
+                                                                   const char *stream_id,
                                                                    struct zego_canvas *canvas);
 #endif
 
@@ -44,10 +46,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream)(const char *s
 /// @param config Advanced player configuration Room [roomID] in [ZegoPlayerConfig] is the login roomID.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_playing_stream_with_config(
-    const char *stream_id, struct zego_canvas *canvas, struct zego_player_config config);
+    zego_handle handle, const char *stream_id, struct zego_canvas *canvas,
+    struct zego_player_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream_with_config)(
-    const char *stream_id, struct zego_canvas *canvas, struct zego_player_config config);
+    zego_handle handle, const char *stream_id, struct zego_canvas *canvas,
+    struct zego_player_config config);
 #endif
 
 /// Starts playing a stream from ZEGO RTC server or from third-party CDN when using RangeScene.
@@ -67,10 +71,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream_with_config)(
 /// @param config Advanced scene player configuration.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_playing_stream_in_scene(
-    const char *stream_id, struct zego_canvas *canvas, struct zego_scene_player_config config);
+    zego_handle handle, const char *stream_id, struct zego_canvas *canvas,
+    struct zego_scene_player_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream_in_scene)(
-    const char *stream_id, struct zego_canvas *canvas, struct zego_scene_player_config config);
+    zego_handle handle, const char *stream_id, struct zego_canvas *canvas,
+    struct zego_scene_player_config config);
 #endif
 
 /// Switch from playing a certain stream to playing another stream.
@@ -94,11 +100,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream_in_scene)(
 ///   Only support numbers, English characters and '-', '_'.
 /// @param config Advanced player configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_switch_playing_stream(
-    const char *from_stream_id, const char *to_stream_id, struct zego_player_config config);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_switch_playing_stream(zego_handle handle, const char *from_stream_id,
+                                   const char *to_stream_id, struct zego_player_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_switch_playing_stream)(
-    const char *from_stream_id, const char *to_stream_id, struct zego_player_config config);
+    zego_handle handle, const char *from_stream_id, const char *to_stream_id,
+    struct zego_player_config config);
 #endif
 
 /// Stops playing a stream.
@@ -113,9 +121,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_switch_playing_stream)(
 ///
 /// @param stream_id Stream ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_playing_stream(const char *stream_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_playing_stream(zego_handle handle,
+                                                                 const char *stream_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_playing_stream)(const char *stream_id);
+typedef zego_error(EXP_CALL *pfnzego_express_stop_playing_stream)(zego_handle handle,
+                                                                  const char *stream_id);
 #endif
 
 /// Set decryption key for the playing stream.
@@ -131,10 +141,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_playing_stream)(const char *st
 /// @param stream_id Stream ID.
 /// @param key The decryption key, note that the key length only supports 16/24/32 bytes.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_decryption_key(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_decryption_key(zego_handle handle,
+                                                                            const char *stream_id,
                                                                             const char *key);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_decryption_key)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_decryption_key)(zego_handle handle,
+                                                                             const char *stream_id,
                                                                              const char *key);
 #endif
 
@@ -150,11 +162,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_decryption_key)(con
 /// @param stream_id Stream ID.
 /// @param info Information for cross App playing stream.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_play_stream_cross_app_info(const char *stream_id, struct zego_cross_app_info info);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_cross_app_info(
+    zego_handle handle, const char *stream_id, struct zego_cross_app_info info);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_cross_app_info)(
-    const char *stream_id, struct zego_cross_app_info info);
+    zego_handle handle, const char *stream_id, struct zego_cross_app_info info);
 #endif
 
 /// Take a snapshot of the playing stream.
@@ -168,9 +180,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_cross_app_info)(
 ///
 /// @param stream_id Stream ID to be snapshot.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_take_play_stream_snapshot(const char *stream_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_take_play_stream_snapshot(zego_handle handle,
+                                                                       const char *stream_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_take_play_stream_snapshot)(const char *stream_id);
+typedef zego_error(EXP_CALL *pfnzego_express_take_play_stream_snapshot)(zego_handle handle,
+                                                                        const char *stream_id);
 #endif
 
 /// Sets the stream playback volume.
@@ -185,9 +199,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_take_play_stream_snapshot)(const ch
 /// @param stream_id Stream ID.
 /// @param volume Volume percentage. The value ranges from 0 to 200, and the default value is 100.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_volume(const char *stream_id, int volume);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_volume(zego_handle handle,
+                                                             const char *stream_id, int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_play_volume)(const char *stream_id, int volume);
+typedef zego_error(EXP_CALL *pfnzego_express_set_play_volume)(zego_handle handle,
+                                                              const char *stream_id, int volume);
 #endif
 
 /// Sets the all stream playback volume.
@@ -201,9 +217,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_volume)(const char *stream
 ///
 /// @param volume Volume percentage. The value ranges from 0 to 200, and the default value is 100.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_all_play_stream_volume(int volume);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_all_play_stream_volume(zego_handle handle,
+                                                                        int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_all_play_stream_volume)(int volume);
+typedef zego_error(EXP_CALL *pfnzego_express_set_all_play_stream_volume)(zego_handle handle,
+                                                                         int volume);
 #endif
 
 /// Set play video stream type.
@@ -219,10 +237,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_all_play_stream_volume)(int vol
 /// @param stream_type Video stream type.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_video_type(
-    const char *stream_id, enum zego_video_stream_type stream_type);
+    zego_handle handle, const char *stream_id, enum zego_video_stream_type stream_type);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_video_type)(
-    const char *stream_id, enum zego_video_stream_type stream_type);
+    zego_handle handle, const char *stream_id, enum zego_video_stream_type stream_type);
 #endif
 
 /// Set the adaptive adjustment interval range of the buffer for playing stream.
@@ -239,10 +257,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_video_type)(
 /// @param max_buffer_interval The upper limit of the buffer adaptation interval, in milliseconds. The default value is 4000ms.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_buffer_interval_range(
-    const char *stream_id, unsigned int min_buffer_interval, unsigned int max_buffer_interval);
+    zego_handle handle, const char *stream_id, unsigned int min_buffer_interval,
+    unsigned int max_buffer_interval);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_buffer_interval_range)(
-    const char *stream_id, unsigned int min_buffer_interval, unsigned int max_buffer_interval);
+    zego_handle handle, const char *stream_id, unsigned int min_buffer_interval,
+    unsigned int max_buffer_interval);
 #endif
 
 /// Set the playing stream ID to highlight when multiple streams are mixed. Streams in the stream list will be highlighted when multiple streams sound at the same time.
@@ -255,10 +275,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_buffer_interval_ran
 /// @param mode audio mix mode.
 /// @param stream_list stream list.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_mix_mode(enum zego_audio_mix_mode mode,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_mix_mode(zego_handle handle,
+                                                                enum zego_audio_mix_mode mode,
                                                                 const char **stream_list, int num);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mix_mode)(enum zego_audio_mix_mode mode,
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mix_mode)(zego_handle handle,
+                                                                 enum zego_audio_mix_mode mode,
                                                                  const char **stream_list, int num);
 #endif
 
@@ -273,9 +295,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mix_mode)(enum zego_audio
 ///
 /// @param stream_id Stream ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_focus_on(const char *stream_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_focus_on(zego_handle handle,
+                                                                      const char *stream_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_focus_on)(const char *stream_id);
+typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_focus_on)(zego_handle handle,
+                                                                       const char *stream_id);
 #endif
 
 /// Whether the pull stream can receive the specified audio data.
@@ -293,10 +317,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_focus_on)(const cha
 /// @param stream_id Stream ID.
 /// @param mute Whether it can receive the audio data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false".
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_play_stream_audio(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_play_stream_audio(zego_handle handle,
+                                                                    const char *stream_id,
                                                                     bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_audio)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_audio)(zego_handle handle,
+                                                                     const char *stream_id,
                                                                      bool mute);
 #endif
 
@@ -317,10 +343,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_audio)(const char 
 /// @param stream_id Stream ID.
 /// @param mute Whether it is possible to receive the video data of the specified remote user when streaming, "true" means prohibition, "false" means receiving, the default value is "false". The default value for automatically played streams within the SDK is false.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_play_stream_video(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_play_stream_video(zego_handle handle,
+                                                                    const char *stream_id,
                                                                     bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_video)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_video)(zego_handle handle,
+                                                                     const char *stream_id,
                                                                      bool mute);
 #endif
 
@@ -335,9 +363,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_play_stream_video)(const char 
 ///
 /// @param mute Whether it is possible to receive audio data from all remote users when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_stream_audio(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_stream_audio(zego_handle handle,
+                                                                        bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_stream_audio)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_stream_audio)(zego_handle handle,
+                                                                         bool mute);
 #endif
 
 /// Can the pull stream receive all audio data.
@@ -351,9 +381,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_stream_audio)(bool mu
 ///
 /// @param mute Whether it is possible to receive audio data from all remote users when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_audio_streams(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_audio_streams(zego_handle handle,
+                                                                         bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_audio_streams)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_audio_streams)(zego_handle handle,
+                                                                          bool mute);
 #endif
 
 /// Can the pull stream receive all video data. (When set to true, calling [mutePlayStreamVideo] will not take effect)
@@ -370,9 +402,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_audio_streams)(bool m
 ///
 /// @param mute Whether it is possible to receive all remote users' video data when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_stream_video(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_stream_video(zego_handle handle,
+                                                                        bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_stream_video)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_stream_video)(zego_handle handle,
+                                                                         bool mute);
 #endif
 
 /// Can the pull stream receive all video data.
@@ -389,9 +423,28 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_stream_video)(bool mu
 ///
 /// @param mute Whether it is possible to receive all remote users' video data when streaming, "true" means prohibition, "false" means receiving, and the default value is "false".
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_video_streams(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_all_play_video_streams(zego_handle handle,
+                                                                         bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_video_streams)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_video_streams)(zego_handle handle,
+                                                                          bool mute);
+#endif
+
+/// set play stream decode mode.
+///
+/// Available since: 3.21.0
+/// Description: set stream decode mode.
+/// When to call: This function can be called after calling [createEngine].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param stream_id stream id.
+/// @param frame_mode Decode Frame Mode.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_stream_decode_frame_mode(
+    zego_handle handle, const char *stream_id, enum zego_stream_decode_mode frame_mode);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_set_play_stream_decode_frame_mode)(
+    zego_handle handle, const char *stream_id, enum zego_stream_decode_mode frame_mode);
 #endif
 
 /// Enables or disables hardware decoding.
@@ -406,9 +459,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_all_play_video_streams)(bool m
 ///
 /// @param enable Whether to turn on hardware decoding switch, true: enable hardware decoding, false: disable hardware decoding.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_hardware_decoder(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_hardware_decoder(zego_handle handle,
+                                                                     bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_hardware_decoder)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_hardware_decoder)(zego_handle handle,
+                                                                      bool enable);
 #endif
 
 /// Enables or disables frame order detection.
@@ -424,9 +479,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_hardware_decoder)(bool enabl
 ///
 /// @param enable Whether to turn on frame order detection, true: enable check poc, false: disable check poc.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_check_poc(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_check_poc(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_check_poc)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_check_poc)(zego_handle handle, bool enable);
 #endif
 
 /// Whether the specified video decoding format is supported.
@@ -441,12 +496,32 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_check_poc)(bool enable);
 /// @param is_supported [in/out] Whether the specified video decoding format is supported; 0 means not supported, and the decoding format cannot be used for play stream; 1 means support, you can use this decoding format for playing stream; 2 means not confirmed, it is recommended to call this interface later.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_is_video_decoder_supported(
-    enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
-    int *is_supported);
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, int *is_supported);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_is_video_decoder_supported)(
-    enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
-    int *is_supported);
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, int *is_supported);
+#endif
+
+/// Whether the specified video decoding type and implementation are supported.
+///
+/// Available since: 3.23.0
+/// Description: Whether the specified video decoding is supported depends on the following aspects: whether the hardware model supports hard decoding, whether the performance of the hardware model supports soft decoding, and whether the SDK includes the decoding module.
+/// When to call: After creating the engine.
+/// Caution: It is recommended that users call this interface to obtain the H.265 decoding support capability before pulling the H.265 stream. If it is not supported, the user can pull the stream of other encoding formats, such as H.264.
+///
+/// @param codec_id Video codec id. Required: Yes.
+/// @param codec_backend Backend implementation of decoder. Required: Yes.
+/// @param sequence [in/out] Context that identifies which invocation triggered this callback.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_video_decoder_supported(
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, zego_seq sequence);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_get_video_decoder_supported)(
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, zego_seq sequence);
 #endif
 
 /// Set the play stream alignment properties.
@@ -460,11 +535,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_video_decoder_supported)(
 ///
 /// @param mode Setting the stream alignment mode.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_play_streams_alignment_property(enum zego_stream_alignment_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_play_streams_alignment_property(
+    zego_handle handle, enum zego_stream_alignment_mode mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_play_streams_alignment_property)(
-    enum zego_stream_alignment_mode mode);
+    zego_handle handle, enum zego_stream_alignment_mode mode);
 #endif
 
 /// Enable video super resolution.
@@ -481,10 +556,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_play_streams_alignment_property
 /// @param stream_id The ID of the stream that currently needs to turn on or off overscore.
 /// @param enable Whether to enable super resolution, it is not enabled by default.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_super_resolution(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_super_resolution(zego_handle handle,
+                                                                           const char *stream_id,
                                                                            bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_video_super_resolution)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_enable_video_super_resolution)(zego_handle handle,
+                                                                            const char *stream_id,
                                                                             bool enable);
 #endif
 
@@ -498,9 +575,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_video_super_resolution)(cons
 ///  1. Initializing the video screen is divided into time-consuming operations, and frequent initialization and de-initialization are not recommended;
 ///  2. This function requires a special package, please contact ZEGO technical support.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_init_video_super_resolution();
+ZEGOEXP_API zego_error EXP_CALL zego_express_init_video_super_resolution(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_init_video_super_resolution)();
+typedef zego_error(EXP_CALL *pfnzego_express_init_video_super_resolution)(zego_handle handle);
 #endif
 
 /// Uninit video super resolution.
@@ -511,9 +588,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_init_video_super_resolution)();
 /// When to call: Needs to be called after [initVideoSuperResolution].
 /// Caution: Initializing the video screen is divided into time-consuming operations, and frequent initialization and de-initialization are not recommended.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_uninit_video_super_resolution();
+ZEGOEXP_API zego_error EXP_CALL zego_express_uninit_video_super_resolution(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_uninit_video_super_resolution)();
+typedef zego_error(EXP_CALL *pfnzego_express_uninit_video_super_resolution)(zego_handle handle);
 #endif
 
 /// Update playing canvas.
@@ -532,10 +609,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_uninit_video_super_resolution)();
 /// @param canvas The view used to display the play audio and video stream's image. When the view is set to [NULL], no video is displayed, only audio is played.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_update_playing_canvas(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_update_playing_canvas(zego_handle handle,
+                                                                   const char *stream_id,
                                                                    struct zego_canvas *canvas);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_update_playing_canvas)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_update_playing_canvas)(zego_handle handle,
+                                                                    const char *stream_id,
                                                                     struct zego_canvas *canvas);
 #endif
 
@@ -556,11 +635,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_update_playing_canvas)(const char *
 /// @param canvas The view used to display the play audio and video stream's image.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_playing_canvas(
-    const char *stream_id, enum zego_view_update_type update_type, struct zego_canvas *canvas);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_set_playing_canvas(zego_handle handle, const char *stream_id,
+                                enum zego_view_update_type update_type, struct zego_canvas *canvas);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_playing_canvas)(
-    const char *stream_id, enum zego_view_update_type update_type, struct zego_canvas *canvas);
+    zego_handle handle, const char *stream_id, enum zego_view_update_type update_type,
+    struct zego_canvas *canvas);
 #endif
 
 /// The callback triggered when the state of stream playing changes.
@@ -575,16 +656,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_playing_canvas)(
 /// @param error_code The error code corresponding to the status change of the playing stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param extended_data Extended Information with state updates. As the standby, only an empty json table is currently returned.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_state_update)(const char *stream_id, enum zego_player_state state,
-                                            zego_error error_code, const char *extended_data,
-                                            void *user_context);
+typedef void (*zego_on_player_state_update)(zego_handle handle, const char *stream_id,
+                                            enum zego_player_state state, zego_error error_code,
+                                            const char *extended_data, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_state_update_callback(
-    zego_on_player_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_player_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_state_update_callback)(
-    zego_on_player_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_player_state_update callback_func, void *user_context);
 #endif
 
 /// Switch playing stream callback.
@@ -597,15 +678,15 @@ typedef void(EXP_CALL *pfnzego_register_player_state_update_callback)(
 /// @param stream_id The stream ID currently playing.
 /// @param error_code The error code corresponding to the result of the switch stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_switched)(const char *stream_id, zego_error error_code,
-                                        void *user_context);
+typedef void (*zego_on_player_switched)(zego_handle handle, const char *stream_id,
+                                        zego_error error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_player_switched_callback(zego_on_player_switched callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_player_switched_callback(
+    zego_handle handle, zego_on_player_switched callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_switched_callback)(
-    zego_on_player_switched callback_func, void *user_context);
+    zego_handle handle, zego_on_player_switched callback_func, void *user_context);
 #endif
 
 /// Callback for current stream playing quality.
@@ -619,16 +700,16 @@ typedef void(EXP_CALL *pfnzego_register_player_switched_callback)(
 /// @param stream_id Stream ID.
 /// @param quality Playing stream quality, including audio and video framerate, bitrate, RTT, etc.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_quality_update)(const char *stream_id,
+typedef void (*zego_on_player_quality_update)(zego_handle handle, const char *stream_id,
                                               struct zego_play_stream_quality quality,
                                               void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_quality_update_callback(
-    zego_on_player_quality_update callback_func, void *user_context);
+    zego_handle handle, zego_on_player_quality_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_quality_update_callback)(
-    zego_on_player_quality_update callback_func, void *user_context);
+    zego_handle handle, zego_on_player_quality_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when a media event occurs during streaming playing.
@@ -641,15 +722,15 @@ typedef void(EXP_CALL *pfnzego_register_player_quality_update_callback)(
 /// @param stream_id Stream ID.
 /// @param event Specific events received when playing the stream.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_media_event)(const char *stream_id,
+typedef void (*zego_on_player_media_event)(zego_handle handle, const char *stream_id,
                                            enum zego_player_media_event event, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_media_event_callback(
-    zego_on_player_media_event callback_func, void *user_context);
+    zego_handle handle, zego_on_player_media_event callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_media_event_callback)(
-    zego_on_player_media_event callback_func, void *user_context);
+    zego_handle handle, zego_on_player_media_event callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the first audio frame is received.
@@ -662,14 +743,15 @@ typedef void(EXP_CALL *pfnzego_register_player_media_event_callback)(
 ///
 /// @param stream_id Stream ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_recv_audio_first_frame)(const char *stream_id, void *user_context);
+typedef void (*zego_on_player_recv_audio_first_frame)(zego_handle handle, const char *stream_id,
+                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_recv_audio_first_frame_callback(
-    zego_on_player_recv_audio_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_audio_first_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_recv_audio_first_frame_callback)(
-    zego_on_player_recv_audio_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_audio_first_frame callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the first video frame is received.
@@ -683,14 +765,15 @@ typedef void(EXP_CALL *pfnzego_register_player_recv_audio_first_frame_callback)(
 ///
 /// @param stream_id Stream ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_recv_video_first_frame)(const char *stream_id, void *user_context);
+typedef void (*zego_on_player_recv_video_first_frame)(zego_handle handle, const char *stream_id,
+                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_recv_video_first_frame_callback(
-    zego_on_player_recv_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_video_first_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_recv_video_first_frame_callback)(
-    zego_on_player_recv_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_video_first_frame callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the first video frame is rendered.
@@ -704,14 +787,15 @@ typedef void(EXP_CALL *pfnzego_register_player_recv_video_first_frame_callback)(
 ///
 /// @param stream_id Stream ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_render_video_first_frame)(const char *stream_id, void *user_context);
+typedef void (*zego_on_player_render_video_first_frame)(zego_handle handle, const char *stream_id,
+                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_render_video_first_frame_callback(
-    zego_on_player_render_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_render_video_first_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_render_video_first_frame_callback)(
-    zego_on_player_render_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_render_video_first_frame callback_func, void *user_context);
 #endif
 
 /// Calls back when the stream playing end renders the first frame of the video from the remote camera.
@@ -726,15 +810,18 @@ typedef void(EXP_CALL *pfnzego_register_player_render_video_first_frame_callback
 ///
 /// @param stream_id Stream ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_render_camera_video_first_frame)(const char *stream_id,
+typedef void (*zego_on_player_render_camera_video_first_frame)(zego_handle handle,
+                                                               const char *stream_id,
                                                                void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_render_camera_video_first_frame_callback(
-    zego_on_player_render_camera_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_render_camera_video_first_frame callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_render_camera_video_first_frame_callback)(
-    zego_on_player_render_camera_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_render_camera_video_first_frame callback_func,
+    void *user_context);
 #endif
 
 /// When multiple playing canvas are set, the callback will be triggered after one view renders the first frame of the video.
@@ -749,16 +836,19 @@ typedef void(EXP_CALL *pfnzego_register_player_render_camera_video_first_frame_c
 /// @param stream_id Stream ID.
 /// @param view_context Context of view.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_render_multi_view_first_frame)(const char *stream_id,
+typedef void (*zego_on_player_render_multi_view_first_frame)(zego_handle handle,
+                                                             const char *stream_id,
                                                              const char *view_context,
                                                              void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_render_multi_view_first_frame_callback(
-    zego_on_player_render_multi_view_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_render_multi_view_first_frame callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_render_multi_view_first_frame_callback)(
-    zego_on_player_render_multi_view_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_player_render_multi_view_first_frame callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when the stream playback resolution changes.
@@ -776,15 +866,15 @@ typedef void(EXP_CALL *pfnzego_register_player_render_multi_view_first_frame_cal
 /// @param width Video decoding resolution width.
 /// @param height Video decoding resolution height.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_video_size_changed)(const char *stream_id, int width, int height,
-                                                  void *user_context);
+typedef void (*zego_on_player_video_size_changed)(zego_handle handle, const char *stream_id,
+                                                  int width, int height, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_video_size_changed_callback(
-    zego_on_player_video_size_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_player_video_size_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_video_size_changed_callback)(
-    zego_on_player_video_size_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_player_video_size_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when Supplemental Enhancement Information is received.
@@ -801,15 +891,16 @@ typedef void(EXP_CALL *pfnzego_register_player_video_size_changed_callback)(
 /// @param data SEI content.
 /// @param data_length SEI content length.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_recv_sei)(const char *stream_id, const unsigned char *data,
-                                        unsigned int data_length, void *user_context);
+typedef void (*zego_on_player_recv_sei)(zego_handle handle, const char *stream_id,
+                                        const unsigned char *data, unsigned int data_length,
+                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_player_recv_sei_callback(zego_on_player_recv_sei callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_player_recv_sei_callback(
+    zego_handle handle, zego_on_player_recv_sei callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_recv_sei_callback)(
-    zego_on_player_recv_sei callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_sei callback_func, void *user_context);
 #endif
 
 /// The callback triggered when Supplemental Enhancement Information is received synchronously.
@@ -821,15 +912,16 @@ typedef void(EXP_CALL *pfnzego_register_player_recv_sei_callback)(
 ///
 /// @param info SEI Callback info.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_recv_media_side_info)(struct zego_media_side_info info,
+typedef void (*zego_on_player_recv_media_side_info)(zego_handle handle,
+                                                    struct zego_media_side_info info,
                                                     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_recv_media_side_info_callback(
-    zego_on_player_recv_media_side_info callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_media_side_info callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_recv_media_side_info_callback)(
-    zego_on_player_recv_media_side_info callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_media_side_info callback_func, void *user_context);
 #endif
 
 /// Receive the audio side information content of the remote stream.
@@ -844,16 +936,16 @@ typedef void(EXP_CALL *pfnzego_register_player_recv_media_side_info_callback)(
 /// @param data Audio side information content.
 /// @param data_length Audio side information content length.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_recv_audio_side_info)(const char *stream_id,
+typedef void (*zego_on_player_recv_audio_side_info)(zego_handle handle, const char *stream_id,
                                                     const unsigned char *data,
                                                     unsigned int data_length, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_recv_audio_side_info_callback(
-    zego_on_player_recv_audio_side_info callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_audio_side_info callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_recv_audio_side_info_callback)(
-    zego_on_player_recv_audio_side_info callback_func, void *user_context);
+    zego_handle handle, zego_on_player_recv_audio_side_info callback_func, void *user_context);
 #endif
 
 /// Playing stream low frame rate warning.
@@ -866,15 +958,16 @@ typedef void(EXP_CALL *pfnzego_register_player_recv_audio_side_info_callback)(
 /// @param codec_id Video codec ID.
 /// @param stream_id Stream ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_low_fps_warning)(enum zego_video_codec_id codec_id,
+typedef void (*zego_on_player_low_fps_warning)(zego_handle handle,
+                                               enum zego_video_codec_id codec_id,
                                                const char *stream_id, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_low_fps_warning_callback(
-    zego_on_player_low_fps_warning callback_func, void *user_context);
+    zego_handle handle, zego_on_player_low_fps_warning callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_low_fps_warning_callback)(
-    zego_on_player_low_fps_warning callback_func, void *user_context);
+    zego_handle handle, zego_on_player_low_fps_warning callback_func, void *user_context);
 #endif
 
 /// The callback triggered when playing stream.
@@ -888,15 +981,16 @@ typedef void(EXP_CALL *pfnzego_register_player_low_fps_warning_callback)(
 /// @param stream_id Stream ID.
 /// @param extra_info extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_stream_event)(enum zego_stream_event event_id, const char *stream_id,
-                                            const char *extra_info, void *user_context);
+typedef void (*zego_on_player_stream_event)(zego_handle handle, enum zego_stream_event event_id,
+                                            const char *stream_id, const char *extra_info,
+                                            void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_stream_event_callback(
-    zego_on_player_stream_event callback_func, void *user_context);
+    zego_handle handle, zego_on_player_stream_event callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_stream_event_callback)(
-    zego_on_player_stream_event callback_func, void *user_context);
+    zego_handle handle, zego_on_player_stream_event callback_func, void *user_context);
 #endif
 
 /// Playing stream video super resolution enabled state changes.
@@ -910,16 +1004,19 @@ typedef void(EXP_CALL *pfnzego_register_player_stream_event_callback)(
 /// @param state Video super resolution state.
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_video_super_resolution_update)(const char *stream_id,
+typedef void (*zego_on_player_video_super_resolution_update)(zego_handle handle,
+                                                             const char *stream_id,
                                                              enum zego_super_resolution_state state,
                                                              int error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_video_super_resolution_update_callback(
-    zego_on_player_video_super_resolution_update callback_func, void *user_context);
+    zego_handle handle, zego_on_player_video_super_resolution_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_video_super_resolution_update_callback)(
-    zego_on_player_video_super_resolution_update callback_func, void *user_context);
+    zego_handle handle, zego_on_player_video_super_resolution_update callback_func,
+    void *user_context);
 #endif
 
 /// Results of take play stream snapshot.
@@ -928,15 +1025,34 @@ typedef void(EXP_CALL *pfnzego_register_player_video_super_resolution_update_cal
 /// @param stream_id Stream ID
 /// @param image Snapshot image (Windows: HBITMAP; macOS/iOS: CGImageRef; Linux: QImage; Android: Bitmap)
 /// @param user_context Context of user.
-typedef void (*zego_on_player_take_snapshot_result)(zego_error error_code, const char *stream_id,
-                                                    void *image, void *user_context);
+typedef void (*zego_on_player_take_snapshot_result)(zego_handle handle, zego_error error_code,
+                                                    const char *stream_id, void *image,
+                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_take_snapshot_result_callback(
-    zego_on_player_take_snapshot_result callback_func, void *user_context);
+    zego_handle handle, zego_on_player_take_snapshot_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_take_snapshot_result_callback)(
-    zego_on_player_take_snapshot_result callback_func, void *user_context);
+    zego_handle handle, zego_on_player_take_snapshot_result callback_func, void *user_context);
+#endif
+
+/// Results of get video decoder supported.
+///
+/// @param support 0 - does not support the specified decoding capability, 1 - supports the specified decoding capability, 2 - undetermined.
+/// @param seq Message sequence.
+/// @param user_context Context of user.
+typedef void (*zego_on_player_get_video_decoder_supported_result)(zego_handle handle, int support,
+                                                                  zego_seq seq, void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_player_get_video_decoder_supported_result_callback(
+    zego_handle handle, zego_on_player_get_video_decoder_supported_result callback_func,
+    void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_player_get_video_decoder_supported_result_callback)(
+    zego_handle handle, zego_on_player_get_video_decoder_supported_result callback_func,
+    void *user_context);
 #endif
 
 ZEGO_END_DECLS

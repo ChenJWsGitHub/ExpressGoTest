@@ -11,6 +11,6 @@ import "C"
 
 func getVersion() string {
 	var cVersion *C.char
-	C.zego_express_get_version(&cVersion)
+	C.zego_express_get_version(nil, &cVersion)
 	return C.GoString(cVersion)
 }

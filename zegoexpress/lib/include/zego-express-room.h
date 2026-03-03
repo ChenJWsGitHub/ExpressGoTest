@@ -36,10 +36,12 @@ ZEGO_BEGIN_DECLS
 /// @param user User object instance, configure userID, userName. Note that the userID needs to be globally unique with the same appID, otherwise the user who logs in later will kick out the user who logged in first.
 /// @param config Advanced room configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_login_room(const char *room_id, struct zego_user user,
+ZEGOEXP_API zego_error EXP_CALL zego_express_login_room(zego_handle handle, const char *room_id,
+                                                        struct zego_user user,
                                                         struct zego_room_config *config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_login_room)(const char *room_id, struct zego_user user,
+typedef zego_error(EXP_CALL *pfnzego_express_login_room)(zego_handle handle, const char *room_id,
+                                                         struct zego_user user,
                                                          struct zego_room_config *config);
 #endif
 
@@ -75,12 +77,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_login_room)(const char *room_id, st
 /// @param config Advanced room configuration.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_login_room_with_callback(const char *room_id, struct zego_user user,
-                                      struct zego_room_config *config, zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_login_room_with_callback(
+    zego_handle handle, const char *room_id, struct zego_user user, struct zego_room_config *config,
+    zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_login_room_with_callback)(
-    const char *room_id, struct zego_user user, struct zego_room_config *config,
+    zego_handle handle, const char *room_id, struct zego_user user, struct zego_room_config *config,
     zego_seq *sequence);
 #endif
 
@@ -95,9 +97,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_login_room_with_callback)(
 /// Related callbacks: After calling this function, you will receive [onRoomStateChanged] (Not supported before 2.18.0, please use [onRoomStateUpdate]) callback notification successfully exits the room, while other users in the same room will receive the [onRoomUserUpdate] callback notification(On the premise of enabling isUserStatusNotify configuration).
 /// Related APIs: Users can use [loginRoom], [switchRoom] functions to log in or switch rooms.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_logout_all_room();
+ZEGOEXP_API zego_error EXP_CALL zego_express_logout_all_room(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_logout_all_room)();
+typedef zego_error(EXP_CALL *pfnzego_express_logout_all_room)(zego_handle handle);
 #endif
 
 /// Exit the room with callback.
@@ -113,9 +115,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_logout_all_room)();
 ///
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_logout_all_room_with_callback(zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_logout_all_room_with_callback(zego_handle handle,
+                                                                           zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_logout_all_room_with_callback)(zego_seq *sequence);
+typedef zego_error(EXP_CALL *pfnzego_express_logout_all_room_with_callback)(zego_handle handle,
+                                                                            zego_seq *sequence);
 #endif
 
 /// Exit the room of the specified room ID.
@@ -134,9 +138,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_logout_all_room_with_callback)(zego
 ///   1. Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'.
 ///   2. If you need to communicate with the Web SDK, please do not use '%'.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_logout_room(const char *room_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_logout_room(zego_handle handle, const char *room_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_logout_room)(const char *room_id);
+typedef zego_error(EXP_CALL *pfnzego_express_logout_room)(zego_handle handle, const char *room_id);
 #endif
 
 /// Exit the room of the specified room ID with callback.
@@ -156,10 +160,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_logout_room)(const char *room_id);
 ///   2. If you need to communicate with the Web SDK, please do not use '%'.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_logout_room_with_callback(const char *room_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_logout_room_with_callback(zego_handle handle,
+                                                                       const char *room_id,
                                                                        zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_logout_room_with_callback)(const char *room_id,
+typedef zego_error(EXP_CALL *pfnzego_express_logout_room_with_callback)(zego_handle handle,
+                                                                        const char *room_id,
                                                                         zego_seq *sequence);
 #endif
 
@@ -183,11 +189,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_logout_room_with_callback)(const ch
 /// @param to_room_id The next roomID.
 /// @param config Advanced room configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_switch_room(const char *from_room_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_switch_room(zego_handle handle,
+                                                         const char *from_room_id,
                                                          const char *to_room_id,
                                                          struct zego_room_config *config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_switch_room)(const char *from_room_id,
+typedef zego_error(EXP_CALL *pfnzego_express_switch_room)(zego_handle handle,
+                                                          const char *from_room_id,
                                                           const char *to_room_id,
                                                           struct zego_room_config *config);
 #endif
@@ -206,9 +214,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_switch_room)(const char *from_room_
 /// @param room_id Room ID.
 /// @param token The token that needs to be renew.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_renew_token(const char *room_id, const char *token);
+ZEGOEXP_API zego_error EXP_CALL zego_express_renew_token(zego_handle handle, const char *room_id,
+                                                         const char *token);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_renew_token)(const char *room_id, const char *token);
+typedef zego_error(EXP_CALL *pfnzego_express_renew_token)(zego_handle handle, const char *room_id,
+                                                          const char *token);
 #endif
 
 /// Set room extra information.
@@ -227,11 +237,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_renew_token)(const char *room_id, c
 /// @param value value if the extra info.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_room_extra_info(const char *room_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_room_extra_info(zego_handle handle,
+                                                                 const char *room_id,
                                                                  const char *key, const char *value,
                                                                  zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_room_extra_info)(const char *room_id,
+typedef zego_error(EXP_CALL *pfnzego_express_set_room_extra_info)(zego_handle handle,
+                                                                  const char *room_id,
                                                                   const char *key,
                                                                   const char *value,
                                                                   zego_seq *sequence);
@@ -251,11 +263,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_room_extra_info)(const char *ro
 /// @param stream_list [in/out] Room Stream list.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_get_room_stream_list(
-    const char *room_id, enum zego_room_stream_list_type stream_list_type,
+    zego_handle handle, const char *room_id, enum zego_room_stream_list_type stream_list_type,
     struct zego_room_stream_list **stream_list);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_room_stream_list)(
-    const char *room_id, enum zego_room_stream_list_type stream_list_type,
+    zego_handle handle, const char *room_id, enum zego_room_stream_list_type stream_list_type,
     struct zego_room_stream_list **stream_list);
 #endif
 
@@ -268,10 +280,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_room_stream_list)(
 /// @param stream_list  [getRoomStreamList] Outgoing streamList dynamic memory of the interface.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_free_room_stream_list(struct zego_room_stream_list *stream_list);
+zego_express_free_room_stream_list(zego_handle handle, struct zego_room_stream_list *stream_list);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_free_room_stream_list)(
-    struct zego_room_stream_list *stream_list);
+    zego_handle handle, struct zego_room_stream_list *stream_list);
 #endif
 
 /// Notification of the room connection state changes.
@@ -291,16 +303,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_free_room_stream_list)(
 /// @param error_code Error code, For details, please refer to [Common Error Codes](https://docs.zegocloud.com/article/5548).
 /// @param extended_data Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
 /// @param user_context context of user
-typedef void (*zego_on_room_state_update)(const char *room_id, enum zego_room_state state,
-                                          zego_error error_code, const char *extended_data,
-                                          void *user_context);
+typedef void (*zego_on_room_state_update)(zego_handle handle, const char *room_id,
+                                          enum zego_room_state state, zego_error error_code,
+                                          const char *extended_data, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_state_update_callback(
-    zego_on_room_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_state_update_callback)(
-    zego_on_room_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_state_update callback_func, void *user_context);
 #endif
 
 /// Notification of the room connection state changes, including specific reasons for state change.
@@ -318,17 +330,17 @@ typedef void(EXP_CALL *pfnzego_register_room_state_update_callback)(
 /// @param error_code Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 /// @param extended_data Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
 /// @param user_context context of user
-typedef void (*zego_on_room_state_changed)(const char *room_id,
+typedef void (*zego_on_room_state_changed)(zego_handle handle, const char *room_id,
                                            enum zego_room_state_changed_reason reason,
                                            zego_error error_code, const char *extended_data,
                                            void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_state_changed_callback(
-    zego_on_room_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_room_state_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_state_changed_callback)(
-    zego_on_room_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_room_state_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the number of other users in the room increases or decreases.
@@ -349,16 +361,17 @@ typedef void(EXP_CALL *pfnzego_register_room_state_changed_callback)(
 /// @param user_list List of users changed in the current room.
 /// @param user_count List count of users changed in the current room.
 /// @param user_context context of user.
-typedef void (*zego_on_room_user_update)(const char *room_id, enum zego_update_type update_type,
+typedef void (*zego_on_room_user_update)(zego_handle handle, const char *room_id,
+                                         enum zego_update_type update_type,
                                          const struct zego_user *user_list, unsigned int user_count,
                                          void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_room_user_update_callback(zego_on_room_user_update callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_room_user_update_callback(
+    zego_handle handle, zego_on_room_user_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_user_update_callback)(
-    zego_on_room_user_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_user_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered every 30 seconds to report the current number of online users.
@@ -373,15 +386,15 @@ typedef void(EXP_CALL *pfnzego_register_room_user_update_callback)(
 /// @param room_id Room ID where the user is logged in, a string of up to 128 bytes in length.
 /// @param count Count of online users.
 /// @param user_context context of user
-typedef void (*zego_on_room_online_user_count_update)(const char *room_id, int count,
-                                                      void *user_context);
+typedef void (*zego_on_room_online_user_count_update)(zego_handle handle, const char *room_id,
+                                                      int count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_online_user_count_update_callback(
-    zego_on_room_online_user_count_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_online_user_count_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_online_user_count_update_callback)(
-    zego_on_room_online_user_count_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_online_user_count_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the number of streams published by the other users in the same room increases or decreases.
@@ -402,17 +415,18 @@ typedef void(EXP_CALL *pfnzego_register_room_online_user_count_update_callback)(
 /// @param stream_info_count List count of streams changed in the current room.
 /// @param extended_data Extended information with stream updates.When receiving a stream deletion notification, the developer can convert the string into a json object to get the stream_delete_reason field, which is an array of stream deletion reasons, and the stream_delete_reason[].code field may have the following values: 1 (the user actively stops publishing stream) ; 2 (user heartbeat timeout); 3 (user repeated login); 4 (user kicked out); 5 (user disconnected); 6 (removed by the server).
 /// @param user_context context of user.
-typedef void (*zego_on_room_stream_update)(const char *room_id, enum zego_update_type update_type,
+typedef void (*zego_on_room_stream_update)(zego_handle handle, const char *room_id,
+                                           enum zego_update_type update_type,
                                            const struct zego_stream *stream_list,
                                            unsigned int stream_info_count,
                                            const char *extended_data, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_stream_update_callback(
-    zego_on_room_stream_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_stream_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_stream_update_callback)(
-    zego_on_room_stream_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_stream_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when there is an update on the extra information of the streams published by other users in the same room.
@@ -429,17 +443,17 @@ typedef void(EXP_CALL *pfnzego_register_room_stream_update_callback)(
 /// @param stream_list List of streams that the extra info was updated.
 /// @param stream_info_count List count of streams changed in the current room
 /// @param user_context context of user
-typedef void (*zego_on_room_stream_extra_info_update)(const char *room_id,
+typedef void (*zego_on_room_stream_extra_info_update)(zego_handle handle, const char *room_id,
                                                       const struct zego_stream *stream_list,
                                                       unsigned int stream_info_count,
                                                       void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_stream_extra_info_update_callback(
-    zego_on_room_stream_extra_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_stream_extra_info_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_stream_extra_info_update_callback)(
-    zego_on_room_stream_extra_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_stream_extra_info_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when there is an update on the extra information of the room.
@@ -456,15 +470,16 @@ typedef void(EXP_CALL *pfnzego_register_room_stream_extra_info_update_callback)(
 /// @param room_extra_info_count List count of extra info changed in the current room
 /// @param user_context context of user
 typedef void (*zego_on_room_extra_info_update)(
-    const char *room_id, const struct zego_room_extra_info *room_extra_info_list,
-    unsigned int room_extra_info_count, void *user_context);
+    zego_handle handle, const char *room_id,
+    const struct zego_room_extra_info *room_extra_info_list, unsigned int room_extra_info_count,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_extra_info_update_callback(
-    zego_on_room_extra_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_extra_info_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_extra_info_update_callback)(
-    zego_on_room_extra_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_room_extra_info_update callback_func, void *user_context);
 #endif
 
 /// Callback notification that room Token authentication is about to expire.
@@ -480,15 +495,15 @@ typedef void(EXP_CALL *pfnzego_register_room_extra_info_update_callback)(
 /// @param room_id Room ID where the user is logged in, a string of up to 128 bytes in length.
 /// @param remain_time_in_second The remaining time before the token expires.
 /// @param user_context context of user
-typedef void (*zego_on_room_token_will_expire)(const char *room_id, int remain_time_in_second,
-                                               void *user_context);
+typedef void (*zego_on_room_token_will_expire)(zego_handle handle, const char *room_id,
+                                               int remain_time_in_second, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_token_will_expire_callback(
-    zego_on_room_token_will_expire callback_func, void *user_context);
+    zego_handle handle, zego_on_room_token_will_expire callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_token_will_expire_callback)(
-    zego_on_room_token_will_expire callback_func, void *user_context);
+    zego_handle handle, zego_on_room_token_will_expire callback_func, void *user_context);
 #endif
 
 /// Callback for setting room extra information.
@@ -498,16 +513,16 @@ typedef void(EXP_CALL *pfnzego_register_room_token_will_expire_callback)(
 /// @param key the key of the extra info
 /// @param seq Message sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_room_set_room_extra_info_result)(zego_error error_code, const char *room_id,
-                                                        const char *key, zego_seq seq,
-                                                        void *user_context);
+typedef void (*zego_on_room_set_room_extra_info_result)(zego_handle handle, zego_error error_code,
+                                                        const char *room_id, const char *key,
+                                                        zego_seq seq, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_set_room_extra_info_result_callback(
-    zego_on_room_set_room_extra_info_result callback_func, void *user_context);
+    zego_handle handle, zego_on_room_set_room_extra_info_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_set_room_extra_info_result_callback)(
-    zego_on_room_set_room_extra_info_result callback_func, void *user_context);
+    zego_handle handle, zego_on_room_set_room_extra_info_result callback_func, void *user_context);
 #endif
 
 /// Login room result callback.
@@ -516,15 +531,16 @@ typedef void(EXP_CALL *pfnzego_register_room_set_room_extra_info_result_callback
 /// @param extended_data Extended Information
 /// @param seq Message sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_room_login_result)(zego_error error_code, const char *extended_data,
-                                          const char *room_id, zego_seq seq, void *user_context);
+typedef void (*zego_on_room_login_result)(zego_handle handle, zego_error error_code,
+                                          const char *extended_data, const char *room_id,
+                                          zego_seq seq, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_login_result_callback(
-    zego_on_room_login_result callback_func, void *user_context);
+    zego_handle handle, zego_on_room_login_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_login_result_callback)(
-    zego_on_room_login_result callback_func, void *user_context);
+    zego_handle handle, zego_on_room_login_result callback_func, void *user_context);
 #endif
 
 /// Logout room result callback.
@@ -533,15 +549,16 @@ typedef void(EXP_CALL *pfnzego_register_room_login_result_callback)(
 /// @param extended_data Extended Information
 /// @param seq Message sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_room_logout_result)(zego_error error_code, const char *extended_data,
-                                           const char *room_id, zego_seq seq, void *user_context);
+typedef void (*zego_on_room_logout_result)(zego_handle handle, zego_error error_code,
+                                           const char *extended_data, const char *room_id,
+                                           zego_seq seq, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_room_logout_result_callback(
-    zego_on_room_logout_result callback_func, void *user_context);
+    zego_handle handle, zego_on_room_logout_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_room_logout_result_callback)(
-    zego_on_room_logout_result callback_func, void *user_context);
+    zego_handle handle, zego_on_room_logout_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

@@ -19,10 +19,10 @@ ZEGO_BEGIN_DECLS
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_team_join_team(
-    int range_scene_handle, zego_seq *seq, struct zego_team_param config);
+    zego_handle handle, int range_scene_handle, zego_seq *seq, struct zego_team_param config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_join_team)(
-    int range_scene_handle, zego_seq *seq, struct zego_team_param config);
+    zego_handle handle, int range_scene_handle, zego_seq *seq, struct zego_team_param config);
 #endif
 
 /// Leave team.
@@ -38,11 +38,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_join_team)(
 /// @param team_id Team ID.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_team_leave_team(int range_scene_handle,
+ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_team_leave_team(zego_handle handle,
+                                                                         int range_scene_handle,
                                                                          zego_seq *seq,
                                                                          unsigned int team_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_leave_team)(int range_scene_handle,
+typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_leave_team)(zego_handle handle,
+                                                                          int range_scene_handle,
                                                                           zego_seq *seq,
                                                                           unsigned int team_id);
 #endif
@@ -64,18 +66,18 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_leave_team)(int ra
 /// @param state Changed team state.
 /// @param error_code Error code, For details, please refer to [Common Error Codes](https://docs.zegocloud.com/article/5548).
 /// @param user_context context of user
-typedef void (*zego_on_range_scene_team_team_state_update)(int range_scene_handle,
-                                                           unsigned int team_id,
-                                                           enum zego_team_state state,
-                                                           zego_error error_code,
-                                                           void *user_context);
+typedef void (*zego_on_range_scene_team_team_state_update)(
+    zego_handle handle, int range_scene_handle, unsigned int team_id, enum zego_team_state state,
+    zego_error error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_team_team_state_update_callback(
-    zego_on_range_scene_team_team_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_team_state_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_team_team_state_update_callback)(
-    zego_on_range_scene_team_team_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_team_state_update callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when the number of other users in the team increases or decreases.
@@ -96,15 +98,18 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_team_team_state_update_callb
 /// @param user_count List count of users changed in the current team.
 /// @param user_context context of user.
 typedef void (*zego_on_range_scene_team_team_member_update)(
-    int range_scene_handle, unsigned int team_id, enum zego_update_type update_type,
-    const struct zego_user *user_list, unsigned int user_count, void *user_context);
+    zego_handle handle, int range_scene_handle, unsigned int team_id,
+    enum zego_update_type update_type, const struct zego_user *user_list, unsigned int user_count,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_team_team_member_update_callback(
-    zego_on_range_scene_team_team_member_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_team_member_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_team_team_member_update_callback)(
-    zego_on_range_scene_team_team_member_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_team_member_update callback_func,
+    void *user_context);
 #endif
 
 /// Join team result callback. Do not call the SDK interface in the callback thread.
@@ -114,16 +119,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_team_team_member_update_call
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param team_id Team ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_team_join_team)(int range_scene_handle, zego_seq seq,
-                                                   int error_code, unsigned int team_id,
-                                                   void *user_context);
+typedef void (*zego_on_range_scene_team_join_team)(zego_handle handle, int range_scene_handle,
+                                                   zego_seq seq, int error_code,
+                                                   unsigned int team_id, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_team_join_team_callback(
-    zego_on_range_scene_team_join_team callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_join_team callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_team_join_team_callback)(
-    zego_on_range_scene_team_join_team callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_join_team callback_func, void *user_context);
 #endif
 
 /// Leave team result callback. Do not call the SDK interface in the callback thread.
@@ -133,16 +138,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_team_join_team_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param team_id Team ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_team_leave_team)(int range_scene_handle, zego_seq seq,
-                                                    int error_code, unsigned int team_id,
-                                                    void *user_context);
+typedef void (*zego_on_range_scene_team_leave_team)(zego_handle handle, int range_scene_handle,
+                                                    zego_seq seq, int error_code,
+                                                    unsigned int team_id, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_team_leave_team_callback(
-    zego_on_range_scene_team_leave_team callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_leave_team callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_team_leave_team_callback)(
-    zego_on_range_scene_team_leave_team callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_team_leave_team callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

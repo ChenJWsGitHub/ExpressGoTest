@@ -15,9 +15,11 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param range_scene_handle [in/out] range scene instance object.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_create_range_scene(int *range_scene_handle);
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_range_scene(zego_handle handle,
+                                                                int *range_scene_handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_create_range_scene)(int *range_scene_handle);
+typedef zego_error(EXP_CALL *pfnzego_express_create_range_scene)(zego_handle handle,
+                                                                 int *range_scene_handle);
 #endif
 
 /// Destroy a range scene instance object.
@@ -29,9 +31,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_range_scene)(int *range_scen
 ///
 /// @param range_scene_handle range scene handle.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_range_scene(int range_scene_handle);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_range_scene(zego_handle handle,
+                                                                 int range_scene_handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_destroy_range_scene)(int range_scene_handle);
+typedef zego_error(EXP_CALL *pfnzego_express_destroy_range_scene)(zego_handle handle,
+                                                                  int range_scene_handle);
 #endif
 
 /// Logs in to a scene.
@@ -55,12 +59,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_range_scene)(int range_scen
 /// @param param Scene param.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_login_scene(int range_scene_handle,
+ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_login_scene(zego_handle handle,
+                                                                     int range_scene_handle,
                                                                      zego_seq *seq,
                                                                      struct zego_scene_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_login_scene)(
-    int range_scene_handle, zego_seq *seq, struct zego_scene_param param);
+    zego_handle handle, int range_scene_handle, zego_seq *seq, struct zego_scene_param param);
 #endif
 
 /// Logs out of a scene.
@@ -77,10 +82,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_login_scene)(
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_logout_scene(int range_scene_handle,
+ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_logout_scene(zego_handle handle,
+                                                                      int range_scene_handle,
                                                                       zego_seq *seq);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_range_scene_logout_scene)(int range_scene_handle,
+typedef zego_error(EXP_CALL *pfnzego_express_range_scene_logout_scene)(zego_handle handle,
+                                                                       int range_scene_handle,
                                                                        zego_seq *seq);
 #endif
 
@@ -100,11 +107,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_logout_scene)(int range
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_update_user_status(
-    int range_scene_handle, struct zego_position position, unsigned int channel,
+    zego_handle handle, int range_scene_handle, struct zego_position position, unsigned int channel,
     const unsigned char *status, unsigned int status_length);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_update_user_status)(
-    int range_scene_handle, struct zego_position position, unsigned int channel,
+    zego_handle handle, int range_scene_handle, struct zego_position position, unsigned int channel,
     const unsigned char *status, unsigned int status_length);
 #endif
 
@@ -124,11 +131,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_update_user_status)(
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_update_user_command(
-    int range_scene_handle, struct zego_position position, unsigned int channel,
+    zego_handle handle, int range_scene_handle, struct zego_position position, unsigned int channel,
     const unsigned char *command, unsigned int command_length);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_update_user_command)(
-    int range_scene_handle, struct zego_position position, unsigned int channel,
+    zego_handle handle, int range_scene_handle, struct zego_position position, unsigned int channel,
     const unsigned char *command, unsigned int command_length);
 #endif
 
@@ -145,10 +152,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_update_user_command)(
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_update_user_position(
-    int range_scene_handle, struct zego_position position);
+    zego_handle handle, int range_scene_handle, struct zego_position position);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_update_user_position)(
-    int range_scene_handle, struct zego_position position);
+    zego_handle handle, int range_scene_handle, struct zego_position position);
 #endif
 
 /// Get user count in scene.
@@ -164,10 +171,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_update_user_position)(
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_get_user_count(int range_scene_handle,
+ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_get_user_count(zego_handle handle,
+                                                                        int range_scene_handle,
                                                                         zego_seq *seq);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_range_scene_get_user_count)(int range_scene_handle,
+typedef zego_error(EXP_CALL *pfnzego_express_range_scene_get_user_count)(zego_handle handle,
+                                                                         int range_scene_handle,
                                                                          zego_seq *seq);
 #endif
 
@@ -184,11 +193,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_get_user_count)(int ran
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_range_scene_get_user_list_in_view(int range_scene_handle, zego_seq *seq);
+ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_get_user_list_in_view(
+    zego_handle handle, int range_scene_handle, zego_seq *seq);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_get_user_list_in_view)(
-    int range_scene_handle, zego_seq *seq);
+    zego_handle handle, int range_scene_handle, zego_seq *seq);
 #endif
 
 /// Send custom command.
@@ -207,11 +216,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_get_user_list_in_view)(
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_send_custom_command(
-    int range_scene_handle, zego_seq *seq, const unsigned char *command,
+    zego_handle handle, int range_scene_handle, zego_seq *seq, const unsigned char *command,
     unsigned int command_length);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_send_custom_command)(
-    int range_scene_handle, zego_seq *seq, const unsigned char *command,
+    zego_handle handle, int range_scene_handle, zego_seq *seq, const unsigned char *command,
     unsigned int command_length);
 #endif
 
@@ -227,10 +236,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_send_custom_command)(
 /// @param token The token that needs to be renew.
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_renew_token(int range_scene_handle,
+ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_renew_token(zego_handle handle,
+                                                                     int range_scene_handle,
                                                                      const char *token);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_range_scene_renew_token)(int range_scene_handle,
+typedef zego_error(EXP_CALL *pfnzego_express_range_scene_renew_token)(zego_handle handle,
+                                                                      int range_scene_handle,
                                                                       const char *token);
 #endif
 
@@ -248,10 +259,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_renew_token)(int range_
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_set_stream_config(
-    int range_scene_handle, struct zego_scene_stream_config config);
+    zego_handle handle, int range_scene_handle, struct zego_scene_stream_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_scene_set_stream_config)(
-    int range_scene_handle, struct zego_scene_stream_config config);
+    zego_handle handle, int range_scene_handle, struct zego_scene_stream_config config);
 #endif
 
 /// The callback triggered when the scene connection state changes.
@@ -265,16 +276,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_set_stream_config)(
 /// @param state Current scene state.
 /// @param error_code Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_scene_state_update)(int range_scene_handle,
+typedef void (*zego_on_range_scene_scene_state_update)(zego_handle handle, int range_scene_handle,
                                                        enum zego_scene_state state, int error_code,
                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_scene_state_update_callback(
-    zego_on_range_scene_scene_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_scene_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_scene_state_update_callback)(
-    zego_on_range_scene_scene_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_scene_state_update callback_func, void *user_context);
 #endif
 
 /// Callback notification when another user enters the current user's field of view.
@@ -288,15 +299,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_scene_state_update_callback)
 /// @param user User object.
 /// @param position User position.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_enter_view)(int range_scene_handle, struct zego_user user,
-                                               struct zego_position position, void *user_context);
+typedef void (*zego_on_range_scene_enter_view)(zego_handle handle, int range_scene_handle,
+                                               struct zego_user user, struct zego_position position,
+                                               void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_enter_view_callback(
-    zego_on_range_scene_enter_view callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_enter_view callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_enter_view_callback)(
-    zego_on_range_scene_enter_view callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_enter_view callback_func, void *user_context);
 #endif
 
 /// Callback notification when other users leave the current user's field of view.
@@ -309,15 +321,15 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_enter_view_callback)(
 /// @param range_scene_handle Range scene instance handle.
 /// @param userid User ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_leave_view)(int range_scene_handle, const char *userid,
-                                               void *user_context);
+typedef void (*zego_on_range_scene_leave_view)(zego_handle handle, int range_scene_handle,
+                                               const char *userid, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_leave_view_callback(
-    zego_on_range_scene_leave_view callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_leave_view callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_leave_view_callback)(
-    zego_on_range_scene_leave_view callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_leave_view callback_func, void *user_context);
 #endif
 
 /// User state update callback.
@@ -336,15 +348,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_leave_view_callback)(
 /// @param status_length Current status data length.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_user_status_update)(
-    int range_scene_handle, const char *userid, struct zego_position position, unsigned int channel,
-    const unsigned char *status, unsigned int status_length, void *user_context);
+    zego_handle handle, int range_scene_handle, const char *userid, struct zego_position position,
+    unsigned int channel, const unsigned char *status, unsigned int status_length,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_user_status_update_callback(
-    zego_on_range_scene_user_status_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_user_status_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_user_status_update_callback)(
-    zego_on_range_scene_user_status_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_user_status_update callback_func, void *user_context);
 #endif
 
 /// User command update callback.
@@ -363,15 +376,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_user_status_update_callback)
 /// @param command_length Next command data length.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_user_command_update)(
-    int range_scene_handle, const char *userid, struct zego_position position, unsigned int channel,
-    const unsigned char *command, unsigned int command_length, void *user_context);
+    zego_handle handle, int range_scene_handle, const char *userid, struct zego_position position,
+    unsigned int channel, const unsigned char *command, unsigned int command_length,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_user_command_update_callback(
-    zego_on_range_scene_user_command_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_user_command_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_user_command_update_callback)(
-    zego_on_range_scene_user_command_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_user_command_update callback_func, void *user_context);
 #endif
 
 /// Custom command update callback.
@@ -385,17 +399,20 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_user_command_update_callback
 /// @param command Custom command.
 /// @param command_length Custom command data length.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_custom_command_update)(int range_scene_handle,
+typedef void (*zego_on_range_scene_custom_command_update)(zego_handle handle,
+                                                          int range_scene_handle,
                                                           const unsigned char *command,
                                                           unsigned int command_length,
                                                           void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_custom_command_update_callback(
-    zego_on_range_scene_custom_command_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_custom_command_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_custom_command_update_callback)(
-    zego_on_range_scene_custom_command_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_custom_command_update callback_func,
+    void *user_context);
 #endif
 
 /// Callback notification that scene Token authentication is about to expire.
@@ -409,16 +426,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_custom_command_update_callba
 /// @param range_scene_handle Range scene instance handle.
 /// @param remain_time_in_second The remaining time before the token expires.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_token_will_expire)(int range_scene_handle,
+typedef void (*zego_on_range_scene_token_will_expire)(zego_handle handle, int range_scene_handle,
                                                       int remain_time_in_second,
                                                       void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_token_will_expire_callback(
-    zego_on_range_scene_token_will_expire callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_token_will_expire callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_token_will_expire_callback)(
-    zego_on_range_scene_token_will_expire callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_token_will_expire callback_func, void *user_context);
 #endif
 
 /// Login scene result callback. Do not call the SDK interface in the callback thread.
@@ -428,16 +445,17 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_token_will_expire_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param config State channel count.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_login_scene)(int range_scene_handle, zego_seq seq,
-                                                int error_code, struct zego_scene_config config,
+typedef void (*zego_on_range_scene_login_scene)(zego_handle handle, int range_scene_handle,
+                                                zego_seq seq, int error_code,
+                                                struct zego_scene_config config,
                                                 void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_login_scene_callback(
-    zego_on_range_scene_login_scene callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_login_scene callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_login_scene_callback)(
-    zego_on_range_scene_login_scene callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_login_scene callback_func, void *user_context);
 #endif
 
 /// Logout scene result callback. Do not call the SDK interface in the callback thread.
@@ -446,15 +464,15 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_login_scene_callback)(
 /// @param seq Sequence.
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_logout_scene)(int range_scene_handle, zego_seq seq,
-                                                 int error_code, void *user_context);
+typedef void (*zego_on_range_scene_logout_scene)(zego_handle handle, int range_scene_handle,
+                                                 zego_seq seq, int error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_logout_scene_callback(
-    zego_on_range_scene_logout_scene callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_logout_scene callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_logout_scene_callback)(
-    zego_on_range_scene_logout_scene callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_logout_scene callback_func, void *user_context);
 #endif
 
 /// The callback of getting user count in scene. Do not call the SDK interface in the callback thread.
@@ -464,16 +482,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_logout_scene_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param count User count in scene.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_get_user_count)(int range_scene_handle, zego_seq seq,
-                                                   int error_code, unsigned int count,
+typedef void (*zego_on_range_scene_get_user_count)(zego_handle handle, int range_scene_handle,
+                                                   zego_seq seq, int error_code, unsigned int count,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_get_user_count_callback(
-    zego_on_range_scene_get_user_count callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_get_user_count callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_get_user_count_callback)(
-    zego_on_range_scene_get_user_count callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_get_user_count callback_func, void *user_context);
 #endif
 
 /// The callback of getting user list in view. Do not call the SDK interface in the callback thread.
@@ -484,17 +502,20 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_get_user_count_callback)(
 /// @param user_list User list in view.
 /// @param user_list_size User list in view.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_get_user_list_in_view)(int range_scene_handle, zego_seq seq,
+typedef void (*zego_on_range_scene_get_user_list_in_view)(zego_handle handle,
+                                                          int range_scene_handle, zego_seq seq,
                                                           int error_code, const char **user_list,
                                                           unsigned int user_list_size,
                                                           void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_get_user_list_in_view_callback(
-    zego_on_range_scene_get_user_list_in_view callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_get_user_list_in_view callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_get_user_list_in_view_callback)(
-    zego_on_range_scene_get_user_list_in_view callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_get_user_list_in_view callback_func,
+    void *user_context);
 #endif
 
 /// The callback of send custom command. Do not call the SDK interface in the callback thread.
@@ -503,15 +524,16 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_get_user_list_in_view_callba
 /// @param seq Sequence.
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_range_scene_send_custom_command)(int range_scene_handle, zego_seq seq,
-                                                        int error_code, void *user_context);
+typedef void (*zego_on_range_scene_send_custom_command)(zego_handle handle, int range_scene_handle,
+                                                        zego_seq seq, int error_code,
+                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_scene_send_custom_command_callback(
-    zego_on_range_scene_send_custom_command callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_send_custom_command callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_scene_send_custom_command_callback)(
-    zego_on_range_scene_send_custom_command callback_func, void *user_context);
+    zego_handle handle, zego_on_range_scene_send_custom_command callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

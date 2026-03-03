@@ -16,10 +16,10 @@ ZEGO_BEGIN_DECLS
 /// @param result_instance [in/out] audio vad client instance point.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_create_audio_vad_client(unsigned long long *result_instance);
+zego_express_create_audio_vad_client(zego_handle handle, unsigned long long *result_instance);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_create_audio_vad_client)(
-    unsigned long long *result_instance);
+    zego_handle handle, unsigned long long *result_instance);
 #endif
 
 /// Destroys a audio vad client instance.
@@ -30,9 +30,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_audio_vad_client)(
 ///
 /// @param instance audio vad client instance point.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_audio_vad_client(unsigned long long instance);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_audio_vad_client(zego_handle handle,
+                                                                      unsigned long long instance);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_destroy_audio_vad_client)(unsigned long long instance);
+typedef zego_error(EXP_CALL *pfnzego_express_destroy_audio_vad_client)(zego_handle handle,
+                                                                       unsigned long long instance);
 #endif
 
 /// Check if an audio packet contains speech.
@@ -50,11 +52,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_audio_vad_client)(unsigned 
 /// @param result_type [in/out] voice detection results.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_audio_vad_client_update(
-    unsigned char *data, int data_length, int sample_rate, int channels,
+    zego_handle handle, unsigned char *data, int data_length, int sample_rate, int channels,
     unsigned long long instance, zego_audio_vad_type *result_type);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_audio_vad_client_update)(
-    unsigned char *data, int data_length, int sample_rate, int channels,
+    zego_handle handle, unsigned char *data, int data_length, int sample_rate, int channels,
     unsigned long long instance, zego_audio_vad_type *result_type);
 #endif
 
@@ -67,10 +69,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_vad_client_update)(
 /// @param instance audio vad client instance point.
 /// @param result [in/out] reset results.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_audio_vad_client_reset(unsigned long long instance,
+ZEGOEXP_API zego_error EXP_CALL zego_express_audio_vad_client_reset(zego_handle handle,
+                                                                    unsigned long long instance,
                                                                     bool *result);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_audio_vad_client_reset)(unsigned long long instance,
+typedef zego_error(EXP_CALL *pfnzego_express_audio_vad_client_reset)(zego_handle handle,
+                                                                     unsigned long long instance,
                                                                      bool *result);
 #endif
 

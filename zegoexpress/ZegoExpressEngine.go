@@ -447,7 +447,7 @@ const (
 // Profile for create engine
 //
 // Profile for create engine
-type ZegoEngineProfile struct {
+type ZegoMultiEngineProfile struct {
 	// Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.
 	AppID uint32
 
@@ -456,10 +456,10 @@ type ZegoEngineProfile struct {
 
 	// The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940
 	Scenario ZegoScenario
-}
 
-// Advanced engine configuration.
-type ZegoEngineConfig struct {
+	// Room mode. Description: Used to set the room mode. Use cases: If you need to enter multiple rooms at the same time for publish-play stream, please turn on the multi-room mode through this interface. Required: True. Default value: ZEGO_ROOM_MODE_SINGLE_ROOM.
+	RoomMode ZegoRoomMode
+
 	// Other special function switches, if not set, no special function will be used by default. Please contact ZEGO technical support before use.
 	AdvancedConfig map[string]string
 }
@@ -1088,21 +1088,6 @@ type IZegoCustomAudioProcessHandler interface {
 	OnProcessRemoteAudioData(data []uint8, param *ZegoAudioFrameParam, streamID string, timestamp float64)
 }
 
-type IZegoApiCalledEventHandler interface {
-	// Method execution result callback
-	//
-	// Available since: 2.3.0
-	// Description: When the monitoring is turned on through [setApiCalledCallback], the results of the execution of all methods will be called back through this callback.
-	// Trigger: When the developer calls the SDK method, the execution result of the method is called back.
-	// Restrictions: None.
-	// Caution: It is recommended to monitor and process this callback in the development and testing phases, and turn off the monitoring of this callback after going online.
-	//
-	// @param errorCode Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
-	// @param funcName Function name.
-	// @param info Detailed error information.
-	OnApiCalledResult(errorCode int, funcName string, info string)
-}
-
 type IZegoCallbackEventHandler interface {
 	// Notification callback discarded
 	//
@@ -1342,6 +1327,16 @@ type ZegoIMSendBroadcastMessageCallback func(errorCode int, messageID uint64)
 type ZegoPublisherSetStreamExtraInfoCallback func(errorCode int)
 
 type IZegoExpressEngine interface {
+	// Set advanced engine configuration.
+	//
+	// Available since: 3.24.0
+	// Description: Used to enable advanced functions.
+	// When to call: Different configurations have different call timing requirements. For details, please consult ZEGO technical support.
+	// Restrictions: Multi-instance SDK for Linux only.
+	//
+	// @param advancedConfig Advanced engine configuration
+	SetEngineConfig(advancedConfig map[string]string)
+
 	// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
 	//
 	// Available since: 2.17.0
@@ -1738,7 +1733,7 @@ type IZegoExpressEngine interface {
 // @param profile The basic configuration information is used to create the engine.
 // @param eventHandler Event notification callback. [nullptr] means not receiving any callback notifications.It can also be managed later via [setEventHandler]. If [createEngine] is called repeatedly and the [destroyEngine] function is not called to destroy the engine before the second call, the eventHandler will not be updated.
 // @return engine singleton instance.
-func CreateEngine(profile ZegoEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
+func CreateEngine(profile ZegoMultiEngineProfile, eventHandler IZegoEventHandler) IZegoExpressEngine {
 	return createEngine(profile, eventHandler)
 }
 
@@ -1761,18 +1756,6 @@ func DestroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 	destroyEngine(engine, callback)
 }
 
-// Set advanced engine configuration.
-//
-// Available since: 1.1.0
-// Description: Used to enable advanced functions.
-// When to call: Different configurations have different call timing requirements. For details, please consult ZEGO technical support.
-// Restrictions: None.
-//
-// @param config Advanced engine configuration
-func SetEngineConfig(config ZegoEngineConfig) {
-	setEngineConfig(config)
-}
-
 // Set log configuration.
 //
 // Available since: 2.3.0
@@ -1786,19 +1769,6 @@ func SetLogConfig(config ZegoLogConfig) {
 	setLogConfig(config)
 }
 
-// Set room mode.
-//
-// Available since: 2.9.0
-// Description: If you need to use the multi-room feature, please call this function to complete the configuration.
-// When to call: Must be set before calling [createEngine] to take effect, otherwise it will fail.
-// Restrictions: If you need to use the multi-room feature, please contact the instant technical support to configure the server support.
-// Caution: None.
-//
-// @param mode Room mode. Description: Used to set the room mode. Use cases: If you need to enter multiple rooms at the same time for publish-play stream, please turn on the multi-room mode through this interface. Required: True. Default value: ZEGO_ROOM_MODE_SINGLE_ROOM.
-func SetRoomMode(mode ZegoRoomMode) {
-	setRoomMode(mode)
-}
-
 // Gets the SDK's version number.
 //
 // Available since: 1.1.0
@@ -1810,19 +1780,6 @@ func SetRoomMode(mode ZegoRoomMode) {
 // @return SDK version.
 func GetVersion() string {
 	return getVersion()
-}
-
-// Set method execution result callback.
-//
-// Available since: 2.3.0
-// Description: Set the setting of the execution result of the calling method. After setting, you can get the detailed information of the result of each execution of the ZEGO SDK method.
-// When to call: Any time.
-// Restrictions: None.
-// Caution: It is recommended that developers call this interface only when they need to obtain the call results of each interface. For example, when troubleshooting and tracing problems. Developers generally do not need to pay attention to this interface.
-//
-// @param callback Method execution result callback.
-func SetApiCalledCallback(callback IZegoApiCalledEventHandler) {
-	setApiCalledCallback(callback)
 }
 
 // Set callback event handler.

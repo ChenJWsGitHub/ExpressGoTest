@@ -16,9 +16,11 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param instance_index [in/out] AI voice changer instance, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_create_ai_voice_changer(int *instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_ai_voice_changer(zego_handle handle,
+                                                                     int *instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_create_ai_voice_changer)(int *instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_create_ai_voice_changer)(zego_handle handle,
+                                                                      int *instance_index);
 #endif
 
 /// Destroys an AI voice changer instance.
@@ -27,9 +29,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_ai_voice_changer)(int *insta
 /// Description: Destroys the AI voice changer instance.
 /// Related APIs: User can call [createAIVoiceChanger] function to create an AI voice changer instance.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_ai_voice_changer(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_ai_voice_changer(zego_handle handle,
+                                                                      int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_destroy_ai_voice_changer)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_destroy_ai_voice_changer)(zego_handle handle,
+                                                                       int instance_index);
 #endif
 
 /// Check the device can run AI voice changer or not.
@@ -41,40 +45,50 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_ai_voice_changer)(int insta
 ///
 /// @param is_supported [in/out] Return 1 if the device can run AI voice changer, otherwise return 0.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_is_ai_voice_changer_supported(int *is_supported);
+ZEGOEXP_API zego_error EXP_CALL zego_express_is_ai_voice_changer_supported(zego_handle handle,
+                                                                           int *is_supported);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_is_ai_voice_changer_supported)(int *is_supported);
+typedef zego_error(EXP_CALL *pfnzego_express_is_ai_voice_changer_supported)(zego_handle handle,
+                                                                            int *is_supported);
 #endif
 
 /// Initialize AI voice changer engine.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_init(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_init(zego_handle handle,
+                                                                   int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_init)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_init)(zego_handle handle,
+                                                                    int instance_index);
 #endif
 
 /// Update AI voice changer engine models.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_update(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_update(zego_handle handle,
+                                                                     int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_update)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_update)(zego_handle handle,
+                                                                      int instance_index);
 #endif
 
 /// Get AI voice changer speaker list.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_get_speaker_list(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_get_speaker_list(zego_handle handle,
+                                                                               int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_get_speaker_list)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_get_speaker_list)(zego_handle handle,
+                                                                                int instance_index);
 #endif
 
 /// Set AI voice changer speaker.
 ///
 /// @param speaker_id Speaker ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_set_speaker(int instance_index,
+ZEGOEXP_API zego_error EXP_CALL zego_express_ai_voice_changer_set_speaker(zego_handle handle,
+                                                                          int instance_index,
                                                                           int speaker_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_set_speaker)(int instance_index,
+typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_set_speaker)(zego_handle handle,
+                                                                           int instance_index,
                                                                            int speaker_id);
 #endif
 
@@ -88,15 +102,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_set_speaker)(int i
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_ai_voice_changer_init)(zego_error error_code, int instance_index,
-                                              void *user_context);
+typedef void (*zego_on_ai_voice_changer_init)(zego_handle handle, zego_error error_code,
+                                              int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_ai_voice_changer_init_callback(
-    zego_on_ai_voice_changer_init callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_init callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_init_callback)(
-    zego_on_ai_voice_changer_init callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_init callback_func, void *user_context);
 #endif
 
 /// Update AI voice changer engine models progress callback.
@@ -111,16 +125,16 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_init_callback)(
 /// @param file_count Total update file count.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_ai_voice_changer_update_progress)(double percent, int file_index,
-                                                         int file_count, int instance_index,
-                                                         void *user_context);
+typedef void (*zego_on_ai_voice_changer_update_progress)(zego_handle handle, double percent,
+                                                         int file_index, int file_count,
+                                                         int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_ai_voice_changer_update_progress_callback(
-    zego_on_ai_voice_changer_update_progress callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_update_progress callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_update_progress_callback)(
-    zego_on_ai_voice_changer_update_progress callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_update_progress callback_func, void *user_context);
 #endif
 
 /// Update AI voice changer engine models status callback.
@@ -133,15 +147,15 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_update_progress_callbac
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_ai_voice_changer_update)(zego_error error_code, int instance_index,
-                                                void *user_context);
+typedef void (*zego_on_ai_voice_changer_update)(zego_handle handle, zego_error error_code,
+                                                int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_ai_voice_changer_update_callback(
-    zego_on_ai_voice_changer_update callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_update_callback)(
-    zego_on_ai_voice_changer_update callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_update callback_func, void *user_context);
 #endif
 
 /// Get AI voice changer engine available speaker list callback.
@@ -157,15 +171,18 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_update_callback)(
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_ai_voice_changer_get_speaker_list)(
-    zego_error error_code, const struct zego_ai_voice_changer_speaker_info *speaker_list,
-    unsigned int speaker_count, int instance_index, void *user_context);
+    zego_handle handle, zego_error error_code,
+    const struct zego_ai_voice_changer_speaker_info *speaker_list, unsigned int speaker_count,
+    int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_ai_voice_changer_get_speaker_list_callback(
-    zego_on_ai_voice_changer_get_speaker_list callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_get_speaker_list callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_get_speaker_list_callback)(
-    zego_on_ai_voice_changer_get_speaker_list callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_get_speaker_list callback_func,
+    void *user_context);
 #endif
 
 /// AI voice changer event callback.
@@ -178,15 +195,16 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_get_speaker_list_callba
 /// @param event AI voice changer event.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_ai_voice_changer_event)(enum zego_ai_voice_changer_event event,
+typedef void (*zego_on_ai_voice_changer_event)(zego_handle handle,
+                                               enum zego_ai_voice_changer_event event,
                                                int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_ai_voice_changer_event_callback(
-    zego_on_ai_voice_changer_event callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_event callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_event_callback)(
-    zego_on_ai_voice_changer_event callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_event callback_func, void *user_context);
 #endif
 
 /// Set AI voice changer engine speaker status callback.
@@ -199,15 +217,15 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_event_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_ai_voice_changer_set_speaker)(zego_error error_code, int instance_index,
-                                                     void *user_context);
+typedef void (*zego_on_ai_voice_changer_set_speaker)(zego_handle handle, zego_error error_code,
+                                                     int instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_ai_voice_changer_set_speaker_callback(
-    zego_on_ai_voice_changer_set_speaker callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_set_speaker callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_set_speaker_callback)(
-    zego_on_ai_voice_changer_set_speaker callback_func, void *user_context);
+    zego_handle handle, zego_on_ai_voice_changer_set_speaker callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

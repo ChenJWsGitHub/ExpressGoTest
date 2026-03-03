@@ -17,10 +17,10 @@ ZEGO_BEGIN_DECLS
 /// @param config Custom audio processing configuration.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_audio_capture_processing(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_capture_processing)(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #endif
 
 /// Turn on local collection and custom audio processing (after ear return).
@@ -36,11 +36,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_capture_process
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
 zego_express_enable_custom_audio_capture_processing_after_headphone_monitor(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #else
 typedef zego_error(
     EXP_CALL *pfnzego_express_enable_custom_audio_capture_processing_after_headphone_monitor)(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #endif
 
 /// Enable feature of throwing audio aux frames which aligned with accompany.
@@ -55,11 +55,11 @@ typedef zego_error(
 /// @param enable Whether to enable the feature of throwing alignmented audio aux frames.
 /// @param param param of audio frame. Currently supports 8k, 16k, 32k, 44.1k, 48k sampling rate, mono or stereo.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_enable_aligned_audio_aux_data(bool enable, struct zego_audio_frame_param param);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_aligned_audio_aux_data(
+    zego_handle handle, bool enable, struct zego_audio_frame_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_aligned_audio_aux_data)(
-    bool enable, struct zego_audio_frame_param param);
+    zego_handle handle, bool enable, struct zego_audio_frame_param param);
 #endif
 
 /// Enable the feature of throwing audio data before SDK internal audio preprocessing.
@@ -72,11 +72,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_aligned_audio_aux_data)(
 /// @param enable Whether to enable feature of throwing audio data before SDK internal audio preprocessing.
 /// @param param param of audio frame. Currently, it supports sampling rates of 0, 16k, 32k, 44.1k, and 48k. The 0 means using SDK internal value. It supports channels Unknown, Mono, and Stereo. The Unknown means using SDK internal value.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_enable_before_audio_prep_audio_data(bool enable, struct zego_audio_frame_param param);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_before_audio_prep_audio_data(
+    zego_handle handle, bool enable, struct zego_audio_frame_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_before_audio_prep_audio_data)(
-    bool enable, struct zego_audio_frame_param param);
+    zego_handle handle, bool enable, struct zego_audio_frame_param param);
 #endif
 
 /// Enable custom audio processing for remote playing stream.
@@ -91,10 +91,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_before_audio_prep_audio_data
 /// @param config Custom audio processing configuration.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_audio_remote_processing(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_remote_processing)(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #endif
 
 /// Enable custom audio processing for SDK playback audio data.
@@ -109,10 +109,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_remote_processi
 /// @param config Custom audio processing configuration.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_audio_playback_processing(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_playback_processing)(
-    bool enable, struct zego_custom_audio_process_config *config);
+    zego_handle handle, bool enable, struct zego_custom_audio_process_config *config);
 #endif
 
 /// Enable audio data observering.
@@ -128,10 +128,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_playback_proces
 /// @param param param of audio frame.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_audio_data_observer(
-    unsigned int observer_bit_mask, struct zego_audio_frame_param param);
+    zego_handle handle, unsigned int observer_bit_mask, struct zego_audio_frame_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_audio_data_observer)(
-    unsigned int observer_bit_mask, struct zego_audio_frame_param param);
+    zego_handle handle, unsigned int observer_bit_mask, struct zego_audio_frame_param param);
 #endif
 
 /// Disable audio data observering.
@@ -141,9 +141,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_audio_data_observer)(
 /// Use cases: When develop need to monitor the original audio.
 /// When to call: After calling [startAudioDataObserver] to start audio data monitoring.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_audio_data_observer();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_audio_data_observer(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_data_observer)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_data_observer)(zego_handle handle);
 #endif
 
 /// Enables the custom audio I/O function (for the specified channel), support PCM, AAC format data.
@@ -159,10 +159,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_data_observer)();
 /// @param channel Specify the publish channel to enable custom audio IO.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_custom_audio_io(
-    bool enable, struct zego_custom_audio_config *config, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_custom_audio_config *config,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_io)(
-    bool enable, struct zego_custom_audio_config *config, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_custom_audio_config *config,
+    enum zego_publish_channel channel);
 #endif
 
 /// Sends AAC audio data produced by custom audio capture to the SDK (for the specified channel).
@@ -183,12 +185,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_custom_audio_io)(
 /// @param channel Publish channel for capturing audio frames.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_audio_capture_aac_data(
-    unsigned char *data, unsigned int data_length, unsigned int config_length,
+    zego_handle handle, unsigned char *data, unsigned int data_length, unsigned int config_length,
     unsigned long long reference_time_millisecond, unsigned int samples,
     struct zego_audio_frame_param param, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_audio_capture_aac_data)(
-    unsigned char *data, unsigned int data_length, unsigned int config_length,
+    zego_handle handle, unsigned char *data, unsigned int data_length, unsigned int config_length,
     unsigned long long reference_time_millisecond, unsigned int samples,
     struct zego_audio_frame_param param, enum zego_publish_channel channel);
 #endif
@@ -208,12 +210,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_audio_capture_aac_data)
 /// @param channel Publish channel for capturing audio frames.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_audio_capture_pcm_data(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param,
-    enum zego_publish_channel channel);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param param, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_audio_capture_pcm_data)(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param,
-    enum zego_publish_channel channel);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param param, enum zego_publish_channel channel);
 #endif
 
 /// Fetches PCM audio data of the remote stream from the SDK for custom audio rendering.
@@ -230,10 +232,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_audio_capture_pcm_data)
 /// @param param Specify the parameters of the fetched audio frame. sampleRate in ZegoAudioFrameParam must assignment
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_fetch_custom_audio_render_pcm_data(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_fetch_custom_audio_render_pcm_data)(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param param);
 #endif
 
 /// Send the PCM audio data customized by the developer to the SDK, which is used as a reference for custom rendering audio to eliminate echo.
@@ -249,10 +253,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_fetch_custom_audio_render_pcm_data)
 /// @param param The param of this PCM audio frame
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_reference_audio_pcm_data(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_reference_audio_pcm_data)(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param param);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param param);
 #endif
 
 /// Set the audio route after enabling the custom audio IO function.
@@ -266,10 +272,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_reference_audio_pcm_data)(
 /// @param audio_route Audio route.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_custom_audio_io_audio_route(enum zego_audio_route audio_route);
+zego_express_set_custom_audio_io_audio_route(zego_handle handle, enum zego_audio_route audio_route);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_custom_audio_io_audio_route)(
-    enum zego_audio_route audio_route);
+    zego_handle handle, enum zego_audio_route audio_route);
 #endif
 
 /// Custom audio processing local captured PCM audio frame callback.
@@ -285,16 +291,17 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_audio_io_audio_route)(
 /// @param param Parameters of the audio frame.
 /// @param timestamp The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds.
 /// @param user_context Context of user.
-typedef void (*zego_on_process_captured_audio_data)(unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_process_captured_audio_data)(zego_handle handle, unsigned char *data,
+                                                    unsigned int data_length,
                                                     struct zego_audio_frame_param *param,
                                                     double timestamp, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_process_captured_audio_data_callback(
-    zego_on_process_captured_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_process_captured_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_process_captured_audio_data_callback)(
-    zego_on_process_captured_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_process_captured_audio_data callback_func, void *user_context);
 #endif
 
 /// Custom audio processing local captured PCM audio frame callback after used headphone monitor.
@@ -310,17 +317,19 @@ typedef void(EXP_CALL *pfnzego_register_process_captured_audio_data_callback)(
 /// @param timestamp The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds.
 /// @param user_context Context of user.
 typedef void (*zego_on_process_captured_audio_data_after_used_headphone_monitor)(
-    unsigned char *data, unsigned int data_length, struct zego_audio_frame_param *param,
-    double timestamp, void *user_context);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    struct zego_audio_frame_param *param, double timestamp, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL
 zego_register_process_captured_audio_data_after_used_headphone_monitor_callback(
+    zego_handle handle,
     zego_on_process_captured_audio_data_after_used_headphone_monitor callback_func,
     void *user_context);
 #else
 typedef void(
     EXP_CALL *pfnzego_register_process_captured_audio_data_after_used_headphone_monitor_callback)(
+    zego_handle handle,
     zego_on_process_captured_audio_data_after_used_headphone_monitor callback_func,
     void *user_context);
 #endif
@@ -337,16 +346,17 @@ typedef void(
 /// @param data_length Length of the data.
 /// @param param Parameters of the audio frame.
 /// @param user_context Context of user.
-typedef void (*zego_on_aligned_audio_aux_data)(const unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_aligned_audio_aux_data)(zego_handle handle, const unsigned char *data,
+                                               unsigned int data_length,
                                                struct zego_audio_frame_param *param,
                                                void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_aligned_audio_aux_data_callback(
-    zego_on_aligned_audio_aux_data callback_func, void *user_context);
+    zego_handle handle, zego_on_aligned_audio_aux_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_aligned_audio_aux_data_callback)(
-    zego_on_aligned_audio_aux_data callback_func, void *user_context);
+    zego_handle handle, zego_on_aligned_audio_aux_data callback_func, void *user_context);
 #endif
 
 /// Audio data callback before SDK internal audio preprocessing.
@@ -361,17 +371,17 @@ typedef void(EXP_CALL *pfnzego_register_aligned_audio_aux_data_callback)(
 /// @param data_length Length of the data.
 /// @param param Parameters of the audio frame.
 /// @param user_context Context of user.
-typedef void (*zego_on_before_audio_prep_audio_data)(const unsigned char *data,
+typedef void (*zego_on_before_audio_prep_audio_data)(zego_handle handle, const unsigned char *data,
                                                      unsigned int data_length,
                                                      struct zego_audio_frame_param param,
                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_before_audio_prep_audio_data_callback(
-    zego_on_before_audio_prep_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_before_audio_prep_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_before_audio_prep_audio_data_callback)(
-    zego_on_before_audio_prep_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_before_audio_prep_audio_data callback_func, void *user_context);
 #endif
 
 /// Custom audio processing remote playing stream PCM audio frame callback.
@@ -388,17 +398,18 @@ typedef void(EXP_CALL *pfnzego_register_before_audio_prep_audio_data_callback)(
 /// @param stream_id Corresponding stream ID.
 /// @param timestamp The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds.
 /// @param user_context Context of user.
-typedef void (*zego_on_process_remote_audio_data)(unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_process_remote_audio_data)(zego_handle handle, unsigned char *data,
+                                                  unsigned int data_length,
                                                   struct zego_audio_frame_param *param,
                                                   const char *stream_id, double timestamp,
                                                   void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_process_remote_audio_data_callback(
-    zego_on_process_remote_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_process_remote_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_process_remote_audio_data_callback)(
-    zego_on_process_remote_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_process_remote_audio_data callback_func, void *user_context);
 #endif
 
 /// Custom audio processing SDK playback PCM audio frame callback.
@@ -414,16 +425,17 @@ typedef void(EXP_CALL *pfnzego_register_process_remote_audio_data_callback)(
 /// @param param Parameters of the audio frame.
 /// @param timestamp The audio frame timestamp, starting from 0 when capture is started, the unit is milliseconds (It is effective when there is one and only one stream).
 /// @param user_context Context of user.
-typedef void (*zego_on_process_playback_audio_data)(unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_process_playback_audio_data)(zego_handle handle, unsigned char *data,
+                                                    unsigned int data_length,
                                                     struct zego_audio_frame_param *param,
                                                     double timestamp, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_process_playback_audio_data_callback(
-    zego_on_process_playback_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_process_playback_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_process_playback_audio_data_callback)(
-    zego_on_process_playback_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_process_playback_audio_data callback_func, void *user_context);
 #endif
 
 /// The callback for obtaining the audio data captured by the local microphone.
@@ -438,16 +450,17 @@ typedef void(EXP_CALL *pfnzego_register_process_playback_audio_data_callback)(
 /// @param data_length Length of the data.
 /// @param param Parameters of the audio frame.
 /// @param user_context Context of user.
-typedef void (*zego_on_captured_audio_data)(const unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_captured_audio_data)(zego_handle handle, const unsigned char *data,
+                                            unsigned int data_length,
                                             struct zego_audio_frame_param param,
                                             void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_captured_audio_data_callback(
-    zego_on_captured_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_captured_audio_data_callback)(
-    zego_on_captured_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_audio_data callback_func, void *user_context);
 #endif
 
 /// The callback for obtaining the audio data of all the streams playback by SDK.
@@ -462,16 +475,17 @@ typedef void(EXP_CALL *pfnzego_register_captured_audio_data_callback)(
 /// @param data_length Length of the data.
 /// @param param Parameters of the audio frame.
 /// @param user_context Context of user.
-typedef void (*zego_on_playback_audio_data)(const unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_playback_audio_data)(zego_handle handle, const unsigned char *data,
+                                            unsigned int data_length,
                                             struct zego_audio_frame_param param,
                                             void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_playback_audio_data_callback(
-    zego_on_playback_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_playback_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_playback_audio_data_callback)(
-    zego_on_playback_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_playback_audio_data callback_func, void *user_context);
 #endif
 
 /// Callback to get the audio data played by the SDK and the audio data captured by the local microphone. The audio data is the data mixed by the SDK.
@@ -486,15 +500,16 @@ typedef void(EXP_CALL *pfnzego_register_playback_audio_data_callback)(
 /// @param data_length Length of the data.
 /// @param param Parameters of the audio frame.
 /// @param user_context Context of user.
-typedef void (*zego_on_mixed_audio_data)(const unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_mixed_audio_data)(zego_handle handle, const unsigned char *data,
+                                         unsigned int data_length,
                                          struct zego_audio_frame_param param, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_mixed_audio_data_callback(zego_on_mixed_audio_data callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_mixed_audio_data_callback(
+    zego_handle handle, zego_on_mixed_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_mixed_audio_data_callback)(
-    zego_on_mixed_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_mixed_audio_data callback_func, void *user_context);
 #endif
 
 /// The callback for obtaining the audio data of each stream.
@@ -510,16 +525,17 @@ typedef void(EXP_CALL *pfnzego_register_mixed_audio_data_callback)(
 /// @param param Parameters of the audio frame.
 /// @param stream_id Corresponding stream ID.
 /// @param user_context Context of user.
-typedef void (*zego_on_player_audio_data)(const unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_player_audio_data)(zego_handle handle, const unsigned char *data,
+                                          unsigned int data_length,
                                           struct zego_audio_frame_param param,
                                           const char *stream_id, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_player_audio_data_callback(
-    zego_on_player_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_player_audio_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_player_audio_data_callback)(
-    zego_on_player_audio_data callback_func, void *user_context);
+    zego_handle handle, zego_on_player_audio_data callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

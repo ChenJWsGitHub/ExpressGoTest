@@ -17,9 +17,11 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param millisecond Monitoring time period(in milliseconds), the value range is [1000, 10000]. Default value is 2000 ms.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_performance_monitor(unsigned int millisecond);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_performance_monitor(zego_handle handle,
+                                                                       unsigned int millisecond);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_performance_monitor)(unsigned int millisecond);
+typedef zego_error(EXP_CALL *pfnzego_express_start_performance_monitor)(zego_handle handle,
+                                                                        unsigned int millisecond);
 #endif
 
 /// Stop system performance monitoring.
@@ -31,9 +33,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_performance_monitor)(unsigned
 /// Restrictions: None.
 /// Related APIs: Call [startPerformanceMonitor] to start system performance monitoring.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_performance_monitor();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_performance_monitor(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_performance_monitor)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_performance_monitor)(zego_handle handle);
 #endif
 
 /// Start network probe.
@@ -49,11 +51,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_performance_monitor)();
 /// @param config network probe config.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_start_network_probe(struct zego_network_probe_config config, zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_network_probe(
+    zego_handle handle, struct zego_network_probe_config config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_network_probe)(
-    struct zego_network_probe_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_network_probe_config config, zego_seq *sequence);
 #endif
 
 /// Stop network probe.
@@ -65,9 +67,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_network_probe)(
 /// Restrictions: None.
 /// Related APIs: Call [startNetworkProbe] to start network probe.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_network_probe();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_network_probe(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_network_probe)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_network_probe)(zego_handle handle);
 #endif
 
 /// Test network connectivity.
@@ -76,9 +78,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_network_probe)();
 ///
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_test_network_connectivity(zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_test_network_connectivity(zego_handle handle,
+                                                                       zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_test_network_connectivity)(zego_seq *sequence);
+typedef zego_error(EXP_CALL *pfnzego_express_test_network_connectivity)(zego_handle handle,
+                                                                        zego_seq *sequence);
 #endif
 
 /// Start network speed test. Support set speed test interval。
@@ -95,10 +99,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_test_network_connectivity)(zego_seq
 /// @param interval Interval of network speed test. In milliseconds, default is 3000 ms.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_network_speed_test(
-    struct zego_network_speed_test_config config, unsigned int interval);
+    zego_handle handle, struct zego_network_speed_test_config config, unsigned int interval);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_network_speed_test)(
-    struct zego_network_speed_test_config config, unsigned int interval);
+    zego_handle handle, struct zego_network_speed_test_config config, unsigned int interval);
 #endif
 
 /// Stop network speed test.
@@ -111,9 +115,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_network_speed_test)(
 /// Caution: After the network speed test stopped, [onNetworkSpeedTestQualityUpdate] callback will not be triggered.
 /// Related APIs: Call [startNetworkSpeedTest] to start network speed test.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_network_speed_test();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_network_speed_test(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_network_speed_test)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_network_speed_test)(zego_handle handle);
 #endif
 
 /// Obtain synchronization network time information.
@@ -125,27 +129,29 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_network_speed_test)();
 /// Restrictions: None.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_get_network_time_info(zego_network_time_info *time_info);
+zego_express_get_network_time_info(zego_handle handle, zego_network_time_info *time_info);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_network_time_info)(
-    zego_network_time_info *time_info);
+    zego_handle handle, zego_network_time_info *time_info);
 #endif
 
-/// Dump audio and video data.
+/// Dump audio, video data.
 ///
 /// Available since: 3.10.0
-/// Description: Dump audio and video data. Currently, only audio data is supported.
-/// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
+/// Description: Dump audio, video data.
+/// Use cases: This is a debugging tool. When there is a problem with audio/video capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
 /// When to call: It needs to be called after [createEngine].
-/// Restrictions: None.
-/// Caution: It will trigger the [onStartDumpData] callback when data dumping starts.
+/// Restrictions: Only support Android and iOS to dump video.
+/// Caution: It will trigger the [onStartDumpData] callback when data dumping starts. The video dump auto-stops after 30 seconds to prevent excessive storage usage, triggering the [onStopDumpData] callback.
 /// Related APIs: Call [stopDumpData] to stop dumping data.
 ///
 /// @param config Dump data config.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_dump_data(struct zego_dump_data_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_dump_data(zego_handle handle,
+                                                             struct zego_dump_data_config config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_dump_data)(struct zego_dump_data_config config);
+typedef zego_error(EXP_CALL *pfnzego_express_start_dump_data)(zego_handle handle,
+                                                              struct zego_dump_data_config config);
 #endif
 
 /// Stop dumping data.
@@ -157,9 +163,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_dump_data)(struct zego_dump_d
 /// Restrictions: None.
 /// Caution: It will trigger the [onUploadDumpData] callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_dump_data();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_dump_data(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_dump_data)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_dump_data)(zego_handle handle);
 #endif
 
 /// Upload dumped data to the ZEGO server.
@@ -171,9 +177,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_dump_data)();
 /// Restrictions: None.
 /// Caution: It will trigger the [onUploadDumpData] callback when dump data uploaded.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_upload_dump_data();
+ZEGOEXP_API zego_error EXP_CALL zego_express_upload_dump_data(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_upload_dump_data)();
+typedef zego_error(EXP_CALL *pfnzego_express_upload_dump_data)(zego_handle handle);
 #endif
 
 /// Remove dumped data.
@@ -184,9 +190,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_upload_dump_data)();
 /// When to call: It needs to be called after [stopDumpData]. If the dump data is to be uploaded to the ZEGO server, it should be deleted after the upload is successful.
 /// Restrictions: None.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_remove_dump_data();
+ZEGOEXP_API zego_error EXP_CALL zego_express_remove_dump_data(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_remove_dump_data)();
+typedef zego_error(EXP_CALL *pfnzego_express_remove_dump_data)(zego_handle handle);
 #endif
 
 /// System performance monitoring callback.
@@ -199,15 +205,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_remove_dump_data)();
 ///
 /// @param status System performance monitoring status.
 /// @param user_context Context of user.
-typedef void (*zego_on_performance_status_update)(struct zego_performance_status status,
+typedef void (*zego_on_performance_status_update)(zego_handle handle,
+                                                  struct zego_performance_status status,
                                                   void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_performance_status_update_callback(
-    zego_on_performance_status_update callback_func, void *user_context);
+    zego_handle handle, zego_on_performance_status_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_performance_status_update_callback)(
-    zego_on_performance_status_update callback_func, void *user_context);
+    zego_handle handle, zego_on_performance_status_update callback_func, void *user_context);
 #endif
 
 /// Network mode changed callback.
@@ -219,14 +226,15 @@ typedef void(EXP_CALL *pfnzego_register_performance_status_update_callback)(
 ///
 /// @param mode Current network mode.
 /// @param user_context Context of user.
-typedef void (*zego_on_network_mode_changed)(enum zego_network_mode mode, void *user_context);
+typedef void (*zego_on_network_mode_changed)(zego_handle handle, enum zego_network_mode mode,
+                                             void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_network_mode_changed_callback(
-    zego_on_network_mode_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_network_mode_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_network_mode_changed_callback)(
-    zego_on_network_mode_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_network_mode_changed callback_func, void *user_context);
 #endif
 
 /// Network speed test error callback.
@@ -240,16 +248,16 @@ typedef void(EXP_CALL *pfnzego_register_network_mode_changed_callback)(
 /// @param error_code Network speed test error code. Please refer to error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param type Uplink or downlink.
 /// @param user_context Context of user.
-typedef void (*zego_on_network_speed_test_error)(int error_code,
+typedef void (*zego_on_network_speed_test_error)(zego_handle handle, int error_code,
                                                  enum zego_network_speed_test_type type,
                                                  void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_network_speed_test_error_callback(
-    zego_on_network_speed_test_error callback_func, void *user_context);
+    zego_handle handle, zego_on_network_speed_test_error callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_network_speed_test_error_callback)(
-    zego_on_network_speed_test_error callback_func, void *user_context);
+    zego_handle handle, zego_on_network_speed_test_error callback_func, void *user_context);
 #endif
 
 /// Network speed test quality callback.
@@ -265,15 +273,17 @@ typedef void(EXP_CALL *pfnzego_register_network_speed_test_error_callback)(
 /// @param type Uplink or downlink.
 /// @param user_context Context of user.
 typedef void (*zego_on_network_speed_test_quality_update)(
-    const struct zego_network_speed_test_quality quality, enum zego_network_speed_test_type type,
-    void *user_context);
+    zego_handle handle, const struct zego_network_speed_test_quality quality,
+    enum zego_network_speed_test_type type, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_network_speed_test_quality_update_callback(
-    zego_on_network_speed_test_quality_update callback_func, void *user_context);
+    zego_handle handle, zego_on_network_speed_test_quality_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_network_speed_test_quality_update_callback)(
-    zego_on_network_speed_test_quality_update callback_func, void *user_context);
+    zego_handle handle, zego_on_network_speed_test_quality_update callback_func,
+    void *user_context);
 #endif
 
 /// The network quality callback of users who are publishing in the room.
@@ -297,17 +307,17 @@ typedef void(EXP_CALL *pfnzego_register_network_speed_test_quality_update_callba
 /// @param upstream_quality Upstream network quality
 /// @param downstream_quality Downstream network quality
 /// @param user_context Context of user.
-typedef void (*zego_on_network_quality)(const char *userid,
+typedef void (*zego_on_network_quality)(zego_handle handle, const char *userid,
                                         enum zego_stream_quality_level upstream_quality,
                                         enum zego_stream_quality_level downstream_quality,
                                         void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_network_quality_callback(zego_on_network_quality callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_network_quality_callback(
+    zego_handle handle, zego_on_network_quality callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_network_quality_callback)(
-    zego_on_network_quality callback_func, void *user_context);
+    zego_handle handle, zego_on_network_quality callback_func, void *user_context);
 #endif
 
 /// RTC network statistics callback.
@@ -321,13 +331,16 @@ typedef void(EXP_CALL *pfnzego_register_network_quality_callback)(
 ///
 /// @param info statistical information.
 /// @param user_context Context of user.
-typedef void (*zego_on_rtc_stats)(const struct zego_rtc_stats_info info, void *user_context);
+typedef void (*zego_on_rtc_stats)(zego_handle handle, const struct zego_rtc_stats_info info,
+                                  void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL zego_register_rtc_stats_callback(zego_on_rtc_stats callback_func,
+ZEGOEXP_API void EXP_CALL zego_register_rtc_stats_callback(zego_handle handle,
+                                                           zego_on_rtc_stats callback_func,
                                                            void *user_context);
 #else
-typedef void(EXP_CALL *pfnzego_register_rtc_stats_callback)(zego_on_rtc_stats callback_func,
+typedef void(EXP_CALL *pfnzego_register_rtc_stats_callback)(zego_handle handle,
+                                                            zego_on_rtc_stats callback_func,
                                                             void *user_context);
 #endif
 
@@ -337,14 +350,14 @@ typedef void(EXP_CALL *pfnzego_register_rtc_stats_callback)(zego_on_rtc_stats ca
 /// This callback is triggered when internal network time synchronization completes after a developer calls [createEngine].
 ///
 /// @param user_context context of user
-typedef void (*zego_on_network_time_synchronized)(void *user_context);
+typedef void (*zego_on_network_time_synchronized)(zego_handle handle, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_network_time_synchronized_callback(
-    zego_on_network_time_synchronized callback_func, void *user_context);
+    zego_handle handle, zego_on_network_time_synchronized callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_network_time_synchronized_callback)(
-    zego_on_network_time_synchronized callback_func, void *user_context);
+    zego_handle handle, zego_on_network_time_synchronized callback_func, void *user_context);
 #endif
 
 /// Request to dump data.
@@ -353,14 +366,14 @@ typedef void(EXP_CALL *pfnzego_register_network_time_synchronized_callback)(
 /// When to Trigger: When the customer reports back the problem, ZEGO expects the user to dump the data to analyze the audio / video processing problem, which will trigger this callback.
 ///
 /// @param user_context context of user
-typedef void (*zego_on_request_dump_data)(void *user_context);
+typedef void (*zego_on_request_dump_data)(zego_handle handle, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_request_dump_data_callback(
-    zego_on_request_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_request_dump_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_request_dump_data_callback)(
-    zego_on_request_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_request_dump_data callback_func, void *user_context);
 #endif
 
 /// Request to dump data.
@@ -371,15 +384,15 @@ typedef void(EXP_CALL *pfnzego_register_request_dump_data_callback)(
 /// @param dump_dir Dump data dir.
 /// @param take_photo Need to take photo when uploading dump data
 /// @param user_context context of user
-typedef void (*zego_on_request_upload_dump_data)(const char *dump_dir, bool take_photo,
-                                                 void *user_context);
+typedef void (*zego_on_request_upload_dump_data)(zego_handle handle, const char *dump_dir,
+                                                 bool take_photo, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_request_upload_dump_data_callback(
-    zego_on_request_upload_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_request_upload_dump_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_request_upload_dump_data_callback)(
-    zego_on_request_upload_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_request_upload_dump_data callback_func, void *user_context);
 #endif
 
 /// Callback when starting to dump data.
@@ -389,14 +402,14 @@ typedef void(EXP_CALL *pfnzego_register_request_upload_dump_data_callback)(
 ///
 /// @param error_code Error code.
 /// @param user_context context of user
-typedef void (*zego_on_start_dump_data)(int error_code, void *user_context);
+typedef void (*zego_on_start_dump_data)(zego_handle handle, int error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_start_dump_data_callback(zego_on_start_dump_data callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_start_dump_data_callback(
+    zego_handle handle, zego_on_start_dump_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_start_dump_data_callback)(
-    zego_on_start_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_start_dump_data callback_func, void *user_context);
 #endif
 
 /// Callback when stopping to dump data.
@@ -407,14 +420,15 @@ typedef void(EXP_CALL *pfnzego_register_start_dump_data_callback)(
 /// @param error_code Error code.
 /// @param dump_dir Dump data dir.
 /// @param user_context context of user
-typedef void (*zego_on_stop_dump_data)(int error_code, const char *dump_dir, void *user_context);
+typedef void (*zego_on_stop_dump_data)(zego_handle handle, int error_code, const char *dump_dir,
+                                       void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_stop_dump_data_callback(zego_on_stop_dump_data callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_stop_dump_data_callback(
+    zego_handle handle, zego_on_stop_dump_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_stop_dump_data_callback)(
-    zego_on_stop_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_stop_dump_data callback_func, void *user_context);
 #endif
 
 /// Callback after uploading the dump data.
@@ -424,14 +438,14 @@ typedef void(EXP_CALL *pfnzego_register_stop_dump_data_callback)(
 ///
 /// @param error_code Error code.
 /// @param user_context context of user
-typedef void (*zego_on_upload_dump_data)(int error_code, void *user_context);
+typedef void (*zego_on_upload_dump_data)(zego_handle handle, int error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL
-zego_register_upload_dump_data_callback(zego_on_upload_dump_data callback_func, void *user_context);
+ZEGOEXP_API void EXP_CALL zego_register_upload_dump_data_callback(
+    zego_handle handle, zego_on_upload_dump_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_upload_dump_data_callback)(
-    zego_on_upload_dump_data callback_func, void *user_context);
+    zego_handle handle, zego_on_upload_dump_data callback_func, void *user_context);
 #endif
 
 /// Callback for test network connectivity.
@@ -441,15 +455,15 @@ typedef void(EXP_CALL *pfnzego_register_upload_dump_data_callback)(
 /// @param result Network connectivity test results
 /// @param user_context Context of user.
 typedef void (*zego_on_test_network_connectivity)(
-    zego_seq seq, zego_error error_code, const struct zego_test_network_connectivity_result result,
-    void *user_context);
+    zego_handle handle, zego_seq seq, zego_error error_code,
+    const struct zego_test_network_connectivity_result result, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_test_network_connectivity_callback(
-    zego_on_test_network_connectivity callback_func, void *user_context);
+    zego_handle handle, zego_on_test_network_connectivity callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_test_network_connectivity_callback)(
-    zego_on_test_network_connectivity callback_func, void *user_context);
+    zego_handle handle, zego_on_test_network_connectivity callback_func, void *user_context);
 #endif
 
 /// Callback for network probe.
@@ -458,16 +472,17 @@ typedef void(EXP_CALL *pfnzego_register_test_network_connectivity_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param result Network probe result
 /// @param user_context Context of user.
-typedef void (*zego_on_network_probe_result)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_network_probe_result)(zego_handle handle, zego_seq seq,
+                                             zego_error error_code,
                                              const struct zego_network_probe_result result,
                                              void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_network_probe_result_callback(
-    zego_on_network_probe_result callback_func, void *user_context);
+    zego_handle handle, zego_on_network_probe_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_network_probe_result_callback)(
-    zego_on_network_probe_result callback_func, void *user_context);
+    zego_handle handle, zego_on_network_probe_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

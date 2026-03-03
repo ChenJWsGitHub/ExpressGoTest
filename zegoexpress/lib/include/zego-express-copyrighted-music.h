@@ -13,9 +13,9 @@ ZEGO_BEGIN_DECLS
 /// When to call: It can be called after the engine by [createEngine] has been initialized.
 /// Restrictions: The SDK only supports the creation of one instance of CopyrightedMusic. Multiple calls to this function return the same object.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_create_copyrighted_music();
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_copyrighted_music(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_create_copyrighted_music)();
+typedef zego_error(EXP_CALL *pfnzego_express_create_copyrighted_music)(zego_handle handle);
 #endif
 
 /// Destroys a copyrighted music instance.
@@ -24,9 +24,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_copyrighted_music)();
 /// Description: Destroys a copyrighted music instance.
 /// When to call: It can be called before the engine by [destroyEngine]
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_copyrighted_music();
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_copyrighted_music(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_destroy_copyrighted_music)();
+typedef zego_error(EXP_CALL *pfnzego_express_destroy_copyrighted_music)(zego_handle handle);
 #endif
 
 /// Initialize the copyrighted music module.
@@ -40,10 +40,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_copyrighted_music)();
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_init(
-    struct zego_copyrighted_music_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_config config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_init)(
-    struct zego_copyrighted_music_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_config config, zego_seq *sequence);
 #endif
 
 /// Get cache size.
@@ -56,10 +56,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_init)(
 /// @param cache_size [in/out] cache file size, in byte.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_cache_size(unsigned long long *cache_size);
+zego_express_copyrighted_music_get_cache_size(zego_handle handle, unsigned long long *cache_size);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_cache_size)(
-    unsigned long long *cache_size);
+    zego_handle handle, unsigned long long *cache_size);
 #endif
 
 /// Clear cache.
@@ -69,9 +69,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_cache_size)(
 /// Use case: Used to clear the cache of the App.
 /// When to call: After initializing the copyrighted music [createCopyrightedMusic].
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_clear_cache();
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_clear_cache(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_clear_cache)();
+typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_clear_cache)(zego_handle handle);
 #endif
 
 /// Send extended feature request.
@@ -86,10 +86,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_clear_cache)();
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_send_extended_request(
-    const char *command, const char *params, zego_seq *sequence);
+    zego_handle handle, const char *command, const char *params, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_send_extended_request)(
-    const char *command, const char *params, zego_seq *sequence);
+    zego_handle handle, const char *command, const char *params, zego_seq *sequence);
 #endif
 
 /// Get lyrics in lrc format.
@@ -104,10 +104,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_send_extended_req
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_lrc_lyric_with_vendor(
-    const char *song_id, enum zego_copyrighted_music_vendor_id vendor_id, zego_seq *sequence);
+    zego_handle handle, const char *song_id, enum zego_copyrighted_music_vendor_id vendor_id,
+    zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric_with_vendor)(
-    const char *song_id, enum zego_copyrighted_music_vendor_id vendor_id, zego_seq *sequence);
+    zego_handle handle, const char *song_id, enum zego_copyrighted_music_vendor_id vendor_id,
+    zego_seq *sequence);
 #endif
 
 /// Get lyrics in lrc format.
@@ -121,10 +123,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric_wit
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_lrc_lyric_with_config(
-    struct zego_copyrighted_music_get_lyric_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_get_lyric_config config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric_with_config)(
-    struct zego_copyrighted_music_get_lyric_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_get_lyric_config config, zego_seq *sequence);
 #endif
 
 /// Get lyrics in krc format.
@@ -137,11 +139,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric_wit
 /// @param krc_token The krcToken obtained when calling [requestResource] for accompaniment or climax clips, or when obtaining shared resources through the [getSharedResource] interface. For more details, please refer to https://doc-zh.zego.im/article/15079#2_2
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_krc_lyric_by_token(const char *krc_token, zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_krc_lyric_by_token(
+    zego_handle handle, const char *krc_token, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_krc_lyric_by_token)(
-    const char *krc_token, zego_seq *sequence);
+    zego_handle handle, const char *krc_token, zego_seq *sequence);
 #endif
 
 /// Request music resource.
@@ -161,11 +163,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_krc_lyric_by_
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_request_resource(
-    struct zego_copyrighted_music_request_config config,
+    zego_handle handle, struct zego_copyrighted_music_request_config config,
     enum zego_copyrighted_music_resource_type type, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_resource)(
-    struct zego_copyrighted_music_request_config config,
+    zego_handle handle, struct zego_copyrighted_music_request_config config,
     enum zego_copyrighted_music_resource_type type, zego_seq *sequence);
 #endif
 
@@ -185,10 +187,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_resource)
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_request_resource_v2(
-    zego_copyrighted_music_request_config_v2 config, zego_seq *sequence);
+    zego_handle handle, zego_copyrighted_music_request_config_v2 config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_resource_v2)(
-    zego_copyrighted_music_request_config_v2 config, zego_seq *sequence);
+    zego_handle handle, zego_copyrighted_music_request_config_v2 config, zego_seq *sequence);
 #endif
 
 /// Get shared music resource.
@@ -205,11 +207,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_resource_
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_shared_resource(
-    struct zego_copyrighted_music_get_shared_config config,
+    zego_handle handle, struct zego_copyrighted_music_get_shared_config config,
     enum zego_copyrighted_music_resource_type type, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_shared_resource)(
-    struct zego_copyrighted_music_get_shared_config config,
+    zego_handle handle, struct zego_copyrighted_music_get_shared_config config,
     enum zego_copyrighted_music_resource_type type, zego_seq *sequence);
 #endif
 
@@ -226,10 +228,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_shared_resour
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_shared_resource_v2(
-    zego_copyrighted_music_get_shared_config_v2 config, zego_seq *sequence);
+    zego_handle handle, zego_copyrighted_music_get_shared_config_v2 config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_shared_resource_v2)(
-    zego_copyrighted_music_get_shared_config_v2 config, zego_seq *sequence);
+    zego_handle handle, zego_copyrighted_music_get_shared_config_v2 config, zego_seq *sequence);
 #endif
 
 /// Download music resource.
@@ -243,10 +245,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_shared_resour
 /// @param resource_id the resource ID corresponding to the song or accompaniment.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_download(const char *resource_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_download(zego_handle handle,
+                                                                        const char *resource_id,
                                                                         zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_download)(const char *resource_id,
+typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_download)(zego_handle handle,
+                                                                         const char *resource_id,
                                                                          zego_seq *sequence);
 #endif
 
@@ -261,10 +265,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_download)(const c
 /// @param resource_id the resource ID corresponding to the song or accompaniment.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_cancel_download(const char *resource_id);
+zego_express_copyrighted_music_cancel_download(zego_handle handle, const char *resource_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_cancel_download)(
-    const char *resource_id);
+    zego_handle handle, const char *resource_id);
 #endif
 
 /// Query the resource's cache is existed or not.
@@ -278,10 +282,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_cancel_download)(
 /// @param is_cache [in/out] the resource's cache is existed or not
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_query_cache_with_config(
-    struct zego_copyrighted_music_query_cache_config config, bool *is_cache);
+    zego_handle handle, struct zego_copyrighted_music_query_cache_config config, bool *is_cache);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_config)(
-    struct zego_copyrighted_music_query_cache_config config, bool *is_cache);
+    zego_handle handle, struct zego_copyrighted_music_query_cache_config config, bool *is_cache);
 #endif
 
 /// Query the resource's cache is existed or not.
@@ -295,10 +299,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_
 /// @param is_cache [in/out] the resource's cache is existed or not
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_query_cache_with_config_v2(
-    zego_copyrighted_music_query_cache_config_v2 config, bool *is_cache);
+    zego_handle handle, zego_copyrighted_music_query_cache_config_v2 config, bool *is_cache);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_config_v2)(
-    zego_copyrighted_music_query_cache_config_v2 config, bool *is_cache);
+    zego_handle handle, zego_copyrighted_music_query_cache_config_v2 config, bool *is_cache);
 #endif
 
 /// Get the playing time of a song or accompaniment file.
@@ -311,11 +315,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_
 /// @param resource_id the resource ID corresponding to the song or accompaniment.
 /// @param duration [in/out] The playing time of a song or accompaniment file.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_duration(const char *resource_id, unsigned long long *duration);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_duration(
+    zego_handle handle, const char *resource_id, unsigned long long *duration);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_duration)(
-    const char *resource_id, unsigned long long *duration);
+    zego_handle handle, const char *resource_id, unsigned long long *duration);
 #endif
 
 /// Set the difficulty level of scoring.
@@ -328,9 +332,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_duration)(
 ///
 /// @param level The difficulty level of scoring. The level ranges from 0 to 4. The scoring difficulty decreases from 0 to 4.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_set_scoring_level(int level);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_set_scoring_level(zego_handle handle,
+                                                                                 int level);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_set_scoring_level)(int level);
+typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_set_scoring_level)(
+    zego_handle handle, int level);
 #endif
 
 /// Start scoring.
@@ -344,11 +350,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_set_scoring_level
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param pitch_value_interval the time interval of real-time pitch line callback, in milliseconds, the default is 50 milliseconds.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_start_score(const char *resource_id, int pitch_value_interval);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_start_score(
+    zego_handle handle, const char *resource_id, int pitch_value_interval);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_start_score)(
-    const char *resource_id, int pitch_value_interval);
+    zego_handle handle, const char *resource_id, int pitch_value_interval);
 #endif
 
 /// Pause scoring.
@@ -360,10 +366,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_start_score)(
 ///
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_pause_score(const char *resource_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_pause_score(zego_handle handle,
+                                                                           const char *resource_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_pause_score)(
-    const char *resource_id);
+    zego_handle handle, const char *resource_id);
 #endif
 
 /// Resume scoring.
@@ -376,10 +383,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_pause_score)(
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_resume_score(const char *resource_id);
+zego_express_copyrighted_music_resume_score(zego_handle handle, const char *resource_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_resume_score)(
-    const char *resource_id);
+    zego_handle handle, const char *resource_id);
 #endif
 
 /// Stop scoring.
@@ -391,9 +398,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_resume_score)(
 ///
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_stop_score(const char *resource_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_stop_score(zego_handle handle,
+                                                                          const char *resource_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_stop_score)(const char *resource_id);
+typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_stop_score)(zego_handle handle,
+                                                                           const char *resource_id);
 #endif
 
 /// Reset scoring.
@@ -405,10 +414,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_stop_score)(const
 ///
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_reset_score(const char *resource_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_reset_score(zego_handle handle,
+                                                                           const char *resource_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_reset_score)(
-    const char *resource_id);
+    zego_handle handle, const char *resource_id);
 #endif
 
 /// Get the score of the previous sentence.
@@ -421,11 +431,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_reset_score)(
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param total_score [in/out] The score of the previous sentence.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_previous_score(const char *resource_id, int *total_score);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_previous_score(
+    zego_handle handle, const char *resource_id, int *total_score);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_previous_score)(
-    const char *resource_id, int *total_score);
+    zego_handle handle, const char *resource_id, int *total_score);
 #endif
 
 /// Get average score.
@@ -438,11 +448,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_previous_scor
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param total_score [in/out] Average score.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_average_score(const char *resource_id, int *total_score);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_average_score(
+    zego_handle handle, const char *resource_id, int *total_score);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_average_score)(
-    const char *resource_id, int *total_score);
+    zego_handle handle, const char *resource_id, int *total_score);
 #endif
 
 /// Get total score .
@@ -455,11 +465,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_average_score
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param total_score [in/out] total score.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_total_score(const char *resource_id, int *total_score);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_total_score(
+    zego_handle handle, const char *resource_id, int *total_score);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_total_score)(
-    const char *resource_id, int *total_score);
+    zego_handle handle, const char *resource_id, int *total_score);
 #endif
 
 /// Get full score .
@@ -472,11 +482,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_total_score)(
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param full_score [in/out] full score.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_full_score(const char *resource_id, int *full_score);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_full_score(
+    zego_handle handle, const char *resource_id, int *full_score);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_full_score)(
-    const char *resource_id, int *full_score);
+    zego_handle handle, const char *resource_id, int *full_score);
 #endif
 
 /// Get standard pitch data.
@@ -489,11 +499,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_full_score)(
 /// @param resource_id the resource ID corresponding to the accompaniment or accompaniment clip.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_standard_pitch(const char *resource_id, zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_standard_pitch(
+    zego_handle handle, const char *resource_id, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_standard_pitch)(
-    const char *resource_id, zego_seq *sequence);
+    zego_handle handle, const char *resource_id, zego_seq *sequence);
 #endif
 
 /// Get real-time pitch data.
@@ -506,11 +516,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_standard_pitc
 /// @param resource_id the resource ID corresponding to the song or accompaniment.
 /// @param pitch [in/out] real-time pitch data.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_current_pitch(const char *resource_id, int *pitch);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_current_pitch(
+    zego_handle handle, const char *resource_id, int *pitch);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_current_pitch)(
-    const char *resource_id, int *pitch);
+    zego_handle handle, const char *resource_id, int *pitch);
 #endif
 
 /// Callback for download song or accompaniment progress rate.
@@ -519,17 +529,19 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_current_pitch
 /// @param resource_id The resource ID of the song or accompaniment that triggered this callback.
 /// @param progress_rate download progress rate.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_download_progress_update)(zego_seq seq,
+typedef void (*zego_on_copyrighted_music_download_progress_update)(zego_handle handle, zego_seq seq,
                                                                    const char *resource_id,
                                                                    float progress_rate,
                                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_download_progress_update_callback(
-    zego_on_copyrighted_music_download_progress_update callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_download_progress_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_download_progress_update_callback)(
-    zego_on_copyrighted_music_download_progress_update callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_download_progress_update callback_func,
+    void *user_context);
 #endif
 
 /// Real-time pitch line callback.
@@ -538,17 +550,20 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_download_progress_upda
 /// @param current_duration Current playback progress.
 /// @param pitch_value Real-time pitch accuracy or value.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_current_pitch_value_update)(const char *resource_id,
+typedef void (*zego_on_copyrighted_music_current_pitch_value_update)(zego_handle handle,
+                                                                     const char *resource_id,
                                                                      int current_duration,
                                                                      int pitch_value,
                                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_current_pitch_value_update_callback(
-    zego_on_copyrighted_music_current_pitch_value_update callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_current_pitch_value_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_current_pitch_value_update_callback)(
-    zego_on_copyrighted_music_current_pitch_value_update callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_current_pitch_value_update callback_func,
+    void *user_context);
 #endif
 
 /// [Deprecated] Request a song. Deprecated since 3.0.2, please use the [requestResource] function instead.
@@ -564,10 +579,10 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_current_pitch_value_up
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_request_song(
-    struct zego_copyrighted_music_request_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_request_config config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_song)(
-    struct zego_copyrighted_music_request_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_request_config config, zego_seq *sequence);
 #endif
 
 /// [Deprecated] Request accompaniment. Deprecated since 3.0.2, please use the [requestResource] function instead.
@@ -583,10 +598,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_song)(
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_request_accompaniment(
-    struct zego_copyrighted_music_request_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_request_config config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_accompaniment)(
-    struct zego_copyrighted_music_request_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_request_config config, zego_seq *sequence);
 #endif
 
 /// [Deprecated] Request accompaniment clip. Deprecated since 3.0.2, please use the [requestResource] function instead.
@@ -602,10 +617,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_accompani
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_request_accompaniment_clip(
-    struct zego_copyrighted_music_request_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_request_config config, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_accompaniment_clip)(
-    struct zego_copyrighted_music_request_config config, zego_seq *sequence);
+    zego_handle handle, struct zego_copyrighted_music_request_config config, zego_seq *sequence);
 #endif
 
 /// [Deprecated] Get a song or accompaniment. Deprecated since 3.0.2, please use the [getSharedResource] function instead.
@@ -619,11 +634,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_request_accompani
 /// @param share_token access the corresponding authorization token for a song or accompaniment.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_copyrighted_music_get_music_by_token(const char *share_token, zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_music_by_token(
+    zego_handle handle, const char *share_token, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_music_by_token)(
-    const char *share_token, zego_seq *sequence);
+    zego_handle handle, const char *share_token, zego_seq *sequence);
 #endif
 
 /// [Deprecated] Get lyrics in lrc format. Deprecated since 3.2.1, please use the method with the same name with [vendorID] parameter instead.
@@ -637,10 +652,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_music_by_toke
 /// @param song_id the ID of the song or accompaniment, the song and accompaniment of a song share the same ID.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_lrc_lyric(const char *song_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_lrc_lyric(zego_handle handle,
+                                                                             const char *song_id,
                                                                              zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric)(const char *song_id,
+typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric)(zego_handle handle,
+                                                                              const char *song_id,
                                                                               zego_seq *sequence);
 #endif
 
@@ -657,10 +674,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric)(co
 /// @param is_cache [in/out] the resource's cache is existed or not
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_query_cache(
-    const char *song_id, enum zego_copyrighted_music_type type, bool *is_cache);
+    zego_handle handle, const char *song_id, enum zego_copyrighted_music_type type, bool *is_cache);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache)(
-    const char *song_id, enum zego_copyrighted_music_type type, bool *is_cache);
+    zego_handle handle, const char *song_id, enum zego_copyrighted_music_type type, bool *is_cache);
 #endif
 
 /// [Deprecated] Query the resource's cache is existed or not. Deprecated since 3.9.0, please use the method with the same name with [config] parameter instead.
@@ -677,11 +694,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache)(
 /// @param is_cache [in/out] the resource's cache is existed or not
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_query_cache_with_vendor(
-    const char *song_id, enum zego_copyrighted_music_type type,
+    zego_handle handle, const char *song_id, enum zego_copyrighted_music_type type,
     enum zego_copyrighted_music_vendor_id vendor_id, bool *is_cache);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_vendor)(
-    const char *song_id, enum zego_copyrighted_music_type type,
+    zego_handle handle, const char *song_id, enum zego_copyrighted_music_type type,
     enum zego_copyrighted_music_vendor_id vendor_id, bool *is_cache);
 #endif
 
@@ -690,15 +707,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_
 /// @param seq Sequence.
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_init)(zego_seq seq, zego_error error_code,
-                                               void *user_context);
+typedef void (*zego_on_copyrighted_music_init)(zego_handle handle, zego_seq seq,
+                                               zego_error error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_init_callback(
-    zego_on_copyrighted_music_init callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_init callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_init_callback)(
-    zego_on_copyrighted_music_init callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_init callback_func, void *user_context);
 #endif
 
 /// Callback of sending extended feature request.
@@ -708,17 +725,20 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_init_callback)(
 /// @param command request command.
 /// @param result request result, each request command has corresponding request result.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_send_extended_request)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_copyrighted_music_send_extended_request)(zego_handle handle, zego_seq seq,
+                                                                zego_error error_code,
                                                                 const char *command,
                                                                 const char *result,
                                                                 void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_send_extended_request_callback(
-    zego_on_copyrighted_music_send_extended_request callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_send_extended_request callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_send_extended_request_callback)(
-    zego_on_copyrighted_music_send_extended_request callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_send_extended_request callback_func,
+    void *user_context);
 #endif
 
 /// Get lrc format lyrics complete callback.
@@ -727,15 +747,16 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_send_extended_request_
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param lyrics lrc format lyrics.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_get_lrc_lyric)(zego_seq seq, zego_error error_code,
-                                                        const char *lyrics, void *user_context);
+typedef void (*zego_on_copyrighted_music_get_lrc_lyric)(zego_handle handle, zego_seq seq,
+                                                        zego_error error_code, const char *lyrics,
+                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_get_lrc_lyric_callback(
-    zego_on_copyrighted_music_get_lrc_lyric callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_lrc_lyric callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_lrc_lyric_callback)(
-    zego_on_copyrighted_music_get_lrc_lyric callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_lrc_lyric callback_func, void *user_context);
 #endif
 
 /// Get verbatim lyrics complete callback.
@@ -744,17 +765,19 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_lrc_lyric_callback
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param lyrics verbatim lyrics.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_get_krc_lyric_by_token)(zego_seq seq,
+typedef void (*zego_on_copyrighted_music_get_krc_lyric_by_token)(zego_handle handle, zego_seq seq,
                                                                  zego_error error_code,
                                                                  const char *lyrics,
                                                                  void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_get_krc_lyric_by_token_callback(
-    zego_on_copyrighted_music_get_krc_lyric_by_token callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_krc_lyric_by_token callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_krc_lyric_by_token_callback)(
-    zego_on_copyrighted_music_get_krc_lyric_by_token callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_krc_lyric_by_token callback_func,
+    void *user_context);
 #endif
 
 /// Callback for request song.
@@ -763,15 +786,16 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_krc_lyric_by_token
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param resource The JSON string returned by the song ordering service, including song resource information.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_request_song)(zego_seq seq, zego_error error_code,
-                                                       const char *resource, void *user_context);
+typedef void (*zego_on_copyrighted_music_request_song)(zego_handle handle, zego_seq seq,
+                                                       zego_error error_code, const char *resource,
+                                                       void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_request_song_callback(
-    zego_on_copyrighted_music_request_song callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_song callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_song_callback)(
-    zego_on_copyrighted_music_request_song callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_song callback_func, void *user_context);
 #endif
 
 /// Callback for request accompaniment.
@@ -780,16 +804,19 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_song_callback)
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param resource accompany resource information.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_request_accompaniment)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_copyrighted_music_request_accompaniment)(zego_handle handle, zego_seq seq,
+                                                                zego_error error_code,
                                                                 const char *resource,
                                                                 void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_request_accompaniment_callback(
-    zego_on_copyrighted_music_request_accompaniment callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_accompaniment callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_accompaniment_callback)(
-    zego_on_copyrighted_music_request_accompaniment callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_accompaniment callback_func,
+    void *user_context);
 #endif
 
 /// Callback for request accompaniment clip.
@@ -798,17 +825,20 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_accompaniment_
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param resource accompany clip resource information.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_request_accompaniment_clip)(zego_seq seq,
+typedef void (*zego_on_copyrighted_music_request_accompaniment_clip)(zego_handle handle,
+                                                                     zego_seq seq,
                                                                      zego_error error_code,
                                                                      const char *resource,
                                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_request_accompaniment_clip_callback(
-    zego_on_copyrighted_music_request_accompaniment_clip callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_accompaniment_clip callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_accompaniment_clip_callback)(
-    zego_on_copyrighted_music_request_accompaniment_clip callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_accompaniment_clip callback_func,
+    void *user_context);
 #endif
 
 /// Callback for acquire songs or accompaniment through authorization token.
@@ -817,16 +847,19 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_accompaniment_
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param resource song or accompany resource information.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_get_music_by_token)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_copyrighted_music_get_music_by_token)(zego_handle handle, zego_seq seq,
+                                                             zego_error error_code,
                                                              const char *resource,
                                                              void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_get_music_by_token_callback(
-    zego_on_copyrighted_music_get_music_by_token callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_music_by_token callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_music_by_token_callback)(
-    zego_on_copyrighted_music_get_music_by_token callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_music_by_token callback_func,
+    void *user_context);
 #endif
 
 /// Callback of requesting music resource.
@@ -835,16 +868,19 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_music_by_token_cal
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param resource The JSON string returned by the song ordering service, including music resource information.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_request_resource)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_copyrighted_music_request_resource)(zego_handle handle, zego_seq seq,
+                                                           zego_error error_code,
                                                            const char *resource,
                                                            void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_request_resource_callback(
-    zego_on_copyrighted_music_request_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_resource callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_resource_callback)(
-    zego_on_copyrighted_music_request_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_request_resource callback_func,
+    void *user_context);
 #endif
 
 /// Callback of getting shared music resource.
@@ -853,16 +889,19 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_resource_callb
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param resource The JSON string returned by the song ordering service, including music resource information.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_get_shared_resource)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_copyrighted_music_get_shared_resource)(zego_handle handle, zego_seq seq,
+                                                              zego_error error_code,
                                                               const char *resource,
                                                               void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_get_shared_resource_callback(
-    zego_on_copyrighted_music_get_shared_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_shared_resource callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_shared_resource_callback)(
-    zego_on_copyrighted_music_get_shared_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_shared_resource callback_func,
+    void *user_context);
 #endif
 
 /// Callback for download song or accompaniment.
@@ -870,15 +909,15 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_shared_resource_ca
 /// @param seq Sequence.
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_download)(zego_seq seq, zego_error error_code,
-                                                   void *user_context);
+typedef void (*zego_on_copyrighted_music_download)(zego_handle handle, zego_seq seq,
+                                                   zego_error error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_download_callback(
-    zego_on_copyrighted_music_download callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_download callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_download_callback)(
-    zego_on_copyrighted_music_download callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_download callback_func, void *user_context);
 #endif
 
 /// Get standard pitch data complete callback.
@@ -887,15 +926,18 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_download_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param pitch Standard pitch data.
 /// @param user_context Context of user.
-typedef void (*zego_on_copyrighted_music_get_standard_pitch)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_copyrighted_music_get_standard_pitch)(zego_handle handle, zego_seq seq,
+                                                             zego_error error_code,
                                                              const char *pitch, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copyrighted_music_get_standard_pitch_callback(
-    zego_on_copyrighted_music_get_standard_pitch callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_standard_pitch callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_standard_pitch_callback)(
-    zego_on_copyrighted_music_get_standard_pitch callback_func, void *user_context);
+    zego_handle handle, zego_on_copyrighted_music_get_standard_pitch callback_func,
+    void *user_context);
 #endif
 
 ZEGO_END_DECLS

@@ -18,10 +18,12 @@ ZEGO_BEGIN_DECLS
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_low_light_enhancement(
-    enum zego_low_light_enhancement_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_low_light_enhancement_mode mode,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_low_light_enhancement)(
-    enum zego_low_light_enhancement_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_low_light_enhancement_mode mode,
+    enum zego_publish_channel channel);
 #endif
 
 /// Set low light enhancement params.
@@ -36,10 +38,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_low_light_enhancement)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_low_light_enhancement_params(
-    struct zego_exp_low_light_enhancement_params params, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_exp_low_light_enhancement_params params,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_low_light_enhancement_params)(
-    struct zego_exp_low_light_enhancement_params params, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_exp_low_light_enhancement_params params,
+    enum zego_publish_channel channel);
 #endif
 
 /// Set video denoise params.
@@ -55,10 +59,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_low_light_enhancement_params)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_video_denoise_params(
-    struct zego_video_denoise_params params, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_video_denoise_params params, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_video_denoise_params)(
-    struct zego_video_denoise_params params, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_video_denoise_params params, enum zego_publish_channel channel);
 #endif
 
 /// Whether to enable acoustic echo cancellation (AEC).
@@ -73,9 +77,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_video_denoise_params)(
 ///
 /// @param enable Whether to enable echo cancellation, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_aec(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_aec(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_aec)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_aec)(zego_handle handle, bool enable);
 #endif
 
 /// Whether to turn on acoustic echo cancellation (AEC) when using the headphone.
@@ -92,9 +96,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_aec)(bool enable);
 ///
 /// @param enable Whether to enable, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_headphone_aec(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_headphone_aec(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_headphone_aec)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_headphone_aec)(zego_handle handle, bool enable);
 #endif
 
 /// Sets the acoustic echo cancellation (AEC) mode.
@@ -108,9 +112,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_headphone_aec)(bool enable);
 ///
 /// @param mode Echo cancellation mode
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_aec_mode(enum zego_aec_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_aec_mode(zego_handle handle,
+                                                          enum zego_aec_mode mode);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_aec_mode)(enum zego_aec_mode mode);
+typedef zego_error(EXP_CALL *pfnzego_express_set_aec_mode)(zego_handle handle,
+                                                           enum zego_aec_mode mode);
 #endif
 
 /// Enables or disables automatic gain control (AGC).
@@ -124,9 +130,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_aec_mode)(enum zego_aec_mode mo
 ///
 /// @param enable Whether to enable automatic gain control, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_agc(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_agc(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_agc)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_agc)(zego_handle handle, bool enable);
 #endif
 
 /// Enables or disables active noise suppression (ANS, aka ANC).
@@ -141,9 +147,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_agc)(bool enable);
 ///
 /// @param enable Whether to enable noise suppression, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_ans(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_ans(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_ans)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_ans)(zego_handle handle, bool enable);
 #endif
 
 /// Enables or disables transient noise suppression.
@@ -158,9 +164,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_ans)(bool enable);
 ///
 /// @param enable Whether to enable transient noise suppression, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_transient_ans(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_transient_ans(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_transient_ans)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_transient_ans)(zego_handle handle, bool enable);
 #endif
 
 /// Sets the automatic noise suppression (ANS) mode.
@@ -174,9 +180,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_transient_ans)(bool enable);
 ///
 /// @param mode Audio Noise Suppression mode
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_ans_mode(enum zego_ans_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_ans_mode(zego_handle handle,
+                                                          enum zego_ans_mode mode);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_ans_mode)(enum zego_ans_mode mode);
+typedef zego_error(EXP_CALL *pfnzego_express_set_ans_mode)(zego_handle handle,
+                                                           enum zego_ans_mode mode);
 #endif
 
 /// Enables or disables speech enhancement.
@@ -193,9 +201,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_ans_mode)(enum zego_ans_mode mo
 /// @param enable Whether to enable speech enhancement, true: enable, false: disable
 /// @param level Enhancement level; The value range is [0, 10]
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_speech_enhance(bool enable, int level);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_speech_enhance(zego_handle handle, bool enable,
+                                                                   int level);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_speech_enhance)(bool enable, int level);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_speech_enhance)(zego_handle handle, bool enable,
+                                                                    int level);
 #endif
 
 /// Enables or disables audio mixing function.
@@ -211,9 +221,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_speech_enhance)(bool enable,
 ///
 /// @param enable Whether to enable audio mixting, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_mixing(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_mixing(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_mixing)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_mixing)(zego_handle handle, bool enable);
 #endif
 
 /// Mute or resume local playback of the mixing audio.
@@ -227,9 +237,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_mixing)(bool enable);
 ///
 /// @param mute Whether to mute local audio mixting, true: mute, false: unmute
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_local_audio_mixing(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_local_audio_mixing(zego_handle handle, bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_local_audio_mixing)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_local_audio_mixing)(zego_handle handle,
+                                                                      bool mute);
 #endif
 
 /// Sets the audio mixing output volume for both local playback and the stream to be published.
@@ -244,9 +255,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_local_audio_mixing)(bool mute)
 ///
 /// @param volume The audio mixing volume, range from 0 to 200, 100 as default.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_mixing_volume(int volume);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_mixing_volume(zego_handle handle,
+                                                                     int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mixing_volume)(int volume);
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mixing_volume)(zego_handle handle,
+                                                                      int volume);
 #endif
 
 /// Sets the audio mixing output volume for either local playback or the stream to published.
@@ -261,11 +274,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mixing_volume)(int volume
 /// @param volume The audio mixing volume, range from 0 to 200, 100 as default.
 /// @param type Local playback volume / Remote playback volume
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_audio_mixing_volume_with_type(int volume, enum zego_volume_type type);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_mixing_volume_with_type(
+    zego_handle handle, int volume, enum zego_volume_type type);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mixing_volume_with_type)(
-    int volume, enum zego_volume_type type);
+    zego_handle handle, int volume, enum zego_volume_type type);
 #endif
 
 /// Enable the Effects beauty environment.
@@ -280,9 +293,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mixing_volume_with_type)(
 /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_effects_env();
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_effects_env(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_effects_env)();
+typedef zego_error(EXP_CALL *pfnzego_express_start_effects_env)(zego_handle handle);
 #endif
 
 /// Disable the Effects beauty environment.
@@ -296,9 +309,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_effects_env)();
 /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_effects_env();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_effects_env(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_effects_env)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_effects_env)(zego_handle handle);
 #endif
 
 /// Enables or disables the beauty effect.
@@ -315,9 +328,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_effects_env)();
 ///
 /// @param enable Whether to enable the beauty effect, true is enabled; false is disabled, and the default is false.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_effects_beauty(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_effects_beauty(zego_handle handle, bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_effects_beauty)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_effects_beauty)(zego_handle handle,
+                                                                    bool enable);
 #endif
 
 /// Set beautify param.
@@ -333,10 +347,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_effects_beauty)(bool enable)
 /// @param param Beauty option param.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_effects_beauty_param(struct zego_effects_beauty_param param);
+zego_express_set_effects_beauty_param(zego_handle handle, struct zego_effects_beauty_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_effects_beauty_param)(
-    struct zego_effects_beauty_param param);
+    zego_handle handle, struct zego_effects_beauty_param param);
 #endif
 
 /// Set the sound equalizer (EQ).
@@ -344,16 +358,18 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_effects_beauty_param)(
 /// Available since: 1.12.0
 /// Description: Call this function to set the sound equalizer adjust the tone.
 /// Use cases: Often used in voice chatroom, KTV.
-/// When to call: It needs to be called after [createEngine].
+/// When to call: It should be called after the engine has started.
 /// Restrictions: None.
 ///
 /// @param band_index Band frequency index, the value range is [0, 9], corresponding to 10 frequency bands, and the center frequencies are [31, 62, 125, 250, 500, 1K, 2K, 4K, 8K, 16K] Hz.
 /// @param band_gain Band gain for the index, the value range is [-15, 15]. Default value is 0, if all gain values in all frequency bands are 0, EQ function will be disabled.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_equalizer_gain(int band_index,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_equalizer_gain(zego_handle handle,
+                                                                      int band_index,
                                                                       float band_gain);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_audio_equalizer_gain)(int band_index,
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_equalizer_gain)(zego_handle handle,
+                                                                       int band_index,
                                                                        float band_gain);
 #endif
 
@@ -372,10 +388,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_equalizer_gain)(int band_
 /// @param preset The voice changer preset enumeration.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_voice_changer_preset(enum zego_voice_changer_preset preset);
+zego_express_set_voice_changer_preset(zego_handle handle, enum zego_voice_changer_preset preset);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_voice_changer_preset)(
-    enum zego_voice_changer_preset preset);
+    zego_handle handle, enum zego_voice_changer_preset preset);
 #endif
 
 /// Setting up the specific voice changer parameters.
@@ -390,9 +406,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_voice_changer_preset)(
 ///
 /// @param param Voice changer parameters.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_voice_changer_param(float param);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_voice_changer_param(zego_handle handle,
+                                                                     float param);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_voice_changer_param)(float param);
+typedef zego_error(EXP_CALL *pfnzego_express_set_voice_changer_param)(zego_handle handle,
+                                                                      float param);
 #endif
 
 /// Setting up the reverberation via preset enumeration.
@@ -408,9 +426,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_voice_changer_param)(float para
 ///
 /// @param preset The reverberation preset enumeration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_reverb_preset(enum zego_reverb_preset preset);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_reverb_preset(zego_handle handle,
+                                                               enum zego_reverb_preset preset);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_preset)(enum zego_reverb_preset preset);
+typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_preset)(zego_handle handle,
+                                                                enum zego_reverb_preset preset);
 #endif
 
 /// Setting up the specific reverberation parameters.
@@ -427,10 +447,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_preset)(enum zego_reverb
 /// @param param Reverb advanced parameter.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_reverb_advanced_param(struct zego_reverb_advanced_param param);
+zego_express_set_reverb_advanced_param(zego_handle handle, struct zego_reverb_advanced_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_advanced_param)(
-    struct zego_reverb_advanced_param param);
+    zego_handle handle, struct zego_reverb_advanced_param param);
 #endif
 
 /// Setting up the specific reverberation echo parameters.
@@ -444,10 +464,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_advanced_param)(
 /// @param param The reverberation echo parameter.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_reverb_echo_param(struct zego_reverb_echo_param param);
+zego_express_set_reverb_echo_param(zego_handle handle, struct zego_reverb_echo_param param);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_echo_param)(
-    struct zego_reverb_echo_param param);
+    zego_handle handle, struct zego_reverb_echo_param param);
 #endif
 
 /// Enable or disable the virtual stereo effect when publishing stream.
@@ -461,9 +481,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_reverb_echo_param)(
 /// @param enable true to turn on the virtual stereo, false to turn off the virtual stereo.
 /// @param angle The angle of the sound source in virtual stereo in the range of -1 ~ 360, with 90 being directly in front, 0 / 180 / 270 corresponding to the rightmost and leftmost respectively. In particular, when set to -1, it is all round virtual stereo effects.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_virtual_stereo(bool enable, int angle);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_virtual_stereo(zego_handle handle, bool enable,
+                                                                   int angle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_virtual_stereo)(bool enable, int angle);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_virtual_stereo)(zego_handle handle, bool enable,
+                                                                    int angle);
 #endif
 
 /// Enable or disable the virtual stereo effect when playing stream.
@@ -478,11 +500,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_virtual_stereo)(bool enable,
 /// @param angle The angle of the sound source in virtual stereo in the range of 0 ~ 360, with 90 being directly in front, 0 / 180 / 270 corresponding to the rightmost and leftmost respectively.
 /// @param stream_id Stream ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_enable_play_stream_virtual_stereo(bool enable, int angle, const char *stream_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_play_stream_virtual_stereo(
+    zego_handle handle, bool enable, int angle, const char *stream_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_play_stream_virtual_stereo)(
-    bool enable, int angle, const char *stream_id);
+    zego_handle handle, bool enable, int angle, const char *stream_id);
 #endif
 
 /// Turn on or off the electronic sound effect.
@@ -500,11 +522,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_play_stream_virtual_stereo)(
 /// @param mode Mode of Electronic Effects reference.
 /// @param tonal The starting pitch of an electric tone in a given mode, representing 12 semitones in one octave of the sound, in the range [0, 11].
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_electronic_effects(bool enable, enum zego_electronic_effects_mode mode, int tonal);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_electronic_effects(
+    zego_handle handle, bool enable, enum zego_electronic_effects_mode mode, int tonal);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_electronic_effects)(
-    bool enable, enum zego_electronic_effects_mode mode, int tonal);
+    zego_handle handle, bool enable, enum zego_electronic_effects_mode mode, int tonal);
 #endif
 
 /// Enable color enhancement.
@@ -520,10 +542,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_electronic_effects)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_color_enhancement(
-    bool enable, struct zego_color_enhancement_params params, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_color_enhancement_params params,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_color_enhancement)(
-    bool enable, struct zego_color_enhancement_params params, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_color_enhancement_params params,
+    enum zego_publish_channel channel);
 #endif
 
 /// Audio mixing callback.
@@ -537,15 +561,16 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_color_enhancement)(
 ///
 /// @param data Audio mixing data. Note that this parameter is an input parameter, and the developer needs to modify the value of each parameter in the struct.
 /// @param user_context Context of user.
-typedef void (*zego_on_copy_audio_mixing_data)(struct zego_audio_mixing_data *data,
+typedef void (*zego_on_copy_audio_mixing_data)(zego_handle handle,
+                                               struct zego_audio_mixing_data *data,
                                                void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_copy_audio_mixing_data_callback(
-    zego_on_copy_audio_mixing_data callback_func, void *user_context);
+    zego_handle handle, zego_on_copy_audio_mixing_data callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_copy_audio_mixing_data_callback)(
-    zego_on_copy_audio_mixing_data callback_func, void *user_context);
+    zego_handle handle, zego_on_copy_audio_mixing_data callback_func, void *user_context);
 #endif
 
 /// [Deprecated] Enables or disables the beauty features for the specified publish channel. Deprecated since 2.16.0, please use the [enableEffectsBeauty] function instead.
@@ -563,10 +588,12 @@ typedef void(EXP_CALL *pfnzego_register_copy_audio_mixing_data_callback)(
 /// @param feature_bit_mask Beauty features, bitmask format, you can choose to enable several features in [ZegoBeautifyFeature] at the same time
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_beautify(int feature_bit_mask,
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_beautify(zego_handle handle,
+                                                             int feature_bit_mask,
                                                              enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_beautify)(int feature_bit_mask,
+typedef zego_error(EXP_CALL *pfnzego_express_enable_beautify)(zego_handle handle,
+                                                              int feature_bit_mask,
                                                               enum zego_publish_channel channel);
 #endif
 
@@ -584,11 +611,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_beautify)(int feature_bit_ma
 /// @param option Beautify option.
 /// @param channel stream publish channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_beautify_option(struct zego_beautify_option option,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_beautify_option(zego_handle handle,
+                                                                 struct zego_beautify_option option,
                                                                  enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_beautify_option)(
-    struct zego_beautify_option option, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_beautify_option option, enum zego_publish_channel channel);
 #endif
 
 ZEGO_END_DECLS

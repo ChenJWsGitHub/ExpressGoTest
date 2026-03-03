@@ -17,9 +17,9 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param mute Whether to mute (disable) the microphone, `true`: mute (disable) microphone, `false`: enable microphone.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_microphone(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_microphone(zego_handle handle, bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_microphone)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_microphone)(zego_handle handle, bool mute);
 #endif
 
 /// Checks whether the microphone is muted.
@@ -32,9 +32,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_microphone)(bool mute);
 ///
 /// @param is_mute [in/out] Whether the microphone is muted; `true`: the microphone is muted; `false`: the microphone is enable (not muted).
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_is_microphone_muted(bool *is_mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_is_microphone_muted(zego_handle handle, bool *is_mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_is_microphone_muted)(bool *is_mute);
+typedef zego_error(EXP_CALL *pfnzego_express_is_microphone_muted)(zego_handle handle,
+                                                                  bool *is_mute);
 #endif
 
 /// Mutes or unmutes the audio output speaker.
@@ -47,9 +48,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_microphone_muted)(bool *is_mute)
 ///
 /// @param mute Whether to mute (disable) speaker audio output, `true`: mute (disable) speaker audio output, `false`: enable speaker audio output.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_mute_speaker(bool mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_speaker(zego_handle handle, bool mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_mute_speaker)(bool mute);
+typedef zego_error(EXP_CALL *pfnzego_express_mute_speaker)(zego_handle handle, bool mute);
 #endif
 
 /// Checks whether the audio output speaker is muted.
@@ -62,9 +63,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_speaker)(bool mute);
 ///
 /// @param is_mute [in/out] Whether the speaker is muted; `true`: the speaker is muted; `false`: the speaker is enable (not muted).
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_is_speaker_muted(bool *is_mute);
+ZEGOEXP_API zego_error EXP_CALL zego_express_is_speaker_muted(zego_handle handle, bool *is_mute);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_is_speaker_muted)(bool *is_mute);
+typedef zego_error(EXP_CALL *pfnzego_express_is_speaker_muted)(zego_handle handle, bool *is_mute);
 #endif
 
 /// Gets a list of audio devices.
@@ -76,11 +77,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_speaker_muted)(bool *is_mute);
 /// @param device_list [in/out] Audo device List.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_get_audio_device_list(enum zego_audio_device_type device_type, int *device_count,
-                                   struct zego_device_info **device_list);
+zego_express_get_audio_device_list(zego_handle handle, enum zego_audio_device_type device_type,
+                                   int *device_count, struct zego_device_info **device_list);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_audio_device_list)(
-    enum zego_audio_device_type device_type, int *device_count,
+    zego_handle handle, enum zego_audio_device_type device_type, int *device_count,
     struct zego_device_info **device_list);
 #endif
 
@@ -91,10 +92,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_audio_device_list)(
 /// @param device_list Audio device type
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_free_audio_device_list(struct zego_device_info *device_list);
+zego_express_free_audio_device_list(zego_handle handle, struct zego_device_info *device_list);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_free_audio_device_list)(
-    struct zego_device_info *device_list);
+    zego_handle handle, struct zego_device_info *device_list);
 #endif
 
 /// Get the device ID of the default audio device.
@@ -105,10 +106,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_free_audio_device_list)(
 /// @param device_id [in/out] Default Audio device ID.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_get_default_audio_device_id(
-    enum zego_audio_device_type device_type, const char **device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char **device_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_default_audio_device_id)(
-    enum zego_audio_device_type device_type, const char **device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char **device_id);
 #endif
 
 /// Chooses to use the specified audio device.
@@ -121,11 +122,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_default_audio_device_id)(
 /// @param device_type Audio device type
 /// @param device_id ID of a device obtained by [getAudioDeviceList]
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_use_audio_device(enum zego_audio_device_type device_type, const char *device_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_use_audio_device(
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_use_audio_device)(
-    enum zego_audio_device_type device_type, const char *device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id);
 #endif
 
 /// Get volume for the specified audio device.
@@ -136,11 +137,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_use_audio_device)(
 /// @param device_id ID of a device obtained by [getAudioDeviceList]
 /// @param volume [in/out] Device volume.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_audio_device_volume(
-    enum zego_audio_device_type device_type, const char *device_id, int *volume);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_get_audio_device_volume(zego_handle handle, enum zego_audio_device_type device_type,
+                                     const char *device_id, int *volume);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_audio_device_volume)(
-    enum zego_audio_device_type device_type, const char *device_id, int *volume);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id,
+    int *volume);
 #endif
 
 /// Set volume for the specified audio device.
@@ -153,10 +156,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_audio_device_volume)(
 /// @param volume Device volume
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_device_volume(
-    enum zego_audio_device_type device_type, const char *device_id, int volume);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id, int volume);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_audio_device_volume)(
-    enum zego_audio_device_type device_type, const char *device_id, int volume);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id, int volume);
 #endif
 
 /// Set the volume of the speaker in the App.
@@ -171,10 +174,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_device_volume)(
 /// @param device_id ID of a device obtained by [getAudioDeviceList].
 /// @param volume Device volume.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_speaker_volume_in_app(const char *device_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_speaker_volume_in_app(zego_handle handle,
+                                                                       const char *device_id,
                                                                        int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_speaker_volume_in_app)(const char *device_id,
+typedef zego_error(EXP_CALL *pfnzego_express_set_speaker_volume_in_app)(zego_handle handle,
+                                                                        const char *device_id,
                                                                         int volume);
 #endif
 
@@ -189,9 +194,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_speaker_volume_in_app)(const ch
 /// @param device_id ID of a device obtained by [getAudioDeviceList].
 /// @return Device volume.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API int EXP_CALL zego_express_get_speaker_volume_in_app(const char *device_id);
+ZEGOEXP_API int EXP_CALL zego_express_get_speaker_volume_in_app(zego_handle handle,
+                                                                const char *device_id);
 #else
-typedef int(EXP_CALL *pfnzego_express_get_speaker_volume_in_app)(const char *device_id);
+typedef int(EXP_CALL *pfnzego_express_get_speaker_volume_in_app)(zego_handle handle,
+                                                                 const char *device_id);
 #endif
 
 /// Turn on audio device volume monitoring.
@@ -207,10 +214,10 @@ typedef int(EXP_CALL *pfnzego_express_get_speaker_volume_in_app)(const char *dev
 /// @param device_id ID of a device obtained by [getAudioDeviceList]
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_audio_device_volume_monitor(
-    enum zego_audio_device_type device_type, const char *device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_audio_device_volume_monitor)(
-    enum zego_audio_device_type device_type, const char *device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id);
 #endif
 
 /// Turn off audio device volume monitoring. Only for Windows/macOS.
@@ -224,10 +231,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_audio_device_volume_monitor)(
 /// @param device_id ID of a device obtained by [getAudioDeviceList]
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_stop_audio_device_volume_monitor(
-    enum zego_audio_device_type device_type, const char *device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_device_volume_monitor)(
-    enum zego_audio_device_type device_type, const char *device_id);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id);
 #endif
 
 /// Mutes or unmutes the audio device.
@@ -239,10 +246,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_device_volume_monitor)(
 /// @param mute Whether to mute the audio device; `true` means to mute the audio device; `false` means to unmute the audio device.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_mute_audio_device(
-    enum zego_audio_device_type device_type, const char *device_id, bool mute);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id, bool mute);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_mute_audio_device)(
-    enum zego_audio_device_type device_type, const char *device_id, bool mute);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id, bool mute);
 #endif
 
 /// Set the audio device mode.
@@ -256,10 +263,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_audio_device)(
 /// @param device_mode Audio device mode
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_audio_device_mode(enum zego_audio_device_mode device_mode);
+zego_express_set_audio_device_mode(zego_handle handle, enum zego_audio_device_mode device_mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_audio_device_mode)(
-    enum zego_audio_device_mode device_mode);
+    zego_handle handle, enum zego_audio_device_mode device_mode);
 #endif
 
 /// Check if the audio device is muted.
@@ -270,11 +277,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_device_mode)(
 /// @param device_id ID of a device obtained by [getAudioDeviceList]
 /// @param is_mute [in/out] Whether the audio device is muted; `true` means the audio device is muted; `false` means the audio device is not muted.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_is_audio_device_muted(
-    enum zego_audio_device_type device_type, const char *device_id, bool *is_mute);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_is_audio_device_muted(zego_handle handle, enum zego_audio_device_type device_type,
+                                   const char *device_id, bool *is_mute);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_is_audio_device_muted)(
-    enum zego_audio_device_type device_type, const char *device_id, bool *is_mute);
+    zego_handle handle, enum zego_audio_device_type device_type, const char *device_id,
+    bool *is_mute);
 #endif
 
 /// Enables or disables the audio capture device.
@@ -289,9 +298,33 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_audio_device_muted)(
 ///
 /// @param enable Whether to enable the audio capture device, `true`: enable audio capture device, `false`: disable audio capture device.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_capture_device(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_capture_device(zego_handle handle,
+                                                                         bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_capture_device)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_capture_device)(zego_handle handle,
+                                                                          bool enable);
+#endif
+
+/// Asynchronous enables or disables the audio capture device.
+///
+/// Available since: 3.23.0
+/// Description: This function is used to control whether to use the audio collection device. When the audio collection device is turned off, the SDK will no longer occupy the audio device. Of course, if the stream is being published at this time, by default, mute data will be used as audio data for streaming. not support Linux.
+/// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
+/// Default value: The default is `true`.
+/// When to call: After creating the engine [createEngine].
+/// Restrictions: None.
+/// Related APIs: Turning off or turning on the microphone on the hardware is a time-consuming operation, and there is a certain performance overhead when the user performs frequent operations. [muteMicrophone] is generally recommended.
+///
+/// @param enable Whether to enable the audio capture device, `true`: enable audio capture device, `false`: disable audio capture device.
+/// @param sequence [in] Context that identifies which invocation triggered this callback.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_audio_capture_device_async(zego_handle handle,
+                                                                               bool enable,
+                                                                               zego_seq sequence);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_capture_device_async)(zego_handle handle,
+                                                                                bool enable,
+                                                                                zego_seq sequence);
 #endif
 
 /// get current audio route type.
@@ -305,10 +338,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_audio_capture_device)(bool e
 /// @param route_type [in/out] Current audio route type.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_get_audio_route_type(enum zego_audio_route *route_type);
+zego_express_get_audio_route_type(zego_handle handle, enum zego_audio_route *route_type);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_audio_route_type)(
-    enum zego_audio_route *route_type);
+    zego_handle handle, enum zego_audio_route *route_type);
 #endif
 
 /// Whether to use the built-in speaker to play audio.
@@ -321,9 +354,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_audio_route_type)(
 ///
 /// @param default_to_speaker Whether to use the built-in speaker to play sound, `true`: use the built-in speaker to play sound, `false`: use the highest priority audio output device scheduled by the current system to play sound
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_route_to_speaker(bool default_to_speaker);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_route_to_speaker(zego_handle handle,
+                                                                        bool default_to_speaker);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_audio_route_to_speaker)(bool default_to_speaker);
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_route_to_speaker)(zego_handle handle,
+                                                                         bool default_to_speaker);
 #endif
 
 /// Turns on/off the camera (for the specified channel).
@@ -340,12 +375,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_route_to_speaker)(bool de
 /// @param notify_mode Mode for notifying the local device status.
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_enable_camera(bool enable, enum zego_exp_notify_device_state_mode notify_mode,
-                           enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_camera(
+    zego_handle handle, bool enable, enum zego_exp_notify_device_state_mode notify_mode,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_camera)(
-    bool enable, enum zego_exp_notify_device_state_mode notify_mode,
+    zego_handle handle, bool enable, enum zego_exp_notify_device_state_mode notify_mode,
     enum zego_publish_channel channel);
 #endif
 
@@ -362,10 +397,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_camera)(
 /// @param enable [ZegoVideoSourceTypeCamera] if or not use front camera, `true`: use the front camera, `false`: use the the rear camera.
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_use_front_camera(bool enable,
+ZEGOEXP_API zego_error EXP_CALL zego_express_use_front_camera(zego_handle handle, bool enable,
                                                               enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_use_front_camera)(bool enable,
+typedef zego_error(EXP_CALL *pfnzego_express_use_front_camera)(zego_handle handle, bool enable,
                                                                enum zego_publish_channel channel);
 #endif
 
@@ -380,11 +415,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_use_front_camera)(bool enable,
 /// @param channel Publishing stream channel
 /// @param is_supported [in/out] Whether to support focus, support is true, not support is false.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_is_camera_focus_supported(enum zego_publish_channel channel, bool *is_supported);
+ZEGOEXP_API zego_error EXP_CALL zego_express_is_camera_focus_supported(
+    zego_handle handle, enum zego_publish_channel channel, bool *is_supported);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_is_camera_focus_supported)(
-    enum zego_publish_channel channel, bool *is_supported);
+    zego_handle handle, enum zego_publish_channel channel, bool *is_supported);
 #endif
 
 /// Set the camera focus mode.
@@ -399,10 +434,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_camera_focus_supported)(
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_focus_mode(
-    enum zego_camera_focus_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_camera_focus_mode mode, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_focus_mode)(
-    enum zego_camera_focus_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_camera_focus_mode mode, enum zego_publish_channel channel);
 #endif
 
 /// Set the focus point in the preview view.
@@ -418,11 +453,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_focus_mode)(
 /// @param y Normalized Y axis coordinate value, effective value [0,1].
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_camera_focus_point_in_preview(float x, float y, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_focus_point_in_preview(
+    zego_handle handle, float x, float y, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_focus_point_in_preview)(
-    float x, float y, enum zego_publish_channel channel);
+    zego_handle handle, float x, float y, enum zego_publish_channel channel);
 #endif
 
 /// Set the camera exposure mode.
@@ -437,10 +472,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_focus_point_in_preview)(
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_exposure_mode(
-    enum zego_camera_exposure_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_camera_exposure_mode mode, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_mode)(
-    enum zego_camera_exposure_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_camera_exposure_mode mode, enum zego_publish_channel channel);
 #endif
 
 /// Set the exposure point in the preview view.
@@ -457,10 +492,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_mode)(
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_exposure_point_in_preview(
-    float x, float y, enum zego_publish_channel channel);
+    zego_handle handle, float x, float y, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_point_in_preview)(
-    float x, float y, enum zego_publish_channel channel);
+    zego_handle handle, float x, float y, enum zego_publish_channel channel);
 #endif
 
 /// Set the camera exposure compensation value and support spedifying the publish channel.
@@ -477,11 +512,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_point_in_previe
 /// @param value Camera exposure, the value range is [-1,1], the default 0, -1 tends to darken, 1 tends to brighten.
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_camera_exposure_compensation(float value, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_exposure_compensation(
+    zego_handle handle, float value, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_compensation)(
-    float value, enum zego_publish_channel channel);
+    zego_handle handle, float value, enum zego_publish_channel channel);
 #endif
 
 /// Set the zoom factor of the camera and support specifying the publish channel. Every time the camera is restarted, the camera zoom factor will return to the initial value (1.0).
@@ -495,11 +530,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_exposure_compensation)(
 /// @param factor The zoom factor of the camera, the minimum value is 1.0, and the maximum value is the return value of [getCameraMaxZoomFactor].
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_camera_zoom_factor(float factor, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_zoom_factor(
+    zego_handle handle, float factor, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_zoom_factor)(
-    float factor, enum zego_publish_channel channel);
+    zego_handle handle, float factor, enum zego_publish_channel channel);
 #endif
 
 /// Get the maximum zoom factor of the camera and support specifying the publish channel.
@@ -513,11 +548,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_zoom_factor)(
 /// @param channel Publishing stream channel
 /// @param max_factor [in/out] The maximum zoom factor of the camera.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_get_camera_max_zoom_factor(enum zego_publish_channel channel, float *max_factor);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_camera_max_zoom_factor(
+    zego_handle handle, enum zego_publish_channel channel, float *max_factor);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_camera_max_zoom_factor)(
-    enum zego_publish_channel channel, float *max_factor);
+    zego_handle handle, enum zego_publish_channel channel, float *max_factor);
 #endif
 
 /// Enable camera adaptive frame rate.
@@ -535,10 +570,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_camera_max_zoom_factor)(
 /// @param channel Publishing stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_camera_adaptive_fps(
-    bool enable, int min_fps, int max_fps, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, int min_fps, int max_fps, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_camera_adaptive_fps)(
-    bool enable, int min_fps, int max_fps, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, int min_fps, int max_fps, enum zego_publish_channel channel);
 #endif
 
 /// Chooses to use the specified video device (for the specified channel).
@@ -549,10 +584,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_camera_adaptive_fps)(
 /// @param device_id ID of a device obtained by [getVideoDeviceList]
 /// @param channel Publishing stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_use_video_device(const char *device_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_use_video_device(zego_handle handle,
+                                                              const char *device_id,
                                                               enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_use_video_device)(const char *device_id,
+typedef zego_error(EXP_CALL *pfnzego_express_use_video_device)(zego_handle handle,
+                                                               const char *device_id,
                                                                enum zego_publish_channel channel);
 #endif
 
@@ -564,11 +601,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_use_video_device)(const char *devic
 /// @param device_count [in/out] Number of video devices.
 /// @param device_list [in/out] List of video devices
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_get_video_device_list(int *device_count, struct zego_device_info **device_list);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_video_device_list(
+    zego_handle handle, int *device_count, struct zego_device_info **device_list);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_video_device_list)(
-    int *device_count, struct zego_device_info **device_list);
+    zego_handle handle, int *device_count, struct zego_device_info **device_list);
 #endif
 
 /// Release a list of video devices.
@@ -578,10 +615,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_video_device_list)(
 /// @param device_list Video device type
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_free_video_device_list(struct zego_device_info *device_list);
+zego_express_free_video_device_list(zego_handle handle, struct zego_device_info *device_list);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_free_video_device_list)(
-    struct zego_device_info *device_list);
+    zego_handle handle, struct zego_device_info *device_list);
 #endif
 
 /// Get the device ID of the default video device.
@@ -591,9 +628,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_free_video_device_list)(
 ///
 /// @param device_id [in/out] Default video device ID.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_default_video_device_id(const char **device_id);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_default_video_device_id(zego_handle handle,
+                                                                         const char **device_id);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_get_default_video_device_id)(const char **device_id);
+typedef zego_error(EXP_CALL *pfnzego_express_get_default_video_device_id)(zego_handle handle,
+                                                                          const char **device_id);
 #endif
 
 /// Starts sound level monitoring. Support setting the listening interval.
@@ -608,9 +647,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_default_video_device_id)(const 
 ///
 /// @param millisecond Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000]. Default is 100 ms.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_sound_level_monitor(unsigned int millisecond);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_sound_level_monitor(zego_handle handle,
+                                                                       unsigned int millisecond);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_sound_level_monitor)(unsigned int millisecond);
+typedef zego_error(EXP_CALL *pfnzego_express_start_sound_level_monitor)(zego_handle handle,
+                                                                        unsigned int millisecond);
 #endif
 
 /// Starts sound level monitoring. Support enable some advanced feature.
@@ -625,11 +666,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_sound_level_monitor)(unsigned
 ///
 /// @param config Configuration for starts the sound level monitor.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_start_sound_level_monitor_with_config(struct zego_sound_level_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_sound_level_monitor_with_config(
+    zego_handle handle, struct zego_sound_level_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_sound_level_monitor_with_config)(
-    struct zego_sound_level_config config);
+    zego_handle handle, struct zego_sound_level_config config);
 #endif
 
 /// Stops sound level monitoring.
@@ -639,9 +680,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_sound_level_monitor_with_conf
 /// When to call: After the engine is created [createEngine].
 /// Related APIs: Soundwave monitoring can be initiated via [startSoundLevelMonitor].
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_sound_level_monitor();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_sound_level_monitor(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_sound_level_monitor)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_sound_level_monitor)(zego_handle handle);
 #endif
 
 /// Starts audio spectrum monitoring. Support setting the listening interval.
@@ -654,10 +695,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_sound_level_monitor)();
 ///
 /// @param millisecond Monitoring time period of the audio spectrum, in milliseconds, the minimum value is 10. Default is 500 ms.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_audio_spectrum_monitor(unsigned int millisecond);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_audio_spectrum_monitor(zego_handle handle,
+                                                                          unsigned int millisecond);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_audio_spectrum_monitor)(
-    unsigned int millisecond);
+    zego_handle handle, unsigned int millisecond);
 #endif
 
 /// Stops audio spectrum monitoring.
@@ -667,9 +709,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_audio_spectrum_monitor)(
 /// When to call: After the engine is created [createEngine].
 /// Related APIs: Audio spectrum monitoring can be initiated via [startAudioSpectrumMonitor].
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_audio_spectrum_monitor();
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_audio_spectrum_monitor(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_spectrum_monitor)();
+typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_spectrum_monitor)(zego_handle handle);
 #endif
 
 /// Enables or disables headphone monitoring.
@@ -684,9 +726,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_spectrum_monitor)();
 ///
 /// @param enable Whether to use headphone monitor, true: enable, false: disable
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_headphone_monitor(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_headphone_monitor(zego_handle handle,
+                                                                      bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_headphone_monitor)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_headphone_monitor)(zego_handle handle,
+                                                                       bool enable);
 #endif
 
 /// Sets the headphone monitor volume.
@@ -699,9 +743,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_headphone_monitor)(bool enab
 ///
 /// @param volume headphone monitor volume, range from 0 to 200, 60 as default.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_headphone_monitor_volume(int volume);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_headphone_monitor_volume(zego_handle handle,
+                                                                          int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_headphone_monitor_volume)(int volume);
+typedef zego_error(EXP_CALL *pfnzego_express_set_headphone_monitor_volume)(zego_handle handle,
+                                                                           int volume);
 #endif
 
 /// Enable or disable system audio capture.
@@ -717,9 +763,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_headphone_monitor_volume)(int v
 ///
 /// @param enable Whether to mix system playout.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_mix_system_playout(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_mix_system_playout(zego_handle handle,
+                                                                       bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_mix_system_playout)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_mix_system_playout)(zego_handle handle,
+                                                                        bool enable);
 #endif
 
 /// set system audio capture volume.
@@ -734,9 +782,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_mix_system_playout)(bool ena
 ///
 /// @param volume the volume. Valid range [0, 200], default is 100.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_mix_system_playout_volume(int volume);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_mix_system_playout_volume(zego_handle handle,
+                                                                           int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_mix_system_playout_volume)(int volume);
+typedef zego_error(EXP_CALL *pfnzego_express_set_mix_system_playout_volume)(zego_handle handle,
+                                                                            int volume);
 #endif
 
 /// Enable or disable mix SDK playout to stream publishing.
@@ -750,9 +800,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_mix_system_playout_volume)(int 
 ///
 /// @param enable Whether to mix engine playout
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_mix_engine_playout(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_mix_engine_playout(zego_handle handle,
+                                                                       bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_mix_engine_playout)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_mix_engine_playout)(zego_handle handle,
+                                                                        bool enable);
 #endif
 
 /// Start audio VAD stable state monitoring, and the monitoring period can be set.
@@ -768,10 +820,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_mix_engine_playout)(bool ena
 /// @param millisecond monitoring period default 3000. value of [200, 10000]
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_audio_vad_stable_state_monitor(
-    enum zego_audio_vad_stable_state_monitor_type type, int millisecond);
+    zego_handle handle, enum zego_audio_vad_stable_state_monitor_type type, int millisecond);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_audio_vad_stable_state_monitor)(
-    enum zego_audio_vad_stable_state_monitor_type type, int millisecond);
+    zego_handle handle, enum zego_audio_vad_stable_state_monitor_type type, int millisecond);
 #endif
 
 /// Stop audio VAD stable state monitoring.
@@ -785,10 +837,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_audio_vad_stable_state_monito
 /// @param type audio VAD monitor type.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_stop_audio_vad_stable_state_monitor(
-    enum zego_audio_vad_stable_state_monitor_type type);
+    zego_handle handle, enum zego_audio_vad_stable_state_monitor_type type);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_vad_stable_state_monitor)(
-    enum zego_audio_vad_stable_state_monitor_type type);
+    zego_handle handle, enum zego_audio_vad_stable_state_monitor_type type);
 #endif
 
 /// The callback triggered when there is a change to audio devices (i.e. new device added or existing device deleted).
@@ -803,17 +855,18 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_audio_vad_stable_state_monitor
 /// @param device_type Audio device type
 /// @param device_info Audio device information
 /// @param user_context Context of user.
-typedef void (*zego_on_audio_device_state_changed)(enum zego_update_type update_type,
+typedef void (*zego_on_audio_device_state_changed)(zego_handle handle,
+                                                   enum zego_update_type update_type,
                                                    enum zego_audio_device_type device_type,
                                                    struct zego_device_info device_info,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_device_state_changed_callback(
-    zego_on_audio_device_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_device_state_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_device_state_changed_callback)(
-    zego_on_audio_device_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_device_state_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when there is a change of the volume for the audio devices.
@@ -827,16 +880,17 @@ typedef void(EXP_CALL *pfnzego_register_audio_device_state_changed_callback)(
 /// @param device_id Audio device ID
 /// @param volume audio device volume
 /// @param user_context Context of user.
-typedef void (*zego_on_audio_device_volume_changed)(enum zego_audio_device_type device_type,
+typedef void (*zego_on_audio_device_volume_changed)(zego_handle handle,
+                                                    enum zego_audio_device_type device_type,
                                                     const char *device_id, int volume,
                                                     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_device_volume_changed_callback(
-    zego_on_audio_device_volume_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_device_volume_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_device_volume_changed_callback)(
-    zego_on_audio_device_volume_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_device_volume_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when there is a change to video devices (i.e. new device added or existing device deleted).
@@ -851,16 +905,17 @@ typedef void(EXP_CALL *pfnzego_register_audio_device_volume_changed_callback)(
 /// @param update_type Update type (add/delete)
 /// @param device_info Audio device information
 /// @param user_context Context of user.
-typedef void (*zego_on_video_device_state_changed)(enum zego_update_type update_type,
+typedef void (*zego_on_video_device_state_changed)(zego_handle handle,
+                                                   enum zego_update_type update_type,
                                                    struct zego_device_info device_info,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_video_device_state_changed_callback(
-    zego_on_video_device_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_video_device_state_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_video_device_state_changed_callback)(
-    zego_on_video_device_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_video_device_state_changed callback_func, void *user_context);
 #endif
 
 /// The local captured audio sound level callback.
@@ -875,15 +930,16 @@ typedef void(EXP_CALL *pfnzego_register_video_device_state_changed_callback)(
 ///
 /// @param sound_level Locally captured sound level value, ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.) .
 /// @param user_context Context of user.
-typedef void (*zego_on_captured_sound_level_update)(const struct zego_sound_level_info *sound_level,
+typedef void (*zego_on_captured_sound_level_update)(zego_handle handle,
+                                                    const struct zego_sound_level_info *sound_level,
                                                     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_captured_sound_level_update_callback(
-    zego_on_captured_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_sound_level_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_captured_sound_level_update_callback)(
-    zego_on_captured_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_sound_level_update callback_func, void *user_context);
 #endif
 
 /// The local captured audio sound level callback, supported vad.
@@ -899,14 +955,14 @@ typedef void(EXP_CALL *pfnzego_register_captured_sound_level_update_callback)(
 /// @param sound_level_info Locally captured sound level value, ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
 /// @param user_context Context of user.
 typedef void (*zego_on_captured_sound_level_info_update)(
-    const struct zego_sound_level_info *sound_level_info, void *user_context);
+    zego_handle handle, const struct zego_sound_level_info *sound_level_info, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_captured_sound_level_info_update_callback(
-    zego_on_captured_sound_level_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_sound_level_info_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_captured_sound_level_info_update_callback)(
-    zego_on_captured_sound_level_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_sound_level_info_update callback_func, void *user_context);
 #endif
 
 /// The remote playing streams audio sound level callback.
@@ -920,15 +976,16 @@ typedef void(EXP_CALL *pfnzego_register_captured_sound_level_info_update_callbac
 /// @param sound_levels Remote sound level hash map, key is the streamID, value is the sound level value of the corresponding streamID, value ranging from 0.0 to 100.0 (This value only represents the range of the sound level value returned by the callback, not the precision.).
 /// @param info_count Count of sound level info.
 /// @param user_context Context of user.
-typedef void (*zego_on_remote_sound_level_update)(const struct zego_sound_level_info *sound_levels,
+typedef void (*zego_on_remote_sound_level_update)(zego_handle handle,
+                                                  const struct zego_sound_level_info *sound_levels,
                                                   unsigned int info_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_remote_sound_level_update_callback(
-    zego_on_remote_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_sound_level_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_remote_sound_level_update_callback)(
-    zego_on_remote_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_sound_level_update callback_func, void *user_context);
 #endif
 
 /// The remote playing streams audio sound level callback, supported vad.
@@ -943,15 +1000,15 @@ typedef void(EXP_CALL *pfnzego_register_remote_sound_level_update_callback)(
 /// @param info_count Count of sound level info.
 /// @param user_context Context of user.
 typedef void (*zego_on_remote_sound_level_info_update)(
-    const struct zego_sound_level_info *sound_level_info, unsigned int info_count,
-    void *user_context);
+    zego_handle handle, const struct zego_sound_level_info *sound_level_info,
+    unsigned int info_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_remote_sound_level_info_update_callback(
-    zego_on_remote_sound_level_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_sound_level_info_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_remote_sound_level_info_update_callback)(
-    zego_on_remote_sound_level_info_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_sound_level_info_update callback_func, void *user_context);
 #endif
 
 /// The local captured audio spectrum callback.
@@ -965,14 +1022,14 @@ typedef void(EXP_CALL *pfnzego_register_remote_sound_level_info_update_callback)
 /// @param audio_spectrum Locally captured audio spectrum value list. Spectrum value range is [0-2^30].
 /// @param user_context Context of user.
 typedef void (*zego_on_captured_audio_spectrum_update)(
-    const struct zego_audio_spectrum_info *audio_spectrum, void *user_context);
+    zego_handle handle, const struct zego_audio_spectrum_info *audio_spectrum, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_captured_audio_spectrum_update_callback(
-    zego_on_captured_audio_spectrum_update callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_audio_spectrum_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_captured_audio_spectrum_update_callback)(
-    zego_on_captured_audio_spectrum_update callback_func, void *user_context);
+    zego_handle handle, zego_on_captured_audio_spectrum_update callback_func, void *user_context);
 #endif
 
 /// The remote playing streams audio spectrum callback.
@@ -987,15 +1044,15 @@ typedef void(EXP_CALL *pfnzego_register_captured_audio_spectrum_update_callback)
 /// @param info_count Count of audio spectrum.
 /// @param user_context Context of user.
 typedef void (*zego_on_remote_audio_spectrum_update)(
-    const struct zego_audio_spectrum_info *audio_spectrums, unsigned int info_count,
-    void *user_context);
+    zego_handle handle, const struct zego_audio_spectrum_info *audio_spectrums,
+    unsigned int info_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_remote_audio_spectrum_update_callback(
-    zego_on_remote_audio_spectrum_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_audio_spectrum_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_remote_audio_spectrum_update_callback)(
-    zego_on_remote_audio_spectrum_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_audio_spectrum_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when a local device exception occurred.
@@ -1009,15 +1066,15 @@ typedef void(EXP_CALL *pfnzego_register_remote_audio_spectrum_update_callback)(
 /// @param device_id Device ID. Currently, only desktop devices are supported to distinguish different devices; for mobile devices, this parameter will return an empty string.
 /// @param user_context Context of user.
 typedef void (*zego_on_local_device_exception_occurred)(
-    enum zego_device_exception_type exception_type, enum zego_device_type device_type,
-    const char *device_id, void *user_context);
+    zego_handle handle, enum zego_device_exception_type exception_type,
+    enum zego_device_type device_type, const char *device_id, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_local_device_exception_occurred_callback(
-    zego_on_local_device_exception_occurred callback_func, void *user_context);
+    zego_handle handle, zego_on_local_device_exception_occurred callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_local_device_exception_occurred_callback)(
-    zego_on_local_device_exception_occurred callback_func, void *user_context);
+    zego_handle handle, zego_on_local_device_exception_occurred callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the state of the remote camera changes.
@@ -1032,16 +1089,16 @@ typedef void(EXP_CALL *pfnzego_register_local_device_exception_occurred_callback
 /// @param stream_id Stream ID.
 /// @param state Remote camera status.
 /// @param user_context Context of user.
-typedef void (*zego_on_remote_camera_state_update)(const char *stream_id,
+typedef void (*zego_on_remote_camera_state_update)(zego_handle handle, const char *stream_id,
                                                    enum zego_remote_device_state state,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_remote_camera_state_update_callback(
-    zego_on_remote_camera_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_camera_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_remote_camera_state_update_callback)(
-    zego_on_remote_camera_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_camera_state_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the state of the remote microphone changes.
@@ -1055,16 +1112,16 @@ typedef void(EXP_CALL *pfnzego_register_remote_camera_state_update_callback)(
 /// @param stream_id Stream ID.
 /// @param state Remote microphone status.
 /// @param user_context Context of user.
-typedef void (*zego_on_remote_mic_state_update)(const char *stream_id,
+typedef void (*zego_on_remote_mic_state_update)(zego_handle handle, const char *stream_id,
                                                 enum zego_remote_device_state state,
                                                 void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_remote_mic_state_update_callback(
-    zego_on_remote_mic_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_mic_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_remote_mic_state_update_callback)(
-    zego_on_remote_mic_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_mic_state_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the state of the remote speaker changes.
@@ -1078,16 +1135,16 @@ typedef void(EXP_CALL *pfnzego_register_remote_mic_state_update_callback)(
 /// @param stream_id Stream ID.
 /// @param state Remote speaker status.
 /// @param user_context Context of user.
-typedef void (*zego_on_remote_speaker_state_update)(const char *stream_id,
+typedef void (*zego_on_remote_speaker_state_update)(zego_handle handle, const char *stream_id,
                                                     enum zego_remote_device_state state,
                                                     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_remote_speaker_state_update_callback(
-    zego_on_remote_speaker_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_speaker_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_remote_speaker_state_update_callback)(
-    zego_on_remote_speaker_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_remote_speaker_state_update callback_func, void *user_context);
 #endif
 
 /// Callback for device's audio route changed.
@@ -1099,14 +1156,15 @@ typedef void(EXP_CALL *pfnzego_register_remote_speaker_state_update_callback)(
 ///
 /// @param audio_route Current audio route.
 /// @param user_context Context of user.
-typedef void (*zego_on_audio_route_change)(enum zego_audio_route audio_route, void *user_context);
+typedef void (*zego_on_audio_route_change)(zego_handle handle, enum zego_audio_route audio_route,
+                                           void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_route_change_callback(
-    zego_on_audio_route_change callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_route_change callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_route_change_callback)(
-    zego_on_audio_route_change callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_route_change callback_func, void *user_context);
 #endif
 
 /// Callback for audio VAD  stable state update.
@@ -1120,15 +1178,16 @@ typedef void(EXP_CALL *pfnzego_register_audio_route_change_callback)(
 /// @param type audio VAD monitor type
 /// @param state VAD result
 /// @param user_context Context of user.
-typedef void (*zego_on_audio_vad_state_update)(enum zego_audio_vad_stable_state_monitor_type type,
+typedef void (*zego_on_audio_vad_state_update)(zego_handle handle,
+                                               enum zego_audio_vad_stable_state_monitor_type type,
                                                enum zego_audio_vad_type state, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_audio_vad_state_update_callback(
-    zego_on_audio_vad_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_vad_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_audio_vad_state_update_callback)(
-    zego_on_audio_vad_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_audio_vad_state_update callback_func, void *user_context);
 #endif
 
 /// Get the audio device information currently in use.
@@ -1143,11 +1202,32 @@ typedef void(EXP_CALL *pfnzego_register_audio_vad_state_update_callback)(
 /// @param device_type Audio device type.Required:Yes.
 /// @param device_info [in/out] Audio device information.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_current_audio_device(
-    enum zego_audio_device_type device_type, struct zego_device_info *device_info);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_get_current_audio_device(zego_handle handle, enum zego_audio_device_type device_type,
+                                      struct zego_device_info *device_info);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_current_audio_device)(
-    enum zego_audio_device_type device_type, struct zego_device_info *device_info);
+    zego_handle handle, enum zego_audio_device_type device_type,
+    struct zego_device_info *device_info);
+#endif
+
+/// Enable audio capture device result callback.
+///
+/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param seq Message sequence.
+/// @param user_context Context of user.
+typedef void (*zego_on_audio_captrue_device_enable_result)(zego_handle handle,
+                                                           zego_error error_code, zego_seq seq,
+                                                           void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_audio_captrue_device_enable_result_callback(
+    zego_handle handle, zego_on_audio_captrue_device_enable_result callback_func,
+    void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_audio_captrue_device_enable_result_callback)(
+    zego_handle handle, zego_on_audio_captrue_device_enable_result callback_func,
+    void *user_context);
 #endif
 
 ZEGO_END_DECLS

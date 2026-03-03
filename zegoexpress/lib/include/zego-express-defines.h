@@ -42,6 +42,8 @@
 #define zego_seq int
 #define zego_instance int
 
+typedef void *zego_handle;
+
 #define ZEGO_EXPRESS_MAX_COMMON_LEN (512)
 #define ZEGO_EXPRESS_MAX_APPSIGN_LEN (64)
 #define ZEGO_EXPRESS_MAX_USERID_LEN (64)
@@ -586,7 +588,13 @@ enum zego_reverb_preset {
     zego_reverb_preset_misty = 16,
 
     /// 3D voice reverb effect
-    zego_reverb_preset_three_dimensional_voice = 17
+    zego_reverb_preset_three_dimensional_voice = 17,
+
+    /// Theatre reverb effect
+    zego_reverb_preset_theatre = 18,
+
+    /// Recording studio reverb effect (Only vivo)
+    zego_reverb_preset_custom_record_studio = 19
 
 };
 
@@ -1005,6 +1013,19 @@ enum zego_view_update_type {
 
 };
 
+/// Stream decode Mode
+enum zego_stream_decode_mode {
+    /// Decode all frame.
+    zego_stream_decode_mode_all_frame = 0,
+
+    /// Only Decode I Frame.
+    zego_stream_decode_mode_only_i_frame = 1,
+
+    /// none decode frame.
+    zego_stream_decode_mode_none_frame = 2
+
+};
+
 /// Update type.
 enum zego_update_type {
     /// Add
@@ -1240,7 +1261,10 @@ enum zego_audio_device_type {
     zego_audio_device_type_input = 0,
 
     /// Audio output type
-    zego_audio_device_type_output = 1
+    zego_audio_device_type_output = 1,
+
+    /// Audio loopback type. It is only supported in the [useAudioDevice] interface and only on Windows.
+    zego_audio_device_type_loopback = 2
 
 };
 
@@ -2522,7 +2546,10 @@ enum zego_media_stream_type {
 /// Dump data type.
 enum zego_dump_data_type {
     /// Audio.
-    zego_dump_data_type_audio = 0
+    zego_dump_data_type_audio = 0,
+
+    /// Video.
+    zego_dump_data_type_video = 1
 
 };
 
@@ -2660,7 +2687,7 @@ struct zego_room_config {
     /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
     unsigned int capability_negotiation_types;
 
-    /// The type of the room, the default is 0.
+    /// The type of the room, generally, it can be ignored and set to 0.
     unsigned int room_type;
 };
 
@@ -3005,6 +3032,12 @@ struct zego_publish_stream_quality {
 
     /// Number of video bytes sent
     double video_send_bytes;
+
+    /// Audio traffic control ratio, in percentage, 0 ~ 100. A value of -1 indicates failed streaming. Higher values indicate greater traffic control impact.
+    int audio_traffic_control_rate;
+
+    /// Video traffic control ratio, in percentage, 0 ~ 100. A value of -1 indicates failed streaming. Higher values indicate greater traffic control impact.
+    int video_traffic_control_rate;
 };
 
 /// CDN config object.
@@ -3087,6 +3120,9 @@ struct zego_custom_player_resource_config {
 struct zego_switch_playing_stream_config {
     /// Switch playing stream type.
     enum zego_switch_playing_stream_type switch_type;
+
+    /// Switch the stream timeout, the unit is seconds.
+    int switch_time_out;
 };
 
 /// Advanced player configuration.
@@ -3164,7 +3200,7 @@ struct zego_play_stream_quality {
     /// Video bit rate in kbps
     double video_kbps;
 
-    /// Video break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0)
+    /// Video break count, break count during the callback cycle (Available since 1.17.0)
     double video_break_rate;
 
     /// Audio receiving frame rate. The unit of frame rate is f/s
@@ -3182,7 +3218,7 @@ struct zego_play_stream_quality {
     /// Audio bit rate in kbps
     double audio_kbps;
 
-    /// Audio break rate, the unit is (number of breaks / every 10 seconds) (Available since 1.17.0)
+    /// Audio break count, break count during the callback cycle (Available since 1.17.0)
     double audio_break_rate;
 
     /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://docs.zegocloud.com/article/3720#4_4 (Available since 2.16.0)
@@ -3476,6 +3512,24 @@ struct zego_mixer_image_info {
     int display_mode;
 };
 
+/// blur info.
+///
+/// Description: mix stream blur padding info.
+/// Use cases: Set text watermark in manual stream mixing scene, such as Co-hosting.
+struct zego_blur_info {
+    /// The distance between the feathered edge and the top canvas border, in px. Required: False. Default value: 0.
+    int top_padding;
+
+    /// The distance between the feathered edge and the left canvas border, in px. Required: False. Default value: 0.
+    int left_padding;
+
+    /// The distance between the feathered edge and the bottom canvas border.
+    int bottom_padding;
+
+    /// The distance between the feathered edge and the right canvas border, in px. Required: False. Default value: 0.
+    int right_padding;
+};
+
 /// Mixer input.
 ///
 /// Configure the mix stream input stream ID, type, and the layout
@@ -3492,10 +3546,10 @@ struct zego_mixer_input {
     /// If enable soundLevel in mix stream task, an unique soundLevelID is need for every stream
     unsigned int sound_level_id;
 
-    /// Input stream volume, valid range [0, 200], default is 100. On web platforms, this property does not take effect.
+    /// Input stream volume, valid range [0, 200], default is 100.
     unsigned int volume;
 
-    /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled. On web platforms, this property does not take effect.
+    /// Whether the focus voice is enabled in the current input stream, the sound of this stream will be highlighted if enabled.
     bool is_audio_focus;
 
     /// The direction of the audio. Valid direction is between 0 to 360. Set -1 means disable. Default value is -1. On web platforms, this property does not take effect.
@@ -3515,6 +3569,9 @@ struct zego_mixer_input {
 
     /// Set advanced configuration. Please contact ZEGO technical support. On web platforms, this property does not take effect.
     char advanced_config[ZEGO_EXPRESS_MAX_COMMON_LEN];
+
+    /// Set blur info.
+    struct zego_blur_info blur_info;
 
     bool enable_audio_direction;
 };
@@ -3897,6 +3954,18 @@ struct zego_data_record_progress {
 
     /// The quality of current recording file
     struct zego_publish_stream_quality quality;
+};
+
+/// File recording progress.
+struct zego_data_remote_record_progress {
+    /// Current recording duration in milliseconds
+    unsigned long long duration;
+
+    /// Current recording file size in byte
+    unsigned long long current_file_size;
+
+    /// The quality of current recording file
+    struct zego_play_stream_quality quality;
 };
 
 /// Network probe config
@@ -4330,6 +4399,12 @@ struct zego_layer_border_config {
     int color;
 };
 
+/// Screen capture audio config
+struct zego_screen_capture_audio_config {
+    /// Whether to collect window sound. true for collection, false for no collection, default false. (only for Windows 10 2004 and above versions)
+    bool enable_window_capture;
+};
+
 /// Audio source mix config
 ///
 /// Used to config whether mix media player, audio effect player and captured system audio into publish stream or not when set audio source.
@@ -4384,7 +4459,7 @@ struct zego_media_player_resource {
     /// Online resource cache path, in utf8 encoding format.
     char online_resource_cache_path[ZEGO_EXPRESS_MAX_MEDIA_URL_LEN];
 
-    /// The maximum length of online resource cache to be used, in bytes, with a minimum setting of 10M (10 * 1024 * 1024). The default value is 0 - no limit, and try to cache the entire file.
+    /// The maximum length of online resource cache to be used, in bytes, with a minimum setting of 500K (500 * 1024). The default value is 0 - no limit, and try to cache the entire file.
     long long max_cache_pending_length;
 };
 

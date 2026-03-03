@@ -16,9 +16,11 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param instance_index [in/out] Picture capturer instance, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_create_picture_capturer(int *instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_picture_capturer(zego_handle handle,
+                                                                     int *instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_create_picture_capturer)(int *instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_create_picture_capturer)(zego_handle handle,
+                                                                      int *instance_index);
 #endif
 
 /// Destroys a picture capturer instance.
@@ -27,9 +29,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_picture_capturer)(int *insta
 /// Description: Destroys the picture capturer instance.
 /// Related APIs: User can call [createPictureCapturer] function to create a picture capturer instance.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_picture_capturer(int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_picture_capturer(zego_handle handle,
+                                                                      int instance_index);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_destroy_picture_capturer)(int instance_index);
+typedef zego_error(EXP_CALL *pfnzego_express_destroy_picture_capturer)(zego_handle handle,
+                                                                       int instance_index);
 #endif
 
 /// Set the path of the picture capturer source.
@@ -38,12 +42,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_picture_capturer)(int insta
 /// Description: Set the path of the picture capturer source.
 /// Related APIs: User can call [createPictureCapturer] function to create a picture capturer instance.
 ///
-/// @param path The path of the picture.
+/// @param path The path of the picture. Support local picture file path (file://xxx), Android URI path (uri://xxx), asset resource path (asset://xxx). The URL length cannot exceed 512 characters.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_picture_capturer_set_path(int instance_index,
+ZEGOEXP_API zego_error EXP_CALL zego_express_picture_capturer_set_path(zego_handle handle,
+                                                                       int instance_index,
                                                                        const char *path);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_picture_capturer_set_path)(int instance_index,
+typedef zego_error(EXP_CALL *pfnzego_express_picture_capturer_set_path)(zego_handle handle,
+                                                                        int instance_index,
                                                                         const char *path);
 #endif
 

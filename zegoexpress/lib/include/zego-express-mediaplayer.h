@@ -11,17 +11,17 @@ ZEGO_BEGIN_DECLS
 /// Description: Creates a media player instance.
 /// Use case: It is often used to play media resource scenes, For example, play video files, push the video of media resources in combination with custom video acquisition, and the remote end can pull the stream for viewing.
 /// When to call: It can be called after the SDK by [createEngine] has been initialized.
-/// Restrictions: Currently, a maximum of 4 instances can be created, after which it will return NULL.
+/// Restrictions: Currently, a maximum of 10 instances can be created, after which it will return NULL.
 /// Caution: The more instances of a media player, the greater the performance overhead on the device.
 /// Related APIs: User can call [destroyMediaPlayer] function to destroy a media player instance.
 ///
 /// @param instance_index [in/out] Media player instance, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_create_media_player(enum zego_media_player_instance_index *instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_media_player(
+    zego_handle handle, enum zego_media_player_instance_index *instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_create_media_player)(
-    enum zego_media_player_instance_index *instance_index);
+    zego_handle handle, enum zego_media_player_instance_index *instance_index);
 #endif
 
 /// Destroys a media player instance.
@@ -30,11 +30,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_media_player)(
 /// Description: Destroys a media player instance.
 /// Related APIs: User can call [createMediaPlayer] function to create a media player instance.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_destroy_media_player(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_media_player(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_destroy_media_player)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Load local or network media resource.
@@ -49,10 +49,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_media_player)(
 /// @param path The absolute resource path or the URL of the network resource and cannot be NULL or "". Android can set this path string with Uri.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_load_resource(
-    const char *path, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, const char *path, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource)(
-    const char *path, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, const char *path, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Load local or network media resource and specify the start position.
@@ -69,10 +69,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource)(
 /// @param start_position The progress at which the playback started.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_load_resource_with_position(
-    const char *path, long start_position, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, const char *path, long start_position,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource_with_position)(
-    const char *path, long start_position, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, const char *path, long start_position,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Load binary audio resource.
@@ -90,11 +92,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource_with_pos
 /// @param start_position Position of starting playback, in milliseconds.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_load_resource_from_media_data(
-    unsigned char *media_data, int media_data_length, long start_position,
+    zego_handle handle, unsigned char *media_data, int media_data_length, long start_position,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource_from_media_data)(
-    unsigned char *media_data, int media_data_length, long start_position,
+    zego_handle handle, unsigned char *media_data, int media_data_length, long start_position,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -112,12 +114,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource_from_med
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
 zego_express_media_player_load_copyrighted_music_resource_with_position(
-    const char *resource_id, long start_position,
+    zego_handle handle, const char *resource_id, long start_position,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(
     EXP_CALL *pfnzego_express_media_player_load_copyrighted_music_resource_with_position)(
-    const char *resource_id, long start_position,
+    zego_handle handle, const char *resource_id, long start_position,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -133,11 +135,11 @@ typedef zego_error(
 /// @param resource Multimedia resources that need to be loaded.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_load_resource_with_config(
-    struct zego_media_player_resource *resource,
+    zego_handle handle, struct zego_media_player_resource *resource,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource_with_config)(
-    struct zego_media_player_resource *resource,
+    zego_handle handle, struct zego_media_player_resource *resource,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -145,38 +147,38 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_load_resource_with_con
 ///
 /// You need to load resources before playing
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_start(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_start(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_start)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Stop playing.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_stop(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_stop(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_stop)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Pause playing.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_pause(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_pause(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_pause)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Resume playing.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_resume(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_resume(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_resume)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set the specified playback progress.
@@ -187,12 +189,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_resume)(
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_seek_to(
-    unsigned long long millisecond, enum zego_media_player_instance_index instance_index,
-    zego_seq *sequence);
+    zego_handle handle, unsigned long long millisecond,
+    enum zego_media_player_instance_index instance_index, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_seek_to)(
-    unsigned long long millisecond, enum zego_media_player_instance_index instance_index,
-    zego_seq *sequence);
+    zego_handle handle, unsigned long long millisecond,
+    enum zego_media_player_instance_index instance_index, zego_seq *sequence);
 #endif
 
 /// Whether to repeat playback.
@@ -200,10 +202,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_seek_to)(
 /// @param enable repeat playback flag. The default is false.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_repeat(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_repeat)(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set the count of play loops.
@@ -218,10 +220,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_repeat)(
 /// @param count the count of play loops.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_play_loop_count(
-    int count, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int count, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_loop_count)(
-    int count, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int count, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set the speed of play.
@@ -237,10 +239,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_loop_count)(
 ///   Versions 3.16.0 and above: The range is 0.3 ~ 4.0.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_play_speed(
-    float speed, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, float speed, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_speed)(
-    float speed, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, float speed, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Whether to mix the player's sound into the stream being published.
@@ -250,10 +252,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_speed)(
 /// @param enable Aux audio flag. The default is false.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_aux(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_aux)(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Whether to play locally silently.
@@ -263,10 +265,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_aux)(
 /// @param mute Mute local audio flag, The default is false.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_mute_local_audio(
-    bool mute, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool mute, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_mute_local_audio)(
-    bool mute, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool mute, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set the view of the player playing video.
@@ -274,11 +276,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_mute_local_audio)(
 ///
 /// @param canvas Video rendered canvas object
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_player_canvas(
-    struct zego_canvas *canvas, enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_media_player_set_player_canvas(zego_handle handle, struct zego_canvas *canvas,
+                                            enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_player_canvas)(
-    struct zego_canvas *canvas, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, struct zego_canvas *canvas,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set mediaplayer volume. Both the local play volume and the publish volume are set.
@@ -286,10 +290,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_player_canvas)(
 /// @param volume The range is 0 ~ 200. The default is 60.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_volume(
-    int volume, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_volume)(
-    int volume, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set mediaplayer local playback volume.
@@ -297,10 +301,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_volume)(
 /// @param volume The range is 0 ~ 200. The default is 60.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_play_volume(
-    int volume, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_volume)(
-    int volume, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set mediaplayer publish volume.
@@ -308,10 +312,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_volume)(
 /// @param volume The range is 0 ~ 200. The default is 60.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_publish_volume(
-    int volume, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_publish_volume)(
-    int volume, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set playback progress callback interval.
@@ -322,10 +326,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_publish_volume)(
 /// @param millisecond Interval of playback progress callback in milliseconds
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_progress_interval(
-    unsigned long long millisecond, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned long long millisecond,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_progress_interval)(
-    unsigned long long millisecond, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned long long millisecond,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Gets the current local playback volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60.
@@ -333,10 +339,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_progress_interval)
 /// @param volume [in/out] The current local playback volume.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_play_volume(
-    enum zego_media_player_instance_index instance_index, int *volume);
+    zego_handle handle, enum zego_media_player_instance_index instance_index, int *volume);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_play_volume)(
-    enum zego_media_player_instance_index instance_index, int *volume);
+    zego_handle handle, enum zego_media_player_instance_index instance_index, int *volume);
 #endif
 
 /// Gets the current publish volume of the mediaplayer, the range is 0 ~ 200, with the default value of 60.
@@ -344,10 +350,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_play_volume)(
 /// @param volume [in/out] The current publish volume.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_publish_volume(
-    enum zego_media_player_instance_index instance_index, int *volume);
+    zego_handle handle, enum zego_media_player_instance_index instance_index, int *volume);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_publish_volume)(
-    enum zego_media_player_instance_index instance_index, int *volume);
+    zego_handle handle, enum zego_media_player_instance_index instance_index, int *volume);
 #endif
 
 /// Get the total progress of your media resources.
@@ -357,10 +363,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_publish_volume)(
 /// @param duration [in/out] The total progress of media resources.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_total_duration(
-    enum zego_media_player_instance_index instance_index, unsigned long long *duration);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned long long *duration);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_total_duration)(
-    enum zego_media_player_instance_index instance_index, unsigned long long *duration);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned long long *duration);
 #endif
 
 /// Get current playing progress.
@@ -370,10 +378,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_total_duration)(
 /// @param progress [in/out] The current playing progress.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_current_progress(
-    enum zego_media_player_instance_index instance_index, unsigned long long *progress);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned long long *progress);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_current_progress)(
-    enum zego_media_player_instance_index instance_index, unsigned long long *progress);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned long long *progress);
 #endif
 
 /// Get current rendering progress.
@@ -383,10 +393,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_current_progress)(
 /// @param progress [in/out] The current rendering progress.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_current_rendering_progress(
-    enum zego_media_player_instance_index instance_index, unsigned long long *progress);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned long long *progress);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_current_rendering_progress)(
-    enum zego_media_player_instance_index instance_index, unsigned long long *progress);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned long long *progress);
 #endif
 
 /// Get the number of audio tracks of the playback file.
@@ -394,10 +406,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_current_rendering_
 /// @param track_count [in/out] The number of audio tracks of the playback file.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_audio_track_count(
-    enum zego_media_player_instance_index instance_index, unsigned int *track_count);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned int *track_count);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_audio_track_count)(
-    enum zego_media_player_instance_index instance_index, unsigned int *track_count);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    unsigned int *track_count);
 #endif
 
 /// Set the audio track of the playback file.
@@ -405,10 +419,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_audio_track_count)
 /// @param index Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_audio_track_index(
-    unsigned int index, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int index, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_audio_track_index)(
-    unsigned int index, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int index, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set the audio track mode of the player.
@@ -423,11 +437,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_audio_track_index)
 /// @param mode Audio track mode.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_audio_track_mode(
-    enum zego_media_player_audio_track_mode mode,
+    zego_handle handle, enum zego_media_player_audio_track_mode mode,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_audio_track_mode)(
-    enum zego_media_player_audio_track_mode mode,
+    zego_handle handle, enum zego_media_player_audio_track_mode mode,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -442,10 +456,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_audio_track_mode)(
 /// @param index Audio track index, the number of audio tracks can be obtained through the [getAudioTrackCount] function.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_audio_track_publish_index(
-    unsigned int index, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int index, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_audio_track_publish_index)(
-    unsigned int index, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int index, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Enable voice changer, set up the specific voice changer parameters.
@@ -459,12 +473,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_audio_track_publis
 /// @param param Voice changer parameters
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_voice_changer(
-    enum zego_media_player_audio_channel audio_channel, bool enable, float param,
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_audio_channel audio_channel, bool enable,
+    float param, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_voice_changer)(
-    enum zego_media_player_audio_channel audio_channel, bool enable, float param,
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_audio_channel audio_channel, bool enable,
+    float param, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Get the current playback status.
@@ -472,10 +486,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_voice_changer)(
 /// @param state [in/out] The current playback status.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_current_state(
-    enum zego_media_player_instance_index instance_index, enum zego_media_player_state *state);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    enum zego_media_player_state *state);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_current_state)(
-    enum zego_media_player_instance_index instance_index, enum zego_media_player_state *state);
+    zego_handle handle, enum zego_media_player_instance_index instance_index,
+    enum zego_media_player_state *state);
 #endif
 
 /// Whether to audio data playback.
@@ -483,10 +499,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_current_state)(
 /// @param enable Audio data playback flag. The default is false.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_audio_data(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_audio_data)(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Whether to video data playback.
@@ -500,12 +516,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_audio_data)(
 /// @param enable Video data playback flag. The default is false.
 /// @param format Video frame format for video data
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_enable_video_data(bool enable, enum zego_video_frame_format format,
-                                            enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_video_data(
+    zego_handle handle, bool enable, enum zego_video_frame_format format,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_video_data)(
-    bool enable, enum zego_video_frame_format format,
+    zego_handle handle, bool enable, enum zego_video_frame_format format,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -521,10 +537,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_video_data)(
 /// @param block_size The size of the encrypted data block. The bufferSize in the OnBlockData callback is an integer multiple of blockSize.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_block_data(
-    bool enable, unsigned int block_size, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, unsigned int block_size,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_block_data)(
-    bool enable, unsigned int block_size, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, unsigned int block_size,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Take a screenshot of the current playing screen of the media player.
@@ -532,11 +550,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_block_data)(
 /// Only in the case of calling [setPlayerCanvas] to set the display controls and the playback state, can the screenshot be taken normally
 /// Note: This function is only available in ZegoExpressVideo SDK!
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_take_snapshot(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_take_snapshot(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_take_snapshot)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Enable accurate seek and set relevant attributes.
@@ -550,11 +568,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_take_snapshot)(
 /// @param config The property setting of accurate seek, only valid when enable is true.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_accurate_seek(
-    bool enable, struct zego_accurate_seek_config *config,
+    zego_handle handle, bool enable, struct zego_accurate_seek_config *config,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_accurate_seek)(
-    bool enable, struct zego_accurate_seek_config *config,
+    zego_handle handle, bool enable, struct zego_accurate_seek_config *config,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -562,15 +580,18 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_accurate_seek)(
 ///
 /// The setting must be called before loading the resource, and it will take effect during the entire life cycle of the media player.
 /// Time and size are not allowed to be 0 at the same time. The SDK internal default time is 5000, and the size is 15*1024*1024 byte.When one of time and size reaches the set value first, the cache will stop.
+/// When loading resources with a non-empty onlineResourceCachePath, the cache is controlled by maxCachePendingLength. This configuration is invalid.
 ///
 /// @param time The maximum length of the cache time, in ms, the SDK internal default is 5000; the effective value is greater than or equal to 2000; if you fill in 0, it means no limit.
 /// @param size The maximum size of the cache, the unit is byte, the internal default size of the SDK is 15*1024*1024 byte; the effective value is greater than or equal to 5000000, if you fill in 0, it means no limit.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_network_resource_max_cache(
-    unsigned int time, unsigned int size, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int time, unsigned int size,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_network_resource_max_cache)(
-    unsigned int time, unsigned int size, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int time, unsigned int size,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Get the playable duration and size of the cached data of the current network material cache queue
@@ -579,11 +600,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_network_resource_m
 /// @return Returns the current cached information, including the length of time the data can be played and the size of the cached data.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_network_resource_cache(
-    struct zego_network_resource_cache *cache,
+    zego_handle handle, struct zego_network_resource_cache *cache,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_network_resource_cache)(
-    struct zego_network_resource_cache *cache,
+    zego_handle handle, struct zego_network_resource_cache *cache,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -596,10 +617,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_network_resource_c
 /// @param threshold Threshold that needs to be reached to resume playback, unit ms.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_network_buffer_threshold(
-    unsigned int threshold, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int threshold,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_network_buffer_threshold)(
-    unsigned int threshold, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, unsigned int threshold,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Whether to enable sound level monitoring.
@@ -614,10 +637,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_network_buffer_thr
 /// @param millisecond Monitoring time period of the sound level, in milliseconds, has a value range of [100, 3000].
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_sound_level_monitor(
-    bool enable, unsigned int millisecond, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, unsigned int millisecond,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_sound_level_monitor)(
-    bool enable, unsigned int millisecond, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, unsigned int millisecond,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Whether to enable frequency spectrum monitoring.
@@ -632,10 +657,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_sound_level_mon
 /// @param millisecond Monitoring time period of the frequency spectrum, in milliseconds, has a value range of [10, 3000]. Note that on v3.19.0 and older version, the value range is [100, 3000].
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_frequency_spectrum_monitor(
-    bool enable, unsigned int millisecond, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, unsigned int millisecond,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_frequency_spectrum_monitor)(
-    bool enable, unsigned int millisecond, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, unsigned int millisecond,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set the playback channel.
@@ -648,11 +675,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_frequency_spect
 /// @param audio_channel Playback channel, the default is ZegoMediaPlayerAudioChannelAll.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_active_audio_channel(
-    enum zego_media_player_audio_channel audio_channel,
+    zego_handle handle, enum zego_media_player_audio_channel audio_channel,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_active_audio_channel)(
-    enum zego_media_player_audio_channel audio_channel,
+    zego_handle handle, enum zego_media_player_audio_channel audio_channel,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -663,11 +690,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_active_audio_chann
 /// When to call: It can be called after the engine by [createEngine] has been initialized and the media player has been created by [createMediaPlayer].
 /// Restrictions: The interface call takes effect only when the media player ends playing.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_clear_view(enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_clear_view(
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_clear_view)(
-    enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Get meida information such as video resolution from media file.
@@ -679,12 +706,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_clear_view)(
 ///
 /// @param media_info [in/out] Media information such as video resolution.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_get_media_info(struct zego_media_player_media_info *media_info,
-                                         enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_media_info(
+    zego_handle handle, struct zego_media_player_media_info *media_info,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_media_info)(
-    struct zego_media_player_media_info *media_info,
+    zego_handle handle, struct zego_media_player_media_info *media_info,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -698,11 +725,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_media_info)(
 ///
 /// @param position The unit vector of the front axis of its own coordinate system. The parameter is a float array with a length of 3.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_update_position(
-    const float position[3], enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_media_player_update_position(zego_handle handle, const float position[3],
+                                          enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_update_position)(
-    const float position[3], enum zego_media_player_instance_index instance_index);
+    zego_handle handle, const float position[3],
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Set http headers.
@@ -717,12 +746,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_update_position)(
 /// @param headers_size Headers size.
 /// @param instance_index Media player instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_media_player_set_http_header(struct zego_key_value_pair *headers, int headers_size,
-                                          enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_http_header(
+    zego_handle handle, struct zego_key_value_pair *headers, int headers_size,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_http_header)(
-    struct zego_key_value_pair *headers, int headers_size,
+    zego_handle handle, struct zego_key_value_pair *headers, int headers_size,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -738,10 +767,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_http_header)(
 /// @param instance_index Media player instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_play_media_stream_type(
-    enum zego_media_stream_type stream_type, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_stream_type stream_type,
+    enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_media_stream_type)(
-    enum zego_media_stream_type stream_type, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, enum zego_media_stream_type stream_type,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Enable live audio effect.
@@ -757,11 +788,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_play_media_stream_
 /// @param instance_index Media player instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_live_audio_effect(
-    bool enable, enum zego_live_audio_effect_mode mode,
+    zego_handle handle, bool enable, enum zego_live_audio_effect_mode mode,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_live_audio_effect)(
-    bool enable, enum zego_live_audio_effect_mode mode,
+    zego_handle handle, bool enable, enum zego_live_audio_effect_mode mode,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -776,11 +807,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_live_audio_effe
 /// @param cache_dir Cache dir. If left blank, the directory specified internally by SDK will be used.
 /// @param instance_index Media player instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_local_cache(
-    bool enable, const char *cache_dir, enum zego_media_player_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_media_player_enable_local_cache(zego_handle handle, bool enable, const char *cache_dir,
+                                             enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_local_cache)(
-    bool enable, const char *cache_dir, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, const char *cache_dir,
+    enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Enable the view mirror.
@@ -793,10 +826,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_local_cache)(
 /// @param instance_index Media player instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_enable_view_mirror(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_view_mirror)(
-    bool enable, enum zego_media_player_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_media_player_instance_index instance_index);
 #endif
 
 /// Get playback statistics.
@@ -809,11 +842,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_enable_view_mirror)(
 /// @param stat [in/out] Playback statistics.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_get_playback_statistics(
-    struct zego_media_player_statistics_info *stat,
+    zego_handle handle, struct zego_media_player_statistics_info *stat,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_playback_statistics)(
-    struct zego_media_player_statistics_info *stat,
+    zego_handle handle, struct zego_media_player_statistics_info *stat,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -829,15 +862,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_playback_statistic
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_state_update)(
-    enum zego_media_player_state state, zego_error error_code,
+    zego_handle handle, enum zego_media_player_state state, zego_error error_code,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_state_update_callback(
-    zego_on_media_player_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_state_update_callback)(
-    zego_on_media_player_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_state_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the network status of the media player changes.
@@ -852,15 +885,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_state_update_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_network_event)(
-    enum zego_media_player_network_event network_event,
+    zego_handle handle, enum zego_media_player_network_event network_event,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_network_event_callback(
-    zego_on_media_player_network_event callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_network_event callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_network_event_callback)(
-    zego_on_media_player_network_event callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_network_event callback_func, void *user_context);
 #endif
 
 /// The callback to report the current playback progress of the media player.
@@ -875,15 +908,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_network_event_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_playing_progress)(
-    unsigned long long millisecond, enum zego_media_player_instance_index instance_index,
-    void *user_context);
+    zego_handle handle, unsigned long long millisecond,
+    enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_playing_progress_callback(
-    zego_on_media_player_playing_progress callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_playing_progress callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_playing_progress_callback)(
-    zego_on_media_player_playing_progress callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_playing_progress callback_func, void *user_context);
 #endif
 
 /// The callback to report the current rendering progress of the media player.
@@ -898,15 +931,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_playing_progress_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_rendering_progress)(
-    unsigned long long millisecond, enum zego_media_player_instance_index instance_index,
-    void *user_context);
+    zego_handle handle, unsigned long long millisecond,
+    enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_rendering_progress_callback(
-    zego_on_media_player_rendering_progress callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_rendering_progress callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_rendering_progress_callback)(
-    zego_on_media_player_rendering_progress callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_rendering_progress callback_func, void *user_context);
 #endif
 
 /// The callback triggered when when the resolution of the playback video changes.
@@ -920,15 +953,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_rendering_progress_callback
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_video_size_changed)(
-    int width, int height, enum zego_media_player_instance_index instance_index,
+    zego_handle handle, int width, int height, enum zego_media_player_instance_index instance_index,
     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_video_size_changed_callback(
-    zego_on_media_player_video_size_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_video_size_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_video_size_changed_callback)(
-    zego_on_media_player_video_size_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_video_size_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the media player got media side info.
@@ -942,16 +975,17 @@ typedef void(EXP_CALL *pfnzego_register_media_player_video_size_changed_callback
 /// @param data_length SEI content length.
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
-typedef void (*zego_on_media_player_recv_sei)(const unsigned char *data, unsigned int data_length,
+typedef void (*zego_on_media_player_recv_sei)(zego_handle handle, const unsigned char *data,
+                                              unsigned int data_length,
                                               enum zego_media_player_instance_index instance_index,
                                               void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_recv_sei_callback(
-    zego_on_media_player_recv_sei callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_recv_sei callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_recv_sei_callback)(
-    zego_on_media_player_recv_sei callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_recv_sei callback_func, void *user_context);
 #endif
 
 /// The callback of sound level update.
@@ -966,14 +1000,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_recv_sei_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_sound_level_update)(
-    float sound_level, enum zego_media_player_instance_index instance_index, void *user_context);
+    zego_handle handle, float sound_level, enum zego_media_player_instance_index instance_index,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_sound_level_update_callback(
-    zego_on_media_player_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_sound_level_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_sound_level_update_callback)(
-    zego_on_media_player_sound_level_update callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_sound_level_update callback_func, void *user_context);
 #endif
 
 /// The callback of frequency spectrum update.
@@ -989,15 +1024,17 @@ typedef void(EXP_CALL *pfnzego_register_media_player_sound_level_update_callback
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_frequency_spectrum_update)(
-    float *spectrum_list, unsigned int spectrum_count,
+    zego_handle handle, float *spectrum_list, unsigned int spectrum_count,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_frequency_spectrum_update_callback(
-    zego_on_media_player_frequency_spectrum_update callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_frequency_spectrum_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_frequency_spectrum_update_callback)(
-    zego_on_media_player_frequency_spectrum_update callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_frequency_spectrum_update callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when the media player plays the first frame.
@@ -1012,15 +1049,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_frequency_spectrum_update_c
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_first_frame_event)(
-    enum zego_media_player_first_frame_event event,
+    zego_handle handle, enum zego_media_player_first_frame_event event,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_first_frame_event_callback(
-    zego_on_media_player_first_frame_event callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_first_frame_event callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_first_frame_event_callback)(
-    zego_on_media_player_first_frame_event callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_first_frame_event callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the media player caches http/https network resource locally.
@@ -1037,15 +1074,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_first_frame_event_callback)
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_local_cache)(
-    int error_code, const char *resource, const char *cached_file,
+    zego_handle handle, int error_code, const char *resource, const char *cached_file,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_local_cache_callback(
-    zego_on_media_player_local_cache callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_local_cache callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_local_cache_callback)(
-    zego_on_media_player_local_cache callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_local_cache callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the media player throws out video frame data, with additional information for the video frame.
@@ -1063,16 +1100,16 @@ typedef void(EXP_CALL *pfnzego_register_media_player_local_cache_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_video_frame)(
-    const unsigned char **data, unsigned int *data_length,
+    zego_handle handle, const unsigned char **data, unsigned int *data_length,
     const struct zego_video_frame_param param, const char *extra_info,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_video_frame_callback(
-    zego_on_media_player_video_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_video_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_video_frame_callback)(
-    zego_on_media_player_video_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_video_frame callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the media player throws out audio frame data.
@@ -1089,15 +1126,16 @@ typedef void(EXP_CALL *pfnzego_register_media_player_video_frame_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_audio_frame)(
-    unsigned char *data, unsigned int data_length, const struct zego_audio_frame_param param,
-    enum zego_media_player_instance_index instance_index, void *user_context);
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    const struct zego_audio_frame_param param, enum zego_media_player_instance_index instance_index,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_audio_frame_callback(
-    zego_on_media_player_audio_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_audio_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_audio_frame_callback)(
-    zego_on_media_player_audio_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_audio_frame callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the media player is about to throw the block data of the media resource.
@@ -1112,14 +1150,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_audio_frame_callback)(
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_block_begin)(
-    const char *path, enum zego_media_player_instance_index instance_index, void *user_context);
+    zego_handle handle, const char *path, enum zego_media_player_instance_index instance_index,
+    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_block_begin_callback(
-    zego_on_media_player_block_begin callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_block_begin callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_block_begin_callback)(
-    zego_on_media_player_block_begin callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_block_begin callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the media player throws the block data of the media resource.
@@ -1136,15 +1175,15 @@ typedef void(EXP_CALL *pfnzego_register_media_player_block_begin_callback)(
 /// @param user_context Context of user.
 /// @return The size of the buffer, -1 is returned for failure.
 typedef unsigned int (*zego_on_media_player_block_data)(
-    unsigned char *const buffer, unsigned int buffer_size,
+    zego_handle handle, unsigned char *const buffer, unsigned int buffer_size,
     enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_block_data_callback(
-    zego_on_media_player_block_data callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_block_data callback_func, void *user_context);
 #else
 typedef unsigned int(EXP_CALL *pfnzego_register_media_player_block_data_callback)(
-    zego_on_media_player_block_data callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_block_data callback_func, void *user_context);
 #endif
 
 /// [Deprecated] Setting up the specific voice changer parameters.
@@ -1154,11 +1193,11 @@ typedef unsigned int(EXP_CALL *pfnzego_register_media_player_block_data_callback
 /// @param param Voice changer parameters
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_media_player_set_voice_changer_param(
-    enum zego_media_player_audio_channel audio_channel, float param,
+    zego_handle handle, enum zego_media_player_audio_channel audio_channel, float param,
     enum zego_media_player_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_voice_changer_param)(
-    enum zego_media_player_audio_channel audio_channel, float param,
+    zego_handle handle, enum zego_media_player_audio_channel audio_channel, float param,
     enum zego_media_player_instance_index instance_index);
 #endif
 
@@ -1168,15 +1207,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_voice_changer_para
 /// @param instance_index Media player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_load_resource)(
-    zego_error error_code, enum zego_media_player_instance_index instance_index,
+    zego_handle handle, zego_error error_code, enum zego_media_player_instance_index instance_index,
     void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_load_resource_callback(
-    zego_on_media_player_load_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_load_resource callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_load_resource_callback)(
-    zego_on_media_player_load_resource callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_load_resource callback_func, void *user_context);
 #endif
 
 /// Callback for media player seek to playback progress.
@@ -1185,16 +1224,17 @@ typedef void(EXP_CALL *pfnzego_register_media_player_load_resource_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param instance_index Media player instance index
 /// @param user_context Context of user.
-typedef void (*zego_on_media_player_seek_to)(zego_seq seq, zego_error error_code,
+typedef void (*zego_on_media_player_seek_to)(zego_handle handle, zego_seq seq,
+                                             zego_error error_code,
                                              enum zego_media_player_instance_index instance_index,
                                              void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_seek_to_callback(
-    zego_on_media_player_seek_to callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_seek_to callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_seek_to_callback)(
-    zego_on_media_player_seek_to callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_seek_to callback_func, void *user_context);
 #endif
 
 /// The callback of the screenshot of the media player playing screen
@@ -1204,15 +1244,17 @@ typedef void(EXP_CALL *pfnzego_register_media_player_seek_to_callback)(
 /// @param instance_index Media player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_take_snapshot_result)(
-    zego_error error_code, void *image, enum zego_media_player_instance_index instance_index,
-    void *user_context);
+    zego_handle handle, zego_error error_code, void *image,
+    enum zego_media_player_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_media_player_take_snapshot_result_callback(
-    zego_on_media_player_take_snapshot_result callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_take_snapshot_result callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_media_player_take_snapshot_result_callback)(
-    zego_on_media_player_take_snapshot_result callback_func, void *user_context);
+    zego_handle handle, zego_on_media_player_take_snapshot_result callback_func,
+    void *user_context);
 #endif
 
 ZEGO_END_DECLS

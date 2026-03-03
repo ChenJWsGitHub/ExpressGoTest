@@ -24,11 +24,11 @@ ZEGO_BEGIN_DECLS
 ///   3. Only support numbers, English characters and '-', '_'.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_start_publishing_stream(const char *stream_id, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_publishing_stream(
+    zego_handle handle, const char *stream_id, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream)(
-    const char *stream_id, enum zego_publish_channel channel);
+    zego_handle handle, const char *stream_id, enum zego_publish_channel channel);
 #endif
 
 /// Starts publishing a stream. Support multi-room mode.
@@ -53,10 +53,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_publishing_stream_with_config(
-    const char *stream_id, struct zego_publisher_config config, enum zego_publish_channel channel);
+    zego_handle handle, const char *stream_id, struct zego_publisher_config config,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream_with_config)(
-    const char *stream_id, struct zego_publisher_config config, enum zego_publish_channel channel);
+    zego_handle handle, const char *stream_id, struct zego_publisher_config config,
+    enum zego_publish_channel channel);
 #endif
 
 /// Starts publishing a stream in RangeScene scene.
@@ -77,11 +79,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream_with_config
 /// @param config Advanced scene publish configuration.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_start_publishing_stream_in_scene(
-    const char *stream_id, enum zego_publish_channel channel,
+    zego_handle handle, const char *stream_id, enum zego_publish_channel channel,
     struct zego_scene_publisher_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream_in_scene)(
-    const char *stream_id, enum zego_publish_channel channel,
+    zego_handle handle, const char *stream_id, enum zego_publish_channel channel,
     struct zego_scene_publisher_config config);
 #endif
 
@@ -100,10 +102,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream_in_scene)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_stop_publishing_stream(enum zego_publish_channel channel);
+zego_express_stop_publishing_stream(zego_handle handle, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_stop_publishing_stream)(
-    enum zego_publish_channel channel);
+    zego_handle handle, enum zego_publish_channel channel);
 #endif
 
 /// Sets the extra information of the stream being published for the specified publish channel.
@@ -118,11 +120,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_publishing_stream)(
 /// @param channel Publish stream channel.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_stream_extra_info(
-    const char *extra_info, enum zego_publish_channel channel, zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_set_stream_extra_info(zego_handle handle, const char *extra_info,
+                                   enum zego_publish_channel channel, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_stream_extra_info)(
-    const char *extra_info, enum zego_publish_channel channel, zego_seq *sequence);
+    zego_handle handle, const char *extra_info, enum zego_publish_channel channel,
+    zego_seq *sequence);
 #endif
 
 /// Starts/Updates the local video preview (for the specified channel).
@@ -138,10 +142,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_stream_extra_info)(
 /// @param canvas The view used to display the preview image. If the view is set to NULL, no preview will be made.
 /// @param channel Publish stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_start_preview(struct zego_canvas *canvas,
+ZEGOEXP_API zego_error EXP_CALL zego_express_start_preview(zego_handle handle,
+                                                           struct zego_canvas *canvas,
                                                            enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_start_preview)(struct zego_canvas *canvas,
+typedef zego_error(EXP_CALL *pfnzego_express_start_preview)(zego_handle handle,
+                                                            struct zego_canvas *canvas,
                                                             enum zego_publish_channel channel);
 #endif
 
@@ -154,9 +160,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_preview)(struct zego_canvas *
 ///
 /// @param channel Publish stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_stop_preview(enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_stop_preview(zego_handle handle,
+                                                          enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_stop_preview)(enum zego_publish_channel channel);
+typedef zego_error(EXP_CALL *pfnzego_express_stop_preview)(zego_handle handle,
+                                                           enum zego_publish_channel channel);
 #endif
 
 /// Sets up the video configurations (for the specified channel).
@@ -172,10 +180,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_preview)(enum zego_publish_cha
 /// @param config Video configuration, the SDK provides a common setting combination of resolution, frame rate and bit rate, they also can be customized.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_video_config(struct zego_video_config config,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_video_config(zego_handle handle,
+                                                              struct zego_video_config config,
                                                               enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_video_config)(struct zego_video_config config,
+typedef zego_error(EXP_CALL *pfnzego_express_set_video_config)(zego_handle handle,
+                                                               struct zego_video_config config,
                                                                enum zego_publish_channel channel);
 #endif
 
@@ -187,10 +197,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_video_config)(struct zego_video
 /// @param channel Publish stream channel
 /// @param config [in/out] Video configuration object.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_video_config(enum zego_publish_channel channel,
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_video_config(zego_handle handle,
+                                                              enum zego_publish_channel channel,
                                                               struct zego_video_config *config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_get_video_config)(enum zego_publish_channel channel,
+typedef zego_error(EXP_CALL *pfnzego_express_get_video_config)(zego_handle handle,
+                                                               enum zego_publish_channel channel,
                                                                struct zego_video_config *config);
 #endif
 
@@ -207,12 +219,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_video_config)(enum zego_publish
 /// @param channel ZegoPublishChannel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_publish_dual_stream_config(
-    const struct zego_publish_dual_stream_config *config_list, int config_list_count,
-    enum zego_publish_channel channel);
+    zego_handle handle, const struct zego_publish_dual_stream_config *config_list,
+    int config_list_count, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_publish_dual_stream_config)(
-    const struct zego_publish_dual_stream_config *config_list, int config_list_count,
-    enum zego_publish_channel channel);
+    zego_handle handle, const struct zego_publish_dual_stream_config *config_list,
+    int config_list_count, enum zego_publish_channel channel);
 #endif
 
 /// Sets the video mirroring mode (for the specified channel).
@@ -227,10 +239,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_publish_dual_stream_config)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_video_mirror_mode(
-    enum zego_video_mirror_mode mirror_mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_video_mirror_mode mirror_mode, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_video_mirror_mode)(
-    enum zego_video_mirror_mode mirror_mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_video_mirror_mode mirror_mode, enum zego_publish_channel channel);
 #endif
 
 /// Sets the video orientation (for the specified channel).
@@ -245,11 +257,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_video_mirror_mode)(
 /// @param orientation Video orientation.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_app_orientation(enum zego_orientation orientation,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_app_orientation(zego_handle handle,
+                                                                 enum zego_orientation orientation,
                                                                  enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_app_orientation)(
-    enum zego_orientation orientation, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_orientation orientation, enum zego_publish_channel channel);
 #endif
 
 /// Available since: 1.1.0
@@ -263,10 +276,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_app_orientation)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_ios_app_orientation(
-    enum zego_ios_orientation orientation, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_ios_orientation orientation, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_ios_app_orientation)(
-    enum zego_ios_orientation orientation, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_ios_orientation orientation, enum zego_publish_channel channel);
 #endif
 
 /// Sets up the audio configurations.
@@ -281,9 +294,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_ios_app_orientation)(
 ///
 /// @param config Audio config.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_config(struct zego_audio_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_config(zego_handle handle,
+                                                              struct zego_audio_config config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_audio_config)(struct zego_audio_config config);
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_config)(zego_handle handle,
+                                                               struct zego_audio_config config);
 #endif
 
 /// Sets up the audio configurations for the specified publish channel.
@@ -299,10 +314,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_config)(struct zego_audio
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_config_by_channel(
-    struct zego_audio_config config, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_audio_config config, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_audio_config_by_channel)(
-    struct zego_audio_config config, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_audio_config config, enum zego_publish_channel channel);
 #endif
 
 /// Gets the current audio configurations.
@@ -316,9 +331,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_config_by_channel)(
 ///
 /// @param config [in/out] Audio configuration object.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_audio_config(struct zego_audio_config *config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_audio_config(zego_handle handle,
+                                                              struct zego_audio_config *config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_get_audio_config)(struct zego_audio_config *config);
+typedef zego_error(EXP_CALL *pfnzego_express_get_audio_config)(zego_handle handle,
+                                                               struct zego_audio_config *config);
 #endif
 
 /// Gets the current audio configurations from the specified publish channel.
@@ -333,10 +350,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_audio_config)(struct zego_audio
 /// @param config [in/out] Audio configuration object.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_get_audio_config_by_channel(
-    enum zego_publish_channel channel, struct zego_audio_config *config);
+    zego_handle handle, enum zego_publish_channel channel, struct zego_audio_config *config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_get_audio_config_by_channel)(
-    enum zego_publish_channel channel, struct zego_audio_config *config);
+    zego_handle handle, enum zego_publish_channel channel, struct zego_audio_config *config);
 #endif
 
 /// Set encryption key for the publishing stream for the specified publish channel.
@@ -351,11 +368,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_audio_config_by_channel)(
 /// @param key The encryption key, note that the key length only supports 16/24/32 bytes.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_publish_stream_encryption_key(const char *key, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_publish_stream_encryption_key(
+    zego_handle handle, const char *key, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_publish_stream_encryption_key)(
-    const char *key, enum zego_publish_channel channel);
+    zego_handle handle, const char *key, enum zego_publish_channel channel);
 #endif
 
 /// Take a snapshot of the publishing stream for the specified publish channel.
@@ -372,10 +389,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_publish_stream_encryption_key)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_take_publish_stream_snapshot(enum zego_publish_channel channel);
+zego_express_take_publish_stream_snapshot(zego_handle handle, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_take_publish_stream_snapshot)(
-    enum zego_publish_channel channel);
+    zego_handle handle, enum zego_publish_channel channel);
 #endif
 
 /// Take a snapshot of the publishing stream for the specified publish channel.
@@ -393,10 +410,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_take_publish_stream_snapshot)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_take_publish_stream_snapshot_by_config(
-    struct zego_publisher_take_snapshot_config config, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_publisher_take_snapshot_config config,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_take_publish_stream_snapshot_by_config)(
-    struct zego_publisher_take_snapshot_config config, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_publisher_take_snapshot_config config,
+    enum zego_publish_channel channel);
 #endif
 
 /// Stops or resumes sending the audio part of a stream for the specified channel.
@@ -412,11 +431,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_take_publish_stream_snapshot_by_con
 /// @param mute Whether to stop sending audio streams, true means not to send audio stream, and false means sending audio stream. The default is false.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_mute_publish_stream_audio(bool mute, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_publish_stream_audio(
+    zego_handle handle, bool mute, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_mute_publish_stream_audio)(
-    bool mute, enum zego_publish_channel channel);
+    zego_handle handle, bool mute, enum zego_publish_channel channel);
 #endif
 
 /// Stops or resumes sending the video part of a stream for the specified channel.
@@ -432,11 +451,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_publish_stream_audio)(
 /// @param mute Whether to stop sending video streams, true means not to send video stream, and false means sending video stream. The default is false.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_mute_publish_stream_video(bool mute, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_mute_publish_stream_video(
+    zego_handle handle, bool mute, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_mute_publish_stream_video)(
-    bool mute, enum zego_publish_channel channel);
+    zego_handle handle, bool mute, enum zego_publish_channel channel);
 #endif
 
 /// Enable or disable the stream precision alignment function.
@@ -451,11 +470,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_publish_stream_video)(
 /// @param alignment Whether to enable the stream mixing precision alignment function.
 /// @param channel Publish stream channel
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_stream_alignment_property(int alignment, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_stream_alignment_property(
+    zego_handle handle, int alignment, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_stream_alignment_property)(
-    int alignment, enum zego_publish_channel channel);
+    zego_handle handle, int alignment, enum zego_publish_channel channel);
 #endif
 
 /// Enables or disables traffic control.
@@ -470,9 +489,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_stream_alignment_property)(
 /// @param enable Whether to enable traffic control. The default is ture.
 /// @param property Adjustable property of traffic control, bitmask OR format. Should be one or the combinations of [ZegoTrafficControlProperty] enumeration. [AdaptiveFPS] as default.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_traffic_control(bool enable, int property);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_traffic_control(zego_handle handle, bool enable,
+                                                                    int property);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_traffic_control)(bool enable, int property);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_traffic_control)(zego_handle handle,
+                                                                     bool enable, int property);
 #endif
 
 /// Enables or disables the traffic control for the specified publish channel.
@@ -488,10 +509,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_traffic_control)(bool enable
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_traffic_control_by_channel(
-    bool enable, int property, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, int property, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_traffic_control_by_channel)(
-    bool enable, int property, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, int property, enum zego_publish_channel channel);
 #endif
 
 /// Set the minimum video bitrate threshold for traffic control.
@@ -509,10 +530,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_traffic_control_by_channel)(
 /// @param mode Video sending mode below the minimum bitrate.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_min_video_bitrate_for_traffic_control(
-    int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode);
+    zego_handle handle, int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_min_video_bitrate_for_traffic_control)(
-    int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode);
+    zego_handle handle, int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode);
 #endif
 
 /// Sets the minimum video bitrate for traffic control for the specified publish channel.
@@ -530,11 +551,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_min_video_bitrate_for_traffic_c
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_min_video_bitrate_for_traffic_control_by_channel(
-    int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode,
+    zego_handle handle, int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode,
     enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_min_video_bitrate_for_traffic_control_by_channel)(
-    int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode,
+    zego_handle handle, int bitrate, enum zego_traffic_control_min_video_bitrate_mode mode,
     enum zego_publish_channel channel);
 #endif
 
@@ -553,10 +574,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_min_video_bitrate_for_traffic_c
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_min_video_fps_for_traffic_control_by_channel(
-    int fps, enum zego_publish_channel channel);
+    zego_handle handle, int fps, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_min_video_fps_for_traffic_control_by_channel)(
-    int fps, enum zego_publish_channel channel);
+    zego_handle handle, int fps, enum zego_publish_channel channel);
 #endif
 
 /// Sets the minimum video resolution threshold for traffic control.
@@ -576,11 +597,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_min_video_fps_for_traffic_contr
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
 zego_express_set_min_video_resolution_for_traffic_control_by_channel(
-    int width, int height, enum zego_publish_channel channel);
+    zego_handle handle, int width, int height, enum zego_publish_channel channel);
 #else
 typedef zego_error(
     EXP_CALL *pfnzego_express_set_min_video_resolution_for_traffic_control_by_channel)(
-    int width, int height, enum zego_publish_channel channel);
+    zego_handle handle, int width, int height, enum zego_publish_channel channel);
 #endif
 
 /// Set the factors of concern that trigger traffic control.
@@ -594,11 +615,11 @@ typedef zego_error(
 ///
 /// @param mode When LOCAL_ONLY is selected, only the local network status is concerned. When choosing REMOTE, also take into account the remote network.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_traffic_control_focus_on(enum zego_traffic_control_focus_on_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_traffic_control_focus_on(
+    zego_handle handle, enum zego_traffic_control_focus_on_mode mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_traffic_control_focus_on)(
-    enum zego_traffic_control_focus_on_mode mode);
+    zego_handle handle, enum zego_traffic_control_focus_on_mode mode);
 #endif
 
 /// Set the factors of concern that trigger traffic control for the specified publish channel.
@@ -614,10 +635,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_traffic_control_focus_on)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_traffic_control_focus_on_by_channel(
-    enum zego_traffic_control_focus_on_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_traffic_control_focus_on_mode mode,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_traffic_control_focus_on_by_channel)(
-    enum zego_traffic_control_focus_on_mode mode, enum zego_publish_channel channel);
+    zego_handle handle, enum zego_traffic_control_focus_on_mode mode,
+    enum zego_publish_channel channel);
 #endif
 
 /// Sets the audio recording volume for stream publishing.
@@ -631,9 +654,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_traffic_control_focus_on_by_cha
 ///
 /// @param volume The volume gain percentage, the range is 0 ~ 200, and the default value is 100, which means 100% of the original collection volume of the device.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_capture_volume(int volume);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_capture_volume(zego_handle handle, int volume);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_capture_volume)(int volume);
+typedef zego_error(EXP_CALL *pfnzego_express_set_capture_volume)(zego_handle handle, int volume);
 #endif
 
 /// Gets the audio recording volume for stream publishing.
@@ -646,9 +669,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_capture_volume)(int volume);
 /// @param volume Audio recording volume for stream publishing.
 /// @return The volume gain percentage.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API int EXP_CALL zego_express_get_capture_volume(int *volume);
+ZEGOEXP_API int EXP_CALL zego_express_get_capture_volume(zego_handle handle, int *volume);
 #else
-typedef int(EXP_CALL *pfnzego_express_get_capture_volume)(int *volume);
+typedef int(EXP_CALL *pfnzego_express_get_capture_volume)(zego_handle handle, int *volume);
 #endif
 
 /// Set audio capture stereo mode.
@@ -663,11 +686,11 @@ typedef int(EXP_CALL *pfnzego_express_get_capture_volume)(int *volume);
 ///
 /// @param mode Audio stereo capture mode.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_audio_capture_stereo_mode(enum zego_audio_capture_stereo_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_capture_stereo_mode(
+    zego_handle handle, enum zego_audio_capture_stereo_mode mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_audio_capture_stereo_mode)(
-    enum zego_audio_capture_stereo_mode mode);
+    zego_handle handle, enum zego_audio_capture_stereo_mode mode);
 #endif
 
 /// Adds a target CDN URL to which the stream will be relayed from ZEGO RTC server.
@@ -684,11 +707,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_capture_stereo_mode)(
 /// @param target_url CDN relay address, supported address format is rtmp, rtmps.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_add_publish_cdn_url(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_add_publish_cdn_url(zego_handle handle,
+                                                                 const char *stream_id,
                                                                  const char *target_url,
                                                                  zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_add_publish_cdn_url)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_add_publish_cdn_url)(zego_handle handle,
+                                                                  const char *stream_id,
                                                                   const char *target_url,
                                                                   zego_seq *sequence);
 #endif
@@ -708,12 +733,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_add_publish_cdn_url)(const char *st
 /// @param time_out Timeout. Callback if it does not start in the time. Default is 0, which means no timeout. Valid range is [5, 600], in seconds. Less than 0 will be reset to 0, 1 to 4 will be reset to 5, and a greater than 600 will be reset to 600.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_add_publish_cdn_url_v2(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_add_publish_cdn_url_v2(zego_handle handle,
+                                                                    const char *stream_id,
                                                                     const char *target_url,
                                                                     int time_out,
                                                                     zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_add_publish_cdn_url_v2)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_add_publish_cdn_url_v2)(zego_handle handle,
+                                                                     const char *stream_id,
                                                                      const char *target_url,
                                                                      int time_out,
                                                                      zego_seq *sequence);
@@ -732,11 +759,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_add_publish_cdn_url_v2)(const char 
 /// @param target_url CDN relay address, supported address format rtmp.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_remove_publish_cdn_url(const char *stream_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_remove_publish_cdn_url(zego_handle handle,
+                                                                    const char *stream_id,
                                                                     const char *target_url,
                                                                     zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_remove_publish_cdn_url)(const char *stream_id,
+typedef zego_error(EXP_CALL *pfnzego_express_remove_publish_cdn_url)(zego_handle handle,
+                                                                     const char *stream_id,
                                                                      const char *target_url,
                                                                      zego_seq *sequence);
 #endif
@@ -756,10 +785,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_remove_publish_cdn_url)(const char 
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_publish_direct_to_cdn(
-    bool enable, struct zego_cdn_config *config, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_cdn_config *config,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_publish_direct_to_cdn)(
-    bool enable, struct zego_cdn_config *config, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_cdn_config *config,
+    enum zego_publish_channel channel);
 #endif
 
 /// Sets up the stream watermark before stream publishing (for the specified channel).
@@ -776,10 +807,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_publish_direct_to_cdn)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_publish_watermark(
-    bool is_preview_visible, struct zego_watermark *watermark, enum zego_publish_channel channel);
+    zego_handle handle, bool is_preview_visible, struct zego_watermark *watermark,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_publish_watermark)(
-    bool is_preview_visible, struct zego_watermark *watermark, enum zego_publish_channel channel);
+    zego_handle handle, bool is_preview_visible, struct zego_watermark *watermark,
+    enum zego_publish_channel channel);
 #endif
 
 /// Set the Supplemental Enhancement Information type.
@@ -792,9 +825,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_publish_watermark)(
 ///
 /// @param config SEI configuration. The SEI defined by ZEGO is used by default.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_sei_config(struct zego_sei_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_sei_config(zego_handle handle,
+                                                            struct zego_sei_config config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_sei_config)(struct zego_sei_config config);
+typedef zego_error(EXP_CALL *pfnzego_express_set_sei_config)(zego_handle handle,
+                                                             struct zego_sei_config config);
 #endif
 
 /// Sends Supplemental Enhancement Information to the specified publish channel.
@@ -811,11 +846,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_sei_config)(struct zego_sei_con
 /// @param data_length SEI data length.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_send_sei(const unsigned char *data,
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_sei(zego_handle handle, const unsigned char *data,
                                                       unsigned int data_length,
                                                       enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_send_sei)(const unsigned char *data,
+typedef zego_error(EXP_CALL *pfnzego_express_send_sei)(zego_handle handle,
+                                                       const unsigned char *data,
                                                        unsigned int data_length,
                                                        enum zego_publish_channel channel);
 #endif
@@ -836,12 +872,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_sei)(const unsigned char *data
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_sei_sync_with_custom_video(
-    const unsigned char *data, unsigned int data_length, unsigned long long timestamp_ns,
-    enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
+    unsigned long long timestamp_ns, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_sei_sync_with_custom_video)(
-    const unsigned char *data, unsigned int data_length, unsigned long long timestamp_ns,
-    enum zego_publish_channel channel);
+    zego_handle handle, const unsigned char *data, unsigned int data_length,
+    unsigned long long timestamp_ns, enum zego_publish_channel channel);
 #endif
 
 /// Send audio side information.
@@ -859,12 +895,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_sei_sync_with_custom_video)(
 /// @param timestamp_ms timeStampMs, derived from custom audio processing, in milliseconds. If you fill in 0, it is sent along with the frame that is currently ready to be sent.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_send_audio_side_info(const unsigned char *data, unsigned int data_length,
-                                  double timestamp_ms, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_audio_side_info(
+    zego_handle handle, const unsigned char *data, unsigned int data_length, double timestamp_ms,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_audio_side_info)(
-    const unsigned char *data, unsigned int data_length, double timestamp_ms,
+    zego_handle handle, const unsigned char *data, unsigned int data_length, double timestamp_ms,
     enum zego_publish_channel channel);
 #endif
 
@@ -877,9 +913,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_audio_side_info)(
 ///
 /// @param enable Whether to enable hardware encoding, true: enable hardware encoding, false: disable hardware encoding.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_hardware_encoder(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_hardware_encoder(zego_handle handle,
+                                                                     bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_hardware_encoder)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_hardware_encoder)(zego_handle handle,
+                                                                      bool enable);
 #endif
 
 /// Sets the timing of video scaling in the video capture workflow. You can choose to do video scaling right after video capture (the default value) or before encoding.
@@ -891,11 +929,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_hardware_encoder)(bool enabl
 ///
 /// @param mode The capture scale timing mode.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_capture_pipeline_scale_mode(enum zego_capture_pipeline_scale_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_capture_pipeline_scale_mode(
+    zego_handle handle, enum zego_capture_pipeline_scale_mode mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_capture_pipeline_scale_mode)(
-    enum zego_capture_pipeline_scale_mode mode);
+    zego_handle handle, enum zego_capture_pipeline_scale_mode mode);
 #endif
 
 /// Set the path of the static picture would be published when the camera is closed.
@@ -923,11 +961,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_capture_pipeline_scale_mode)(
 /// @param file_path Picture file path
 /// @param channel Publish channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_dummy_capture_image_path(const char *file_path, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_dummy_capture_image_path(
+    zego_handle handle, const char *file_path, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_path)(
-    const char *file_path, enum zego_publish_channel channel);
+    zego_handle handle, const char *file_path, enum zego_publish_channel channel);
 #endif
 
 /// Set the params of the static picture would be published when the camera is closed.
@@ -956,10 +994,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_path)(
 /// @param channel Publish channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_dummy_capture_image_params(
-    struct zego_dummy_capture_image_params params, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_dummy_capture_image_params params,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_params)(
-    struct zego_dummy_capture_image_params params, enum zego_publish_channel channel);
+    zego_handle handle, struct zego_dummy_capture_image_params params,
+    enum zego_publish_channel channel);
 #endif
 
 /// Whether to enable H.265 encoding to automatically downgrade to H.264 encoding.
@@ -974,9 +1014,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_dummy_capture_image_params)(
 ///
 /// @param enable Whether to enable H.265 coding automatically fallback to H.264 coding, true: enable, false: disable, and the default value is true
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_h_265_encode_fallback(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_h_265_encode_fallback(zego_handle handle,
+                                                                          bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_h_265_encode_fallback)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_h_265_encode_fallback)(zego_handle handle,
+                                                                           bool enable);
 #endif
 
 /// Whether the specified video encoding type and implementation are supported.
@@ -991,12 +1033,32 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_h_265_encode_fallback)(bool 
 /// @param is_supported [in/out] Whether the specified video encoding format is supported; 0 means not supported, and the encoding format cannot be used for publish stream; 1 means support, you can use this encoding format for publish stream; 2 means not confirmed, it is recommended to call this interface later.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_is_video_encoder_supported(
-    enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
-    int *is_supported);
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, int *is_supported);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_is_video_encoder_supported)(
-    enum zego_video_codec_id codec_id, enum zego_video_codec_backend codec_backend,
-    int *is_supported);
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, int *is_supported);
+#endif
+
+/// Whether the specified video encoding type and implementation are supported.
+///
+/// Available since: 3.23.0 and above
+/// Description: Whether the specified video encoding is supported depends on the following aspects, whether the hardware model supports hard encoding, whether the performance of the hardware model supports soft encoding, and whether the SDK has the encoding module.
+/// When to call: After creating the engine.
+/// Caution: It is recommended that users call this interface to obtain H.265 encoding support capability before publish stream with H.265 encoding, if not supported, you can use other encodings for publish, such as H.264.On the mobile platform, the SDK only supports H.265 hardware encoding, and it is affected by the model and hardware capabilities.
+///
+/// @param codec_id Video codec id. Required: Yes.
+/// @param codec_backend Backend implementation of encoder. Required: Yes.
+/// @param sequence [in/out] Context that identifies which invocation triggered this callback.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_video_encoder_supported(
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, zego_seq sequence);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_get_video_encoder_supported)(
+    zego_handle handle, enum zego_video_codec_id codec_id,
+    enum zego_video_codec_backend codec_backend, zego_seq sequence);
 #endif
 
 /// Set the orientation mode of the video.
@@ -1014,10 +1076,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_video_encoder_supported)(
 /// @param mode Orientation mode of the video.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_app_orientation_mode(enum zego_orientation_mode mode);
+zego_express_set_app_orientation_mode(zego_handle handle, enum zego_orientation_mode mode);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_app_orientation_mode)(
-    enum zego_orientation_mode mode);
+    zego_handle handle, enum zego_orientation_mode mode);
 #endif
 
 /// Set a video capture instance as video capture source for the specified channel.
@@ -1038,11 +1100,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_app_orientation_mode)(
 /// @param instance_id Video capture source instance id.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_video_source(enum zego_video_source_type source,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_video_source(zego_handle handle,
+                                                              enum zego_video_source_type source,
                                                               unsigned int instance_id,
                                                               enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_video_source)(enum zego_video_source_type source,
+typedef zego_error(EXP_CALL *pfnzego_express_set_video_source)(zego_handle handle,
+                                                               enum zego_video_source_type source,
                                                                unsigned int instance_id,
                                                                enum zego_publish_channel channel);
 #endif
@@ -1061,10 +1125,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_video_source)(enum zego_video_s
 /// @param source Audio capture source.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_source(enum zego_audio_source_type source,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_source(zego_handle handle,
+                                                              enum zego_audio_source_type source,
                                                               enum zego_publish_channel channel);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_audio_source)(enum zego_audio_source_type source,
+typedef zego_error(EXP_CALL *pfnzego_express_set_audio_source)(zego_handle handle,
+                                                               enum zego_audio_source_type source,
                                                                enum zego_publish_channel channel);
 #endif
 
@@ -1081,11 +1147,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_source)(enum zego_audio_s
 /// @param source Audio capture source.
 /// @param config Audio capture source mix config.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_audio_source_with_config(
-    enum zego_audio_source_type source, struct zego_audio_source_mix_config config);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_set_audio_source_with_config(zego_handle handle, enum zego_audio_source_type source,
+                                          struct zego_audio_source_mix_config config);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_audio_source_with_config)(
-    enum zego_audio_source_type source, struct zego_audio_source_mix_config config);
+    zego_handle handle, enum zego_audio_source_type source,
+    struct zego_audio_source_mix_config config);
 #endif
 
 /// Enable video object segmentation.
@@ -1107,10 +1175,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_source_with_config)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_object_segmentation(
-    bool enable, enum zego_object_segmentation_type type, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_object_segmentation_type type,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_video_object_segmentation)(
-    bool enable, enum zego_object_segmentation_type type, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_object_segmentation_type type,
+    enum zego_publish_channel channel);
 #endif
 
 /// Enable video object segmentation.
@@ -1130,10 +1200,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_video_object_segmentation)(
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_object_segmentation_with_config(
-    bool enable, struct zego_object_segmentation_config config, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_object_segmentation_config config,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_video_object_segmentation_with_config)(
-    bool enable, struct zego_object_segmentation_config config, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, struct zego_object_segmentation_config config,
+    enum zego_publish_channel channel);
 #endif
 
 /// Enable video encoder alpha channel support.
@@ -1149,10 +1221,32 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_video_object_segmentation_wi
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_alpha_channel_video_encoder(
-    bool enable, enum zego_alpha_layout_type alpha_layout, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_alpha_layout_type alpha_layout,
+    enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_alpha_channel_video_encoder)(
-    bool enable, enum zego_alpha_layout_type alpha_layout, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_alpha_layout_type alpha_layout,
+    enum zego_publish_channel channel);
+#endif
+
+/// Enable video encoder enhancement.
+///
+/// Available since: 3.23.0
+/// Description: Call this function to enable or disable video encoder enhancement.
+/// Use cases: Commonly used in video calling, live streaming, and similar scenarios.
+/// Default value: When this function is not called, video encoder enhancement is not enabled by default.
+/// When to call: It needs to be called after [createEngine].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param enable Whether to enable, true: enable, false: disable
+/// @param enhance_level enhance_level [0.0,1.5], advise 0.9
+/// @param channel Publish stream channel.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_encoder_enhancement(
+    zego_handle handle, bool enable, float enhance_level, enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_video_encoder_enhancement)(
+    zego_handle handle, bool enable, float enhance_level, enum zego_publish_channel channel);
 #endif
 
 /// Set the camera stabilization mode.
@@ -1168,11 +1262,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_alpha_channel_video_encoder)
 /// @param mode The camera stabilization mode. \niOS:See Apple AVCaptureVideoStabilizationMode definition for details. The default value is 0. \nAndroid:AUTO:-1, OFF:0. The default value is 0.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_set_camera_stabilization_mode(int mode, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_camera_stabilization_mode(
+    zego_handle handle, int mode, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_camera_stabilization_mode)(
-    int mode, enum zego_publish_channel channel);
+    zego_handle handle, int mode, enum zego_publish_channel channel);
 #endif
 
 /// Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
@@ -1184,9 +1278,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_camera_stabilization_mode)(
 ///
 /// @param enable Turn on or off the adaptive mode to adjust the volume of the human voice according to the volume of the BGM.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_aux_bgm_balance(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_aux_bgm_balance(zego_handle handle,
+                                                                    bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_aux_bgm_balance)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_aux_bgm_balance)(zego_handle handle,
+                                                                     bool enable);
 #endif
 
 /// Turn on or off the face detection.
@@ -1194,16 +1290,17 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_aux_bgm_balance)(bool enable
 /// Available since: 3.20.0
 /// Description: Turn on or off the face detection. Default is on.
 /// When to call: Called after the engine is created [createEngine].
+/// Restrictions: This interface is disabled when using custom video capture.
 /// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
 ///
 /// @param enable Turn on or off the face detection.
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_enable_face_detection(bool enable, enum zego_publish_channel channel);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_face_detection(
+    zego_handle handle, bool enable, enum zego_publish_channel channel);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_face_detection)(
-    bool enable, enum zego_publish_channel channel);
+    zego_handle handle, bool enable, enum zego_publish_channel channel);
 #endif
 
 /// The callback triggered when the state of stream publishing changes.
@@ -1218,17 +1315,17 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_face_detection)(
 /// @param error_code The error code corresponding to the status change of the publish stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param extended_data Extended information with state updates, include playing stream CDN address.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_state_update)(const char *stream_id,
+typedef void (*zego_on_publisher_state_update)(zego_handle handle, const char *stream_id,
                                                enum zego_publisher_state state,
                                                zego_error error_code, const char *extended_data,
                                                void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_state_update_callback(
-    zego_on_publisher_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_state_update_callback)(
-    zego_on_publisher_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_state_update callback_func, void *user_context);
 #endif
 
 /// Callback for current stream publishing quality.
@@ -1241,16 +1338,16 @@ typedef void(EXP_CALL *pfnzego_register_publisher_state_update_callback)(
 /// @param stream_id Stream ID.
 /// @param quality Publishing stream quality, including audio and video framerate, bitrate, RTT, etc.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_quality_update)(const char *stream_id,
+typedef void (*zego_on_publisher_quality_update)(zego_handle handle, const char *stream_id,
                                                  struct zego_publish_stream_quality quality,
                                                  void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_quality_update_callback(
-    zego_on_publisher_quality_update callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_quality_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_quality_update_callback)(
-    zego_on_publisher_quality_update callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_quality_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the first audio frame is captured.
@@ -1261,14 +1358,17 @@ typedef void(EXP_CALL *pfnzego_register_publisher_quality_update_callback)(
 /// Related callbacks: Determine if the SDK actually collected video data by the callback function [onPublisherCapturedVideoFirstFrame], determine if the SDK has rendered the first frame of video data collected by calling back [onPublisherRenderVideoFirstFrame].
 ///
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_captured_audio_first_frame)(void *user_context);
+typedef void (*zego_on_publisher_captured_audio_first_frame)(zego_handle handle,
+                                                             void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_captured_audio_first_frame_callback(
-    zego_on_publisher_captured_audio_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_captured_audio_first_frame callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_captured_audio_first_frame_callback)(
-    zego_on_publisher_captured_audio_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_captured_audio_first_frame callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when the first video frame is captured.
@@ -1281,15 +1381,18 @@ typedef void(EXP_CALL *pfnzego_register_publisher_captured_audio_first_frame_cal
 ///
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_captured_video_first_frame)(enum zego_publish_channel channel,
+typedef void (*zego_on_publisher_captured_video_first_frame)(zego_handle handle,
+                                                             enum zego_publish_channel channel,
                                                              void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_captured_video_first_frame_callback(
-    zego_on_publisher_captured_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_captured_video_first_frame callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_captured_video_first_frame_callback)(
-    zego_on_publisher_captured_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_captured_video_first_frame callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when the first audio frame is sent.
@@ -1301,15 +1404,16 @@ typedef void(EXP_CALL *pfnzego_register_publisher_captured_video_first_frame_cal
 ///
 /// @param channel Publishing stream channel.If you only publish one audio stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_send_audio_first_frame)(enum zego_publish_channel channel,
+typedef void (*zego_on_publisher_send_audio_first_frame)(zego_handle handle,
+                                                         enum zego_publish_channel channel,
                                                          void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_send_audio_first_frame_callback(
-    zego_on_publisher_send_audio_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_send_audio_first_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_send_audio_first_frame_callback)(
-    zego_on_publisher_send_audio_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_send_audio_first_frame callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the first video frame is sent.
@@ -1322,15 +1426,16 @@ typedef void(EXP_CALL *pfnzego_register_publisher_send_audio_first_frame_callbac
 ///
 /// @param channel Publishing stream channel.If you only publish one video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_send_video_first_frame)(enum zego_publish_channel channel,
+typedef void (*zego_on_publisher_send_video_first_frame)(zego_handle handle,
+                                                         enum zego_publish_channel channel,
                                                          void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_send_video_first_frame_callback(
-    zego_on_publisher_send_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_send_video_first_frame callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_send_video_first_frame_callback)(
-    zego_on_publisher_send_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_send_video_first_frame callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the first video frame is rendered.
@@ -1342,15 +1447,18 @@ typedef void(EXP_CALL *pfnzego_register_publisher_send_video_first_frame_callbac
 ///
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_render_video_first_frame)(enum zego_publish_channel channel,
+typedef void (*zego_on_publisher_render_video_first_frame)(zego_handle handle,
+                                                           enum zego_publish_channel channel,
                                                            void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_render_video_first_frame_callback(
-    zego_on_publisher_render_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_render_video_first_frame callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_render_video_first_frame_callback)(
-    zego_on_publisher_render_video_first_frame callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_render_video_first_frame callback_func,
+    void *user_context);
 #endif
 
 /// The callback triggered when the video capture resolution changes.
@@ -1366,16 +1474,16 @@ typedef void(EXP_CALL *pfnzego_register_publisher_render_video_first_frame_callb
 /// @param height Video capture resolution height.
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_video_size_changed)(int width, int height,
+typedef void (*zego_on_publisher_video_size_changed)(zego_handle handle, int width, int height,
                                                      enum zego_publish_channel channel,
                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_video_size_changed_callback(
-    zego_on_publisher_video_size_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_video_size_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_video_size_changed_callback)(
-    zego_on_publisher_video_size_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_video_size_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the state of relayed streaming to CDN changes.
@@ -1390,15 +1498,15 @@ typedef void(EXP_CALL *pfnzego_register_publisher_video_size_changed_callback)(
 /// @param info_count List of information count that the current CDN is relaying.
 /// @param user_context Context of user.
 typedef void (*zego_on_publisher_relay_cdn_state_update)(
-    const char *stream_id, const struct zego_stream_relay_cdn_info *info_list,
+    zego_handle handle, const char *stream_id, const struct zego_stream_relay_cdn_info *info_list,
     unsigned int info_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_relay_cdn_state_update_callback(
-    zego_on_publisher_relay_cdn_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_relay_cdn_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_relay_cdn_state_update_callback)(
-    zego_on_publisher_relay_cdn_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_relay_cdn_state_update callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the video encoder changes in publishing stream.
@@ -1412,17 +1520,18 @@ typedef void(EXP_CALL *pfnzego_register_publisher_relay_cdn_state_update_callbac
 /// @param to_codec_id Video codec ID after the change.
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_video_encoder_changed)(enum zego_video_codec_id from_codec_id,
+typedef void (*zego_on_publisher_video_encoder_changed)(zego_handle handle,
+                                                        enum zego_video_codec_id from_codec_id,
                                                         enum zego_video_codec_id to_codec_id,
                                                         enum zego_publish_channel channel,
                                                         void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_video_encoder_changed_callback(
-    zego_on_publisher_video_encoder_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_video_encoder_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_video_encoder_changed_callback)(
-    zego_on_publisher_video_encoder_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_video_encoder_changed callback_func, void *user_context);
 #endif
 
 /// The callback triggered when publishing stream.
@@ -1436,16 +1545,16 @@ typedef void(EXP_CALL *pfnzego_register_publisher_video_encoder_changed_callback
 /// @param stream_id Stream ID.
 /// @param extra_info extra info. it is in JSON format. Included information includes "url" for address, "streamProtocol" for stream protocol, including rtmp, flv, avertp, hls, webrtc, etc. "netProtocol" for network protocol, including tcp, udp, quic, "resourceType" for resource type , including cdn, rtc, l3.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_stream_event)(enum zego_stream_event event_id,
+typedef void (*zego_on_publisher_stream_event)(zego_handle handle, enum zego_stream_event event_id,
                                                const char *stream_id, const char *extra_info,
                                                void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_stream_event_callback(
-    zego_on_publisher_stream_event callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_stream_event callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_stream_event_callback)(
-    zego_on_publisher_stream_event callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_stream_event callback_func, void *user_context);
 #endif
 
 /// The video object segmentation state changed.
@@ -1460,15 +1569,17 @@ typedef void(EXP_CALL *pfnzego_register_publisher_stream_event_callback)(
 /// @param error_code The error code corresponding to the status change of the object segmentation, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_video_object_segmentation_state_changed)(
-    enum zego_object_segmentation_state state, enum zego_publish_channel channel, int error_code,
-    void *user_context);
+    zego_handle handle, enum zego_object_segmentation_state state,
+    enum zego_publish_channel channel, int error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_video_object_segmentation_state_changed_callback(
-    zego_on_video_object_segmentation_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_video_object_segmentation_state_changed callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_video_object_segmentation_state_changed_callback)(
-    zego_on_video_object_segmentation_state_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_video_object_segmentation_state_changed callback_func,
+    void *user_context);
 #endif
 
 /// Video encoding low frame rate warning.
@@ -1481,16 +1592,17 @@ typedef void(EXP_CALL *pfnzego_register_video_object_segmentation_state_changed_
 /// @param codec_id Video codec ID.
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_low_fps_warning)(enum zego_video_codec_id codec_id,
+typedef void (*zego_on_publisher_low_fps_warning)(zego_handle handle,
+                                                  enum zego_video_codec_id codec_id,
                                                   enum zego_publish_channel channel,
                                                   void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_low_fps_warning_callback(
-    zego_on_publisher_low_fps_warning callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_low_fps_warning callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_low_fps_warning_callback)(
-    zego_on_publisher_low_fps_warning callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_low_fps_warning callback_func, void *user_context);
 #endif
 
 /// The notification for setting the path of the static image displayed when the camera is turned off is incorrect.
@@ -1504,17 +1616,20 @@ typedef void(EXP_CALL *pfnzego_register_publisher_low_fps_warning_callback)(
 /// @param path Image path.
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_dummy_capture_image_path_error)(zego_error error_code,
+typedef void (*zego_on_publisher_dummy_capture_image_path_error)(zego_handle handle,
+                                                                 zego_error error_code,
                                                                  const char *path,
                                                                  enum zego_publish_channel channel,
                                                                  void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_dummy_capture_image_path_error_callback(
-    zego_on_publisher_dummy_capture_image_path_error callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_dummy_capture_image_path_error callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_dummy_capture_image_path_error_callback)(
-    zego_on_publisher_dummy_capture_image_path_error callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_dummy_capture_image_path_error callback_func,
+    void *user_context);
 #endif
 
 /// Face detection information update notification.
@@ -1527,16 +1642,17 @@ typedef void(EXP_CALL *pfnzego_register_publisher_dummy_capture_image_path_error
 /// @param info Face detection information.
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_face_detect_info)(struct zego_face_detection_info info,
+typedef void (*zego_on_publisher_face_detect_info)(zego_handle handle,
+                                                   struct zego_face_detection_info info,
                                                    enum zego_publish_channel channel,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_face_detect_info_callback(
-    zego_on_publisher_face_detect_info callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_face_detect_info callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_face_detect_info_callback)(
-    zego_on_publisher_face_detect_info callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_face_detect_info callback_func, void *user_context);
 #endif
 
 /// Callback for setting stream extra information.
@@ -1544,15 +1660,18 @@ typedef void(EXP_CALL *pfnzego_register_publisher_face_detect_info_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Message sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_update_stream_extra_info_result)(zego_error error_code,
+typedef void (*zego_on_publisher_update_stream_extra_info_result)(zego_handle handle,
+                                                                  zego_error error_code,
                                                                   zego_seq seq, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_update_stream_extra_info_result_callback(
-    zego_on_publisher_update_stream_extra_info_result callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_update_stream_extra_info_result callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_update_stream_extra_info_result_callback)(
-    zego_on_publisher_update_stream_extra_info_result callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_update_stream_extra_info_result callback_func,
+    void *user_context);
 #endif
 
 /// Callback for add/remove CDN URL.
@@ -1561,16 +1680,16 @@ typedef void(EXP_CALL *pfnzego_register_publisher_update_stream_extra_info_resul
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Message sequence.
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_update_cdn_url_result)(const char *stream_id,
+typedef void (*zego_on_publisher_update_cdn_url_result)(zego_handle handle, const char *stream_id,
                                                         zego_error error_code, zego_seq seq,
                                                         void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_update_cdn_url_result_callback(
-    zego_on_publisher_update_cdn_url_result callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_update_cdn_url_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_update_cdn_url_result_callback)(
-    zego_on_publisher_update_cdn_url_result callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_update_cdn_url_result callback_func, void *user_context);
 #endif
 
 /// Results of take publish stream snapshot.
@@ -1579,16 +1698,35 @@ typedef void(EXP_CALL *pfnzego_register_publisher_update_cdn_url_result_callback
 /// @param channel Publish stream channel
 /// @param image Snapshot image (Windows: HBITMAP; macOS/iOS: CGImageRef; Linux: QImage; Android: Bitmap)
 /// @param user_context Context of user.
-typedef void (*zego_on_publisher_take_snapshot_result)(zego_error error_code,
+typedef void (*zego_on_publisher_take_snapshot_result)(zego_handle handle, zego_error error_code,
                                                        enum zego_publish_channel channel,
                                                        void *image, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_publisher_take_snapshot_result_callback(
-    zego_on_publisher_take_snapshot_result callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_take_snapshot_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_publisher_take_snapshot_result_callback)(
-    zego_on_publisher_take_snapshot_result callback_func, void *user_context);
+    zego_handle handle, zego_on_publisher_take_snapshot_result callback_func, void *user_context);
+#endif
+
+/// Results of get video encoder supported.
+///
+/// @param support 0 - does not support the specified encoding capability, 1 - supports the specified encoding capability, 2 - undetermined.
+/// @param seq Message sequence.
+/// @param user_context Context of user.
+typedef void (*zego_on_publisher_get_video_encoder_supported_result)(zego_handle handle,
+                                                                     int support, zego_seq seq,
+                                                                     void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_publisher_get_video_encoder_supported_result_callback(
+    zego_handle handle, zego_on_publisher_get_video_encoder_supported_result callback_func,
+    void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_publisher_get_video_encoder_supported_result_callback)(
+    zego_handle handle, zego_on_publisher_get_video_encoder_supported_result callback_func,
+    void *user_context);
 #endif
 
 ZEGO_END_DECLS

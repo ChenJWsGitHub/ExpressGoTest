@@ -17,11 +17,11 @@ ZEGO_BEGIN_DECLS
 /// @param room_id Fill in the room ID that has been logged in, and all related stuff will be do in this room.
 /// @param instance_index [in/out] The real-time sequential data manager instance index, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_create_real_time_sequential_data_manager(const char *room_id, int *instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_real_time_sequential_data_manager(
+    zego_handle handle, const char *room_id, int *instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_create_real_time_sequential_data_manager)(
-    const char *room_id, int *instance_index);
+    zego_handle handle, const char *room_id, int *instance_index);
 #endif
 
 /// Destroy the real time sequential data manager instance
@@ -36,10 +36,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_real_time_sequential_data_ma
 /// @param instance_index The real time sequential data manager instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_destroy_real_time_sequential_data_manager(int instance_index);
+zego_express_destroy_real_time_sequential_data_manager(zego_handle handle, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_destroy_real_time_sequential_data_manager)(
-    int instance_index);
+    zego_handle handle, int instance_index);
 #endif
 
 /// Start broadcasting real-time sequential data stream.
@@ -58,10 +58,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_real_time_sequential_data_m
 /// @param instance_index The real time sequential data manager instance index.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_real_time_sequential_data_start_broadcasting(
-    const char *stream_id, int instance_index);
+    zego_handle handle, const char *stream_id, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_start_broadcasting)(
-    const char *stream_id, int instance_index);
+    zego_handle handle, const char *stream_id, int instance_index);
 #endif
 
 /// Stop broadcasting real-time sequential data stream.
@@ -76,11 +76,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_start_bro
 /// @param stream_id The ID of the stream that needs to stop broadcasting.
 /// @param instance_index The real time sequential data manager instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_real_time_sequential_data_stop_broadcasting(const char *stream_id, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_real_time_sequential_data_stop_broadcasting(
+    zego_handle handle, const char *stream_id, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_stop_broadcasting)(
-    const char *stream_id, int instance_index);
+    zego_handle handle, const char *stream_id, int instance_index);
 #endif
 
 /// Send real-time sequential data to the broadcasting stream ID.
@@ -99,12 +99,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_stop_broa
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_real_time_sequential_data(
-    const unsigned char *data, unsigned int data_length, const char *stream_id, int instance_index,
-    zego_seq *sequence);
+    zego_handle handle, const unsigned char *data, unsigned int data_length, const char *stream_id,
+    int instance_index, zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_real_time_sequential_data)(
-    const unsigned char *data, unsigned int data_length, const char *stream_id, int instance_index,
-    zego_seq *sequence);
+    zego_handle handle, const unsigned char *data, unsigned int data_length, const char *stream_id,
+    int instance_index, zego_seq *sequence);
 #endif
 
 /// Start subscribing real-time sequential data stream.
@@ -121,11 +121,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_real_time_sequential_data)(
 ///   Only support numbers, English characters and '-', '_'.
 /// @param instance_index The real time sequential data manager instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_real_time_sequential_data_start_subscribing(const char *stream_id, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_real_time_sequential_data_start_subscribing(
+    zego_handle handle, const char *stream_id, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_start_subscribing)(
-    const char *stream_id, int instance_index);
+    zego_handle handle, const char *stream_id, int instance_index);
 #endif
 
 /// Stop subscribing real-time sequential data stream.
@@ -140,11 +140,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_start_sub
 /// @param stream_id The ID of the stream that needs to stop subscribing.
 /// @param instance_index The real time sequential data manager instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_real_time_sequential_data_stop_subscribing(const char *stream_id, int instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_real_time_sequential_data_stop_subscribing(
+    zego_handle handle, const char *stream_id, int instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_stop_subscribing)(
-    const char *stream_id, int instance_index);
+    zego_handle handle, const char *stream_id, int instance_index);
 #endif
 
 /// Callback for receiving real-time sequential data.
@@ -161,17 +161,20 @@ typedef zego_error(EXP_CALL *pfnzego_express_real_time_sequential_data_stop_subs
 /// @param data_length Data content length.
 /// @param stream_id Subscribed stream ID
 /// @param user_context Context of user.
-typedef void (*zego_on_receive_real_time_sequential_data)(int manager, const unsigned char *data,
+typedef void (*zego_on_receive_real_time_sequential_data)(zego_handle handle, int manager,
+                                                          const unsigned char *data,
                                                           unsigned int data_length,
                                                           const char *stream_id,
                                                           void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_receive_real_time_sequential_data_callback(
-    zego_on_receive_real_time_sequential_data callback_func, void *user_context);
+    zego_handle handle, zego_on_receive_real_time_sequential_data callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_receive_real_time_sequential_data_callback)(
-    zego_on_receive_real_time_sequential_data callback_func, void *user_context);
+    zego_handle handle, zego_on_receive_real_time_sequential_data callback_func,
+    void *user_context);
 #endif
 
 /// Sends a Broadcast Message.
@@ -180,7 +183,7 @@ typedef void(EXP_CALL *pfnzego_register_receive_real_time_sequential_data_callba
 /// Description: Send a broadcast message to the room, users who have entered the same room can receive the message, and the message is reliable.
 /// Use cases: Generally used in the live room.
 /// When to call: After calling [loginRoom] to log in to the room.
-/// Restrictions: The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user calling this interface from the client side is 2. For restrictions on the use of this function, please contact ZEGO technical support.
+/// Restrictions: The frequency of sending broadcast messages in the same room cannot be higher than 10 messages/s. The maximum QPS for a single user to call this interface within a single room is 2. For restrictions on the use of this function, please contact ZEGO technical support.
 /// Related callbacks: The room broadcast message can be received through [onIMRecvBroadcastMessage].
 /// Related APIs: Barrage messages can be sent through the [sendBarrageMessage] function, and custom command can be sent through the [sendCustomCommand] function.
 ///
@@ -192,11 +195,13 @@ typedef void(EXP_CALL *pfnzego_register_receive_real_time_sequential_data_callba
 /// @param message The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_send_broadcast_message(const char *room_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_broadcast_message(zego_handle handle,
+                                                                    const char *room_id,
                                                                     const char *message,
                                                                     zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_send_broadcast_message)(const char *room_id,
+typedef zego_error(EXP_CALL *pfnzego_express_send_broadcast_message)(zego_handle handle,
+                                                                     const char *room_id,
                                                                      const char *message,
                                                                      zego_seq *sequence);
 #endif
@@ -219,11 +224,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_broadcast_message)(const char 
 /// @param message The content of the message. Required: Yes. Value range: The length does not exceed 1024 bytes.
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_send_barrage_message(const char *room_id,
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_barrage_message(zego_handle handle,
+                                                                  const char *room_id,
                                                                   const char *message,
                                                                   zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_send_barrage_message)(const char *room_id,
+typedef zego_error(EXP_CALL *pfnzego_express_send_barrage_message)(zego_handle handle,
+                                                                   const char *room_id,
                                                                    const char *message,
                                                                    zego_seq *sequence);
 #endif
@@ -248,17 +255,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_barrage_message)(const char *r
 /// @param to_user_list List of recipients of signaling. Required: Yes. Value range: user list or [NULL]. Caution: When it is [NULL], the SDK will send custom signaling back to all users in the room
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_command(const char *room_id,
-                                                                 const char *command,
-                                                                 struct zego_user *to_user_list,
-                                                                 unsigned int to_user_count,
-                                                                 zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_command(
+    zego_handle handle, const char *room_id, const char *command, struct zego_user *to_user_list,
+    unsigned int to_user_count, zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_send_custom_command)(const char *room_id,
-                                                                  const char *command,
-                                                                  struct zego_user *to_user_list,
-                                                                  unsigned int to_user_count,
-                                                                  zego_seq *sequence);
+typedef zego_error(EXP_CALL *pfnzego_express_send_custom_command)(
+    zego_handle handle, const char *room_id, const char *command, struct zego_user *to_user_list,
+    unsigned int to_user_count, zego_seq *sequence);
 #endif
 
 /// Sends a transparent message in room.
@@ -280,10 +283,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_command)(const char *ro
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_send_transparent_message(
-    const char *room_id, struct zego_room_send_transparent_message *message, zego_seq *sequence);
+    zego_handle handle, const char *room_id, struct zego_room_send_transparent_message *message,
+    zego_seq *sequence);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_send_transparent_message)(
-    const char *room_id, struct zego_room_send_transparent_message *message, zego_seq *sequence);
+    zego_handle handle, const char *room_id, struct zego_room_send_transparent_message *message,
+    zego_seq *sequence);
 #endif
 
 /// The callback triggered when Barrage Messages are received.
@@ -299,15 +304,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_transparent_message)(
 /// @param message recv message.
 /// @param user_context User context. Value range: It is a custom pointer, which can be [NULL].
 typedef void (*zego_on_recv_room_transparent_message)(
-    const char *room_id, const struct zego_room_recv_transparent_message *message,
-    void *user_context);
+    zego_handle handle, const char *room_id,
+    const struct zego_room_recv_transparent_message *message, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_recv_room_transparent_message_callback(
-    zego_on_recv_room_transparent_message callback_func, void *user_context);
+    zego_handle handle, zego_on_recv_room_transparent_message callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_recv_room_transparent_message_callback)(
-    zego_on_recv_room_transparent_message callback_func, void *user_context);
+    zego_handle handle, zego_on_recv_room_transparent_message callback_func, void *user_context);
 #endif
 
 /// The callback triggered when Broadcast Messages are received.
@@ -325,15 +330,15 @@ typedef void(EXP_CALL *pfnzego_register_recv_room_transparent_message_callback)(
 /// @param message_count The number of message lists. Value range: the maximum value is 50.
 /// @param user_context User context. Value range: It is a custom pointer, which can be [NULL].
 typedef void (*zego_on_im_recv_broadcast_message)(
-    const char *room_id, const struct zego_broadcast_message_info *message_list,
+    zego_handle handle, const char *room_id, const struct zego_broadcast_message_info *message_list,
     unsigned int message_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_im_recv_broadcast_message_callback(
-    zego_on_im_recv_broadcast_message callback_func, void *user_context);
+    zego_handle handle, zego_on_im_recv_broadcast_message callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_im_recv_broadcast_message_callback)(
-    zego_on_im_recv_broadcast_message callback_func, void *user_context);
+    zego_handle handle, zego_on_im_recv_broadcast_message callback_func, void *user_context);
 #endif
 
 /// The callback triggered when Barrage Messages are received.
@@ -351,15 +356,15 @@ typedef void(EXP_CALL *pfnzego_register_im_recv_broadcast_message_callback)(
 /// @param message_count The number of message lists. Value range: the maximum value is 50.
 /// @param user_context User context. Value range: It is a custom pointer, which can be [NULL].
 typedef void (*zego_on_im_recv_barrage_message)(
-    const char *room_id, const struct zego_barrage_message_info *message_list,
+    zego_handle handle, const char *room_id, const struct zego_barrage_message_info *message_list,
     unsigned int message_count, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_im_recv_barrage_message_callback(
-    zego_on_im_recv_barrage_message callback_func, void *user_context);
+    zego_handle handle, zego_on_im_recv_barrage_message callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_im_recv_barrage_message_callback)(
-    zego_on_im_recv_barrage_message callback_func, void *user_context);
+    zego_handle handle, zego_on_im_recv_barrage_message callback_func, void *user_context);
 #endif
 
 /// The callback triggered when a Custom Command is received.
@@ -376,15 +381,16 @@ typedef void(EXP_CALL *pfnzego_register_im_recv_barrage_message_callback)(
 /// @param from_user Sender of the command.
 /// @param command Command content received.Value range: The maximum length is 1024 bytes.
 /// @param user_context User context. Value range: It is a custom pointer, which can be [NULL].
-typedef void (*zego_on_im_recv_custom_command)(const char *room_id, struct zego_user from_user,
-                                               const char *command, void *user_context);
+typedef void (*zego_on_im_recv_custom_command)(zego_handle handle, const char *room_id,
+                                               struct zego_user from_user, const char *command,
+                                               void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_im_recv_custom_command_callback(
-    zego_on_im_recv_custom_command callback_func, void *user_context);
+    zego_handle handle, zego_on_im_recv_custom_command callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_im_recv_custom_command_callback)(
-    zego_on_im_recv_custom_command callback_func, void *user_context);
+    zego_handle handle, zego_on_im_recv_custom_command callback_func, void *user_context);
 #endif
 
 /// Callback for sending real-time sequential data.
@@ -393,15 +399,16 @@ typedef void(EXP_CALL *pfnzego_register_im_recv_custom_command_callback)(
 /// @param instance_index The real time sequential data manager instance index.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
-typedef void (*zego_on_real_time_sequential_data_sent)(zego_error error_code, int instance_index,
-                                                       zego_seq seq, void *user_context);
+typedef void (*zego_on_real_time_sequential_data_sent)(zego_handle handle, zego_error error_code,
+                                                       int instance_index, zego_seq seq,
+                                                       void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_real_time_sequential_data_sent_callback(
-    zego_on_real_time_sequential_data_sent callback_func, void *user_context);
+    zego_handle handle, zego_on_real_time_sequential_data_sent callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_real_time_sequential_data_sent_callback)(
-    zego_on_real_time_sequential_data_sent callback_func, void *user_context);
+    zego_handle handle, zego_on_real_time_sequential_data_sent callback_func, void *user_context);
 #endif
 
 /// Callback for sending broadcast messages.
@@ -411,17 +418,17 @@ typedef void(EXP_CALL *pfnzego_register_real_time_sequential_data_sent_callback)
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
-typedef void (*zego_on_im_send_broadcast_message_result)(const char *room_id,
+typedef void (*zego_on_im_send_broadcast_message_result)(zego_handle handle, const char *room_id,
                                                          unsigned long long message_id,
                                                          zego_error error_code, zego_seq seq,
                                                          void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_im_send_broadcast_message_result_callback(
-    zego_on_im_send_broadcast_message_result callback_func, void *user_context);
+    zego_handle handle, zego_on_im_send_broadcast_message_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_im_send_broadcast_message_result_callback)(
-    zego_on_im_send_broadcast_message_result callback_func, void *user_context);
+    zego_handle handle, zego_on_im_send_broadcast_message_result callback_func, void *user_context);
 #endif
 
 /// Callback for sending barrage message.
@@ -431,16 +438,17 @@ typedef void(EXP_CALL *pfnzego_register_im_send_broadcast_message_result_callbac
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
-typedef void (*zego_on_im_send_barrage_message_result)(const char *room_id, const char *message_id,
+typedef void (*zego_on_im_send_barrage_message_result)(zego_handle handle, const char *room_id,
+                                                       const char *message_id,
                                                        zego_error error_code, zego_seq seq,
                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_im_send_barrage_message_result_callback(
-    zego_on_im_send_barrage_message_result callback_func, void *user_context);
+    zego_handle handle, zego_on_im_send_barrage_message_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_im_send_barrage_message_result_callback)(
-    zego_on_im_send_barrage_message_result callback_func, void *user_context);
+    zego_handle handle, zego_on_im_send_barrage_message_result callback_func, void *user_context);
 #endif
 
 /// Callback for sending custom command.
@@ -449,15 +457,16 @@ typedef void(EXP_CALL *pfnzego_register_im_send_barrage_message_result_callback)
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
-typedef void (*zego_on_im_send_custom_command_result)(const char *room_id, zego_error error_code,
-                                                      zego_seq seq, void *user_context);
+typedef void (*zego_on_im_send_custom_command_result)(zego_handle handle, const char *room_id,
+                                                      zego_error error_code, zego_seq seq,
+                                                      void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_im_send_custom_command_result_callback(
-    zego_on_im_send_custom_command_result callback_func, void *user_context);
+    zego_handle handle, zego_on_im_send_custom_command_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_im_send_custom_command_result_callback)(
-    zego_on_im_send_custom_command_result callback_func, void *user_context);
+    zego_handle handle, zego_on_im_send_custom_command_result callback_func, void *user_context);
 #endif
 
 /// Callback for sending custom command.
@@ -466,15 +475,16 @@ typedef void(EXP_CALL *pfnzego_register_im_send_custom_command_result_callback)(
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
-typedef void (*zego_on_send_transparent_message_result)(const char *room_id, zego_error error_code,
-                                                        zego_seq seq, void *user_context);
+typedef void (*zego_on_send_transparent_message_result)(zego_handle handle, const char *room_id,
+                                                        zego_error error_code, zego_seq seq,
+                                                        void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_send_transparent_message_result_callback(
-    zego_on_send_transparent_message_result callback_func, void *user_context);
+    zego_handle handle, zego_on_send_transparent_message_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_send_transparent_message_result_callback)(
-    zego_on_send_transparent_message_result callback_func, void *user_context);
+    zego_handle handle, zego_on_send_transparent_message_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS

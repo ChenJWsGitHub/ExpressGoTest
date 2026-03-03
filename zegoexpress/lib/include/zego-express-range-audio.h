@@ -16,11 +16,11 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param instance_index [in/out] range audio instance, -1 will be returned when the maximum number is exceeded.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_create_range_audio(enum zego_range_audio_instance_index *instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_create_range_audio(
+    zego_handle handle, enum zego_range_audio_instance_index *instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_create_range_audio)(
-    enum zego_range_audio_instance_index *instance_index);
+    zego_handle handle, enum zego_range_audio_instance_index *instance_index);
 #endif
 
 /// Destroys a range audio instance.
@@ -30,11 +30,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_create_range_audio)(
 ///
 /// @param instance_index range audio instance index.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_destroy_range_audio(enum zego_range_audio_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_range_audio(
+    zego_handle handle, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_destroy_range_audio)(
-    enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set the maximum range of received audio.
@@ -50,10 +50,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_range_audio)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_audio_receive_range(
-    float range, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, float range, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_receive_range)(
-    float range, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, float range, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set the configuration of the audio receiving range.
@@ -70,10 +70,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_receive_range
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_audio_receive_range_with_param(
-    struct zego_receive_range_param param, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, struct zego_receive_range_param param,
+    enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_receive_range_with_param)(
-    struct zego_receive_range_param param, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, struct zego_receive_range_param param,
+    enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set the frequency of real-time update locations within the SDK.
@@ -88,10 +90,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_receive_range
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_position_update_frequency(
-    int frequency, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, int frequency, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_position_update_frequency)(
-    int frequency, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, int frequency, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set range voice volume.
@@ -106,10 +108,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_position_update_fre
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_audio_volume(
-    int volume, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_volume)(
-    int volume, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, int volume, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set the sound range for the stream.
@@ -125,10 +127,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_volume)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_stream_vocal_range(
-    const char *stream_id, float vocal_range, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *stream_id, float vocal_range,
+    enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_stream_vocal_range)(
-    const char *stream_id, float vocal_range, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *stream_id, float vocal_range,
+    enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set the sound range for the stream.
@@ -145,11 +149,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_stream_vocal_range)
 /// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_stream_vocal_range_with_param(
-    const char *stream_id, struct zego_vocal_range_param param,
+    zego_handle handle, const char *stream_id, struct zego_vocal_range_param param,
     enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_stream_vocal_range_with_param)(
-    const char *stream_id, struct zego_vocal_range_param param,
+    zego_handle handle, const char *stream_id, struct zego_vocal_range_param param,
     enum zego_range_audio_instance_index instance_index);
 #endif
 
@@ -165,10 +169,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_stream_vocal_range_
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_update_stream_position(
-    const char *stream_id, float position[3], enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *stream_id, float position[3],
+    enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_update_stream_position)(
-    const char *stream_id, float position[3], enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *stream_id, float position[3],
+    enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Update self position and orentation.
@@ -186,12 +192,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_update_stream_position)
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_update_self_position(
-    float position[3], float axis_forward[3], float axis_right[3], float axis_up[3],
-    enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, float position[3], float axis_forward[3], float axis_right[3],
+    float axis_up[3], enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_update_self_position)(
-    float position[3], float axis_forward[3], float axis_right[3], float axis_up[3],
-    enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, float position[3], float axis_forward[3], float axis_right[3],
+    float axis_up[3], enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Add or update audio source position information.
@@ -206,10 +212,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_update_self_position)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_update_audio_source(
-    const char *userid, float position[3], enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *userid, float position[3],
+    enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_update_audio_source)(
-    const char *userid, float position[3], enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *userid, float position[3],
+    enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Turn the 3D spatial sound on or off.
@@ -226,10 +234,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_update_audio_source)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_enable_spatializer(
-    bool enable, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_enable_spatializer)(
-    bool enable, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Turn the microphone on or off.
@@ -246,10 +254,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_enable_spatializer)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_enable_microphone(
-    bool enable, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_enable_microphone)(
-    bool enable, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Turn the speaker on or off.
@@ -265,10 +273,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_enable_microphone)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_enable_speaker(
-    bool enable, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_enable_speaker)(
-    bool enable, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, bool enable, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set range audio mode.
@@ -283,11 +291,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_enable_speaker)(
 /// @param mode The range audio mode.
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_range_audio_mode(
-    enum zego_range_audio_mode mode, enum zego_range_audio_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_set_range_audio_mode(zego_handle handle, enum zego_range_audio_mode mode,
+                                  enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_range_audio_mode)(
-    enum zego_range_audio_mode mode, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, enum zego_range_audio_mode mode,
+    enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Set range audio custom mode.
@@ -306,11 +316,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_range_audio_mode)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_range_audio_custom_mode(
-    enum zego_range_audio_speak_mode speak_mode, enum zego_range_audio_listen_mode listen_mode,
+    zego_handle handle, enum zego_range_audio_speak_mode speak_mode,
+    enum zego_range_audio_listen_mode listen_mode,
     enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_range_audio_custom_mode)(
-    enum zego_range_audio_speak_mode speak_mode, enum zego_range_audio_listen_mode listen_mode,
+    zego_handle handle, enum zego_range_audio_speak_mode speak_mode,
+    enum zego_range_audio_listen_mode listen_mode,
     enum zego_range_audio_instance_index instance_index);
 #endif
 
@@ -327,10 +339,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_range_audio_custom_mode)(
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_team_id(
-    const char *team_id, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *team_id, enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_team_id)(
-    const char *team_id, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *team_id, enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Whether can receive the audio data of the specified user.
@@ -347,11 +359,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_team_id)(
 /// @param mute Whether it can receive the audio data of the specified remote user, "true" means prohibition, "false" means receiving, the default value is "false".
 /// @param instance_index range audio instance index
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_mute_user(
-    const char *userid, bool mute, enum zego_range_audio_instance_index instance_index);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_range_audio_mute_user(zego_handle handle, const char *userid, bool mute,
+                                   enum zego_range_audio_instance_index instance_index);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_range_audio_mute_user)(
-    const char *userid, bool mute, enum zego_range_audio_instance_index instance_index);
+    zego_handle handle, const char *userid, bool mute,
+    enum zego_range_audio_instance_index instance_index);
 #endif
 
 /// Range audio microphone state callback.
@@ -366,15 +380,17 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_mute_user)(
 /// @param instance_index Range audio instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_range_audio_microphone_state_update)(
-    enum zego_range_audio_microphone_state state, zego_error error_code,
+    zego_handle handle, enum zego_range_audio_microphone_state state, zego_error error_code,
     enum zego_range_audio_instance_index instance_index, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_range_audio_microphone_state_update_callback(
-    zego_on_range_audio_microphone_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_audio_microphone_state_update callback_func,
+    void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_range_audio_microphone_state_update_callback)(
-    zego_on_range_audio_microphone_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_range_audio_microphone_state_update callback_func,
+    void *user_context);
 #endif
 
 ZEGO_END_DECLS

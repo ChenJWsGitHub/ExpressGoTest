@@ -17,10 +17,10 @@ ZEGO_BEGIN_DECLS
 /// @return Zego error code.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
-zego_express_engine_init_with_profile(struct zego_engine_profile profile);
+zego_express_engine_init_with_profile(zego_handle handle, struct zego_engine_profile profile);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_engine_init_with_profile)(
-    struct zego_engine_profile profile);
+    zego_handle handle, struct zego_engine_profile profile);
 #endif
 
 /// Destroy the ZegoExpressEngine singleton object and deinitialize the SDK.
@@ -31,9 +31,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_engine_init_with_profile)(
 /// Restrictions: None.
 /// Caution: After using [createEngine] to create a singleton, if the singleton object has not been created or has been destroyed, you will not receive related callbacks when calling this function.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_engine_uninit_async(void);
+ZEGOEXP_API zego_error EXP_CALL zego_express_engine_uninit_async(zego_handle handle);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_engine_uninit_async)(void);
+typedef zego_error(EXP_CALL *pfnzego_express_engine_uninit_async)(zego_handle handle);
 #endif
 
 /// Set advanced engine configuration.
@@ -45,9 +45,27 @@ typedef zego_error(EXP_CALL *pfnzego_express_engine_uninit_async)(void);
 ///
 /// @param config Advanced engine configuration
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_engine_config(struct zego_engine_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_engine_config(zego_handle handle,
+                                                               struct zego_engine_config config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_engine_config)(struct zego_engine_config config);
+typedef zego_error(EXP_CALL *pfnzego_express_set_engine_config)(zego_handle handle,
+                                                                struct zego_engine_config config);
+#endif
+
+/// Set advanced engine configuration.
+///
+/// Available since: 3.24.0
+/// Description: Used to enable advanced functions.
+/// When to call: Different configurations have different call timing requirements. For details, please consult ZEGO technical support.
+/// Restrictions: Multi-instance SDK for Linux only.
+///
+/// @param config Advanced engine configuration
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API int EXP_CALL
+zego_express_set_engine_config_with_instance(zego_handle handle, struct zego_engine_config config);
+#else
+typedef int(EXP_CALL *pfnzego_express_set_engine_config_with_instance)(
+    zego_handle handle, struct zego_engine_config config);
 #endif
 
 /// Set log configuration.
@@ -60,9 +78,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_engine_config)(struct zego_engi
 ///
 /// @param config log configuration.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_log_config(struct zego_log_config config);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_log_config(zego_handle handle,
+                                                            struct zego_log_config config);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_log_config)(struct zego_log_config config);
+typedef zego_error(EXP_CALL *pfnzego_express_set_log_config)(zego_handle handle,
+                                                             struct zego_log_config config);
 #endif
 
 /// Set local proxy config.
@@ -78,10 +98,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_log_config)(struct zego_log_con
 /// @param enable enable proxy or not.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_set_local_proxy_config(
-    const struct zego_proxy_info *proxy_list, int proxy_count, bool enable);
+    zego_handle handle, const struct zego_proxy_info *proxy_list, int proxy_count, bool enable);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_local_proxy_config)(
-    const struct zego_proxy_info *proxy_list, int proxy_count, bool enable);
+    zego_handle handle, const struct zego_proxy_info *proxy_list, int proxy_count, bool enable);
 #endif
 
 /// Set cloud proxy config.
@@ -97,11 +117,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_local_proxy_config)(
 /// @param token token. if use appsign auth, ignore.
 /// @param enable enable proxy or not.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_cloud_proxy_config(
-    const struct zego_proxy_info *proxy_list, int proxy_count, const char *token, bool enable);
+ZEGOEXP_API zego_error EXP_CALL
+zego_express_set_cloud_proxy_config(zego_handle handle, const struct zego_proxy_info *proxy_list,
+                                    int proxy_count, const char *token, bool enable);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_set_cloud_proxy_config)(
-    const struct zego_proxy_info *proxy_list, int proxy_count, const char *token, bool enable);
+    zego_handle handle, const struct zego_proxy_info *proxy_list, int proxy_count,
+    const char *token, bool enable);
 #endif
 
 /// Set license auth.
@@ -114,9 +136,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_cloud_proxy_config)(
 ///
 /// @param license license.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_license(const char *license);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_license(zego_handle handle, const char *license);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_license)(const char *license);
+typedef zego_error(EXP_CALL *pfnzego_express_set_license)(zego_handle handle, const char *license);
 #endif
 
 /// Set room mode.
@@ -129,9 +151,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_license)(const char *license);
 ///
 /// @param mode Room mode. Description: Used to set the room mode. Use cases: If you need to enter multiple rooms at the same time for publish-play stream, please turn on the multi-room mode through this interface. Required: True. Default value: ZEGO_ROOM_MODE_SINGLE_ROOM.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_room_mode(enum zego_room_mode mode);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_room_mode(zego_handle handle,
+                                                           enum zego_room_mode mode);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_room_mode)(enum zego_room_mode mode);
+typedef zego_error(EXP_CALL *pfnzego_express_set_room_mode)(zego_handle handle,
+                                                            enum zego_room_mode mode);
 #endif
 
 /// Set Geo Fence.
@@ -146,11 +170,13 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_room_mode)(enum zego_room_mode 
 /// @param area_list Geo fence area. Description: Used to describe the range of geo fence.
 /// @param area_list_count geo fence area count.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_geo_fence(enum zego_geo_fence_type type,
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_geo_fence(zego_handle handle,
+                                                           enum zego_geo_fence_type type,
                                                            const int *area_list,
                                                            int area_list_count);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_geo_fence)(enum zego_geo_fence_type type,
+typedef zego_error(EXP_CALL *pfnzego_express_set_geo_fence)(zego_handle handle,
+                                                            enum zego_geo_fence_type type,
                                                             const int *area_list,
                                                             int area_list_count);
 #endif
@@ -165,9 +191,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_geo_fence)(enum zego_geo_fence_
 ///
 /// @param version [in/out] SDK version.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_version(const char **version);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_version(zego_handle handle, const char **version);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_get_version)(const char **version);
+typedef zego_error(EXP_CALL *pfnzego_express_get_version)(zego_handle handle, const char **version);
 #endif
 
 /// Sets the JVM and Context for the Android platform.
@@ -181,9 +207,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_version)(const char **version);
 /// @param jvm Java VM Object.
 /// @param context Android Context, it must be valid in the SDK lifecycle.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_android_env(void *jvm, void *context);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_android_env(zego_handle handle, void *jvm,
+                                                             void *context);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_android_env)(void *jvm, void *context);
+typedef zego_error(EXP_CALL *pfnzego_express_set_android_env)(zego_handle handle, void *jvm,
+                                                              void *context);
 #endif
 
 /// Config the Environment for the OpenHarmony platform.
@@ -197,9 +225,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_android_env)(void *jvm, void *c
 /// @param env napi_env Object.
 /// @param exports napi_value exports Object.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_ohos_env(void *env, void *exports);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_ohos_env(zego_handle handle, void *env,
+                                                          void *exports);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_ohos_env)(void *env, void *exports);
+typedef zego_error(EXP_CALL *pfnzego_express_set_ohos_env)(zego_handle handle, void *env,
+                                                           void *exports);
 #endif
 
 /// Get the previously set Android context.
@@ -212,9 +242,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_ohos_env)(void *env, void *expo
 ///
 /// @param context [in/out] If [setAndroidEnv] has not been called before [createEngine], or if it is not called on the Android platform, it returns NULL.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_get_android_context(void **context);
+ZEGOEXP_API zego_error EXP_CALL zego_express_get_android_context(zego_handle handle,
+                                                                 void **context);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_get_android_context)(void **context);
+typedef zego_error(EXP_CALL *pfnzego_express_get_android_context)(zego_handle handle,
+                                                                  void **context);
 #endif
 
 /// Query whether the current SDK supports the specified feature.
@@ -229,11 +261,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_android_context)(void **context
 /// @param feature_type Type of feature to query.
 /// @param is_supported [in/out] Whether the specified feature is supported.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL
-zego_express_is_feature_supported(enum zego_feature_type feature_type, bool *is_supported);
+ZEGOEXP_API zego_error EXP_CALL zego_express_is_feature_supported(
+    zego_handle handle, enum zego_feature_type feature_type, bool *is_supported);
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_is_feature_supported)(
-    enum zego_feature_type feature_type, bool *is_supported);
+    zego_handle handle, enum zego_feature_type feature_type, bool *is_supported);
 #endif
 
 /// Set room scenario.
@@ -251,9 +283,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_feature_supported)(
 ///
 /// @param scenario Room scenario.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_set_room_scenario(enum zego_scenario scenario);
+ZEGOEXP_API zego_error EXP_CALL zego_express_set_room_scenario(zego_handle handle,
+                                                               enum zego_scenario scenario);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_set_room_scenario)(enum zego_scenario scenario);
+typedef zego_error(EXP_CALL *pfnzego_express_set_room_scenario)(zego_handle handle,
+                                                                enum zego_scenario scenario);
 #endif
 
 /// Uploads logs to the ZEGO server.
@@ -267,9 +301,9 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_room_scenario)(enum zego_scenar
 ///
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_upload_log(zego_seq *sequence);
+ZEGOEXP_API zego_error EXP_CALL zego_express_upload_log(zego_handle handle, zego_seq *sequence);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_upload_log)(zego_seq *sequence);
+typedef zego_error(EXP_CALL *pfnzego_express_upload_log)(zego_handle handle, zego_seq *sequence);
 #endif
 
 /// Enable the debug assistant. Note, do not enable this feature in the online version! Use only during development phase!
@@ -284,9 +318,11 @@ typedef zego_error(EXP_CALL *pfnzego_express_upload_log)(zego_seq *sequence);
 ///
 /// @param enable Whether to enable the debug assistant.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_enable_debug_assistant(bool enable);
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_debug_assistant(zego_handle handle,
+                                                                    bool enable);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_enable_debug_assistant)(bool enable);
+typedef zego_error(EXP_CALL *pfnzego_express_enable_debug_assistant)(zego_handle handle,
+                                                                     bool enable);
 #endif
 
 /// Call the experimental API.
@@ -298,10 +334,12 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_debug_assistant)(bool enable
 /// @param params Parameters in the format of a JSON string, please consult ZEGO technical support for details.
 /// @param result [in/out] Returns an argument in the format of a JSON string, please consult ZEGO technical support for details. After the call is successful, please call [freeCallExperimentalAPIResult] to reclaim the dynamic memory.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_call_experimental_api(const char *params,
+ZEGOEXP_API zego_error EXP_CALL zego_express_call_experimental_api(zego_handle handle,
+                                                                   const char *params,
                                                                    char **result);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_call_experimental_api)(const char *params,
+typedef zego_error(EXP_CALL *pfnzego_express_call_experimental_api)(zego_handle handle,
+                                                                    const char *params,
                                                                     char **result);
 #endif
 
@@ -313,16 +351,18 @@ typedef zego_error(EXP_CALL *pfnzego_express_call_experimental_api)(const char *
 ///
 /// @param p The output parameter result of the [callExperimentalAPI] interface is a dynamic memory.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_free_call_experimental_api_result(char *p);
+ZEGOEXP_API zego_error EXP_CALL zego_express_free_call_experimental_api_result(zego_handle handle,
+                                                                               char *p);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_free_call_experimental_api_result)(char *p);
+typedef zego_error(EXP_CALL *pfnzego_express_free_call_experimental_api_result)(zego_handle handle,
+                                                                                char *p);
 #endif
 
 /// Get a seq for context association of callbacks.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_seq EXP_CALL zego_express_get_increase_seq();
+ZEGOEXP_API zego_seq EXP_CALL zego_express_get_increase_seq(zego_handle handle);
 #else
-typedef zego_seq(EXP_CALL *pfnzego_express_get_increase_seq)();
+typedef zego_seq(EXP_CALL *pfnzego_express_get_increase_seq)(zego_handle handle);
 #endif
 
 /// The callback for obtaining debugging error information.
@@ -337,14 +377,16 @@ typedef zego_seq(EXP_CALL *pfnzego_express_get_increase_seq)();
 /// @param func_name Function name.
 /// @param info Detailed error information.
 /// @param user_context context of user.
-typedef void (*zego_on_debug_error)(int error_code, const char *func_name, const char *info,
-                                    void *user_context);
+typedef void (*zego_on_debug_error)(zego_handle handle, int error_code, const char *func_name,
+                                    const char *info, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL zego_register_debug_error_callback(zego_on_debug_error callback_func,
+ZEGOEXP_API void EXP_CALL zego_register_debug_error_callback(zego_handle handle,
+                                                             zego_on_debug_error callback_func,
                                                              void *user_context);
 #else
-typedef void(EXP_CALL *pfnzego_register_debug_error_callback)(zego_on_debug_error callback_func,
+typedef void(EXP_CALL *pfnzego_register_debug_error_callback)(zego_handle handle,
+                                                              zego_on_debug_error callback_func,
                                                               void *user_context);
 #endif
 
@@ -360,15 +402,15 @@ typedef void(EXP_CALL *pfnzego_register_debug_error_callback)(zego_on_debug_erro
 /// @param func_name Function name.
 /// @param info Detailed error information.
 /// @param user_context context of user.
-typedef void (*zego_on_api_called_result)(int error_code, const char *func_name, const char *info,
-                                          void *user_context);
+typedef void (*zego_on_api_called_result)(zego_handle handle, int error_code, const char *func_name,
+                                          const char *info, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_api_called_result_callback(
-    zego_on_api_called_result callback_func, void *user_context);
+    zego_handle handle, zego_on_api_called_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_api_called_result_callback)(
-    zego_on_api_called_result callback_func, void *user_context);
+    zego_handle handle, zego_on_api_called_result callback_func, void *user_context);
 #endif
 
 /// The callback triggered when the audio/video engine state changes.
@@ -383,14 +425,15 @@ typedef void(EXP_CALL *pfnzego_register_api_called_result_callback)(
 ///
 /// @param state The audio/video engine state.
 /// @param user_context context of user.
-typedef void (*zego_on_engine_state_update)(enum zego_engine_state state, void *user_context);
+typedef void (*zego_on_engine_state_update)(zego_handle handle, enum zego_engine_state state,
+                                            void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_engine_state_update_callback(
-    zego_on_engine_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_engine_state_update callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_engine_state_update_callback)(
-    zego_on_engine_state_update callback_func, void *user_context);
+    zego_handle handle, zego_on_engine_state_update callback_func, void *user_context);
 #endif
 
 /// Audio and video engine destruction notification callback.
@@ -398,13 +441,15 @@ typedef void(EXP_CALL *pfnzego_register_engine_state_update_callback)(
 /// When you use the asynchronous destruction engine function, you can obtain whether the SDK has completely released resources by listening to this callback.
 ///
 /// @param user_context context of user.
-typedef void (*zego_on_engine_uninit)(void *user_context);
+typedef void (*zego_on_engine_uninit)(zego_handle handle, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL zego_register_engine_uninit_callback(zego_on_engine_uninit callback_func,
+ZEGOEXP_API void EXP_CALL zego_register_engine_uninit_callback(zego_handle handle,
+                                                               zego_on_engine_uninit callback_func,
                                                                void *user_context);
 #else
-typedef void(EXP_CALL *pfnzego_register_engine_uninit_callback)(zego_on_engine_uninit callback_func,
+typedef void(EXP_CALL *pfnzego_register_engine_uninit_callback)(zego_handle handle,
+                                                                zego_on_engine_uninit callback_func,
                                                                 void *user_context);
 #endif
 
@@ -416,14 +461,15 @@ typedef void(EXP_CALL *pfnzego_register_engine_uninit_callback)(zego_on_engine_u
 ///
 /// @param content Callback content in JSON string format.
 /// @param user_context Context of user.
-typedef void (*zego_on_recv_experimental_api)(const char *content, void *user_context);
+typedef void (*zego_on_recv_experimental_api)(zego_handle handle, const char *content,
+                                              void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_recv_experimental_api_callback(
-    zego_on_recv_experimental_api callback_func, void *user_context);
+    zego_handle handle, zego_on_recv_experimental_api callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_recv_experimental_api_callback)(
-    zego_on_recv_experimental_api callback_func, void *user_context);
+    zego_handle handle, zego_on_recv_experimental_api callback_func, void *user_context);
 #endif
 
 /// The callback that triggered a fatal error, causing the SDK to malfunction and unable to function properly.
@@ -437,13 +483,15 @@ typedef void(EXP_CALL *pfnzego_register_recv_experimental_api_callback)(
 ///
 /// @param error_code Error code.
 /// @param user_context context of user.
-typedef void (*zego_on_fatal_error)(int error_code, void *user_context);
+typedef void (*zego_on_fatal_error)(zego_handle handle, int error_code, void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API void EXP_CALL zego_register_fatal_error_callback(zego_on_fatal_error callback_func,
+ZEGOEXP_API void EXP_CALL zego_register_fatal_error_callback(zego_handle handle,
+                                                             zego_on_fatal_error callback_func,
                                                              void *user_context);
 #else
-typedef void(EXP_CALL *pfnzego_register_fatal_error_callback)(zego_on_fatal_error callback_func,
+typedef void(EXP_CALL *pfnzego_register_fatal_error_callback)(zego_handle handle,
+                                                              zego_on_fatal_error callback_func,
                                                               void *user_context);
 #endif
 
@@ -457,15 +505,16 @@ typedef void(EXP_CALL *pfnzego_register_fatal_error_callback)(zego_on_fatal_erro
 ///
 /// @param type Video backend type.
 /// @param user_context context of user.
-typedef void (*zego_on_video_backend_type_changed)(enum zego_video_backend_type type,
+typedef void (*zego_on_video_backend_type_changed)(zego_handle handle,
+                                                   enum zego_video_backend_type type,
                                                    void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_video_backend_type_changed_callback(
-    zego_on_video_backend_type_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_video_backend_type_changed callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_video_backend_type_changed_callback)(
-    zego_on_video_backend_type_changed callback_func, void *user_context);
+    zego_handle handle, zego_on_video_backend_type_changed callback_func, void *user_context);
 #endif
 
 /// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
@@ -483,12 +532,12 @@ typedef void(EXP_CALL *pfnzego_register_video_backend_type_changed_callback)(
 /// @param scenario The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940
 /// @return Zego error code.
 #ifndef ZEGOEXP_EXPLICIT
-ZEGOEXP_API zego_error EXP_CALL zego_express_engine_init(unsigned int app_id, const char *app_sign,
-                                                         bool is_test_env,
+ZEGOEXP_API zego_error EXP_CALL zego_express_engine_init(zego_handle handle, unsigned int app_id,
+                                                         const char *app_sign, bool is_test_env,
                                                          enum zego_scenario scenario);
 #else
-typedef zego_error(EXP_CALL *pfnzego_express_engine_init)(unsigned int app_id, const char *app_sign,
-                                                          bool is_test_env,
+typedef zego_error(EXP_CALL *pfnzego_express_engine_init)(zego_handle handle, unsigned int app_id,
+                                                          const char *app_sign, bool is_test_env,
                                                           enum zego_scenario scenario);
 #endif
 
@@ -501,14 +550,15 @@ typedef zego_error(EXP_CALL *pfnzego_express_engine_init)(unsigned int app_id, c
 /// @param seq The serial number returned by calling [uploadLog] is used to match calls and callbacks.
 /// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
 /// @param user_context Context of user.
-typedef void (*zego_on_upload_log_result)(zego_seq seq, zego_error error_code, void *user_context);
+typedef void (*zego_on_upload_log_result)(zego_handle handle, zego_seq seq, zego_error error_code,
+                                          void *user_context);
 
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API void EXP_CALL zego_register_upload_log_result_callback(
-    zego_on_upload_log_result callback_func, void *user_context);
+    zego_handle handle, zego_on_upload_log_result callback_func, void *user_context);
 #else
 typedef void(EXP_CALL *pfnzego_register_upload_log_result_callback)(
-    zego_on_upload_log_result callback_func, void *user_context);
+    zego_handle handle, zego_on_upload_log_result callback_func, void *user_context);
 #endif
 
 ZEGO_END_DECLS
