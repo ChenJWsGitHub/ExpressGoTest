@@ -4,6 +4,7 @@ package zegoexpress
 #cgo CFLAGS: -I${SRCDIR}/lib/include
 #include <stddef.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include "zego-express-errcode.h"
 #include "zego-express-engine.h"
@@ -188,7 +189,8 @@ static void bridge_go_on_engine_uninit(zego_handle handle, void *user_context) {
     GoOnEngineUninit(user_context);
 }
 
-static void zego_express_go_bridge_init(zego_handle handle, void *user_context) {
+static void zego_express_go_bridge_init(zego_handle handle, uintptr_t seq) {
+    void* user_context = (void*)seq;
     zego_register_room_login_result_callback(handle, bridge_go_login_callback, user_context);
     zego_register_room_logout_result_callback(handle, bridge_go_logout_callback, user_context);
     zego_register_im_send_broadcast_message_result_callback(handle, bridge_go_on_im_send_broadcast_message_result, user_context);
@@ -229,7 +231,6 @@ import "C"
 import (
 	"container/list"
 	"fmt"
-	"runtime"
 	"strconv"
 	"sync"
 	"unsafe"
@@ -245,8 +246,12 @@ func init() {
 }
 
 var (
+	gMapLock   sync.RWMutex
+	gEngineMap = make(map[int]*engineImpl)
+	gEngineID  int
+
 	engineDestroyCallbackLock sync.Mutex
-	engineDestroyCallbacks    map[unsafe.Pointer]ZegoDestroyCompletionCallback
+	engineDestroyCallbacks    = make(map[int]ZegoDestroyCompletionCallback)
 
 	callbackEventLock    sync.Mutex
 	callbackEventHandler IZegoCallbackEventHandler
@@ -256,7 +261,14 @@ var (
 
 //export GoLoginResultCallback
 func GoLoginResultCallback(errorCode C.zego_error, extendedData *C.char, seq C.zego_seq, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
+
 	goExtendedData := ""
 	if extendedData != nil {
 		goExtendedData = C.GoString(extendedData)
@@ -281,7 +293,13 @@ func GoLoginResultCallback(errorCode C.zego_error, extendedData *C.char, seq C.z
 
 //export GoLogoutResultCallback
 func GoLogoutResultCallback(errorCode C.zego_error, extendedData *C.char, seq C.zego_seq, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goExtendedData := ""
 	if extendedData != nil {
 		goExtendedData = C.GoString(extendedData)
@@ -306,7 +324,13 @@ func GoLogoutResultCallback(errorCode C.zego_error, extendedData *C.char, seq C.
 
 //export GoOnIMSendBroadcastMessageResult
 func GoOnIMSendBroadcastMessageResult(errorCode C.zego_error, messageID C.ulonglong, seq C.zego_seq, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.callbackLock.Lock()
 		defer engine.callbackLock.Unlock()
@@ -327,7 +351,13 @@ func GoOnIMSendBroadcastMessageResult(errorCode C.zego_error, messageID C.ulongl
 
 //export GoOnPublisherUpdateStreamExtraInfoResult
 func GoOnPublisherUpdateStreamExtraInfoResult(errorCode C.zego_error, seq C.zego_seq, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.callbackLock.Lock()
 		defer engine.callbackLock.Unlock()
@@ -348,7 +378,13 @@ func GoOnPublisherUpdateStreamExtraInfoResult(errorCode C.zego_error, seq C.zego
 
 //export GoOnPlayerAudioData
 func GoOnPlayerAudioData(data *C.uchar, dataLen C.uint, param C.struct_zego_audio_frame_param, streamID *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.handlerLock.RLock()
 	defer engine.handlerLock.RUnlock()
 	handler := engine.audioDataHandler
@@ -365,7 +401,13 @@ func GoOnPlayerAudioData(data *C.uchar, dataLen C.uint, param C.struct_zego_audi
 
 //export GoOnProcessRemoteAudioData
 func GoOnProcessRemoteAudioData(data *C.uchar, dataLen C.uint, param *C.struct_zego_audio_frame_param, streamID *C.char, timestamp float64, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.handlerLock.RLock()
 	defer engine.handlerLock.RUnlock()
 	handler := engine.customAudioProcessHandler
@@ -384,7 +426,13 @@ func GoOnProcessRemoteAudioData(data *C.uchar, dataLen C.uint, param *C.struct_z
 
 //export GoOnDebugError
 func GoOnDebugError(errorCode C.int, funcName *C.char, info *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.handlerLock.RLock()
 	defer engine.handlerLock.RUnlock()
 	handler := engine.eventHandler
@@ -400,7 +448,13 @@ func GoOnDebugError(errorCode C.int, funcName *C.char, info *C.char, ctx unsafe.
 
 //export GoOnRoomStateUpdate
 func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode C.zego_error, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	goData := ""
 	if data != nil {
@@ -420,7 +474,13 @@ func GoOnRoomStateUpdate(roomID *C.char, state C.enum_zego_room_state, errorCode
 
 //export GoOnRoomUserUpdate
 func GoOnRoomUserUpdate(roomID *C.char, updateType C.enum_zego_update_type, userList *C.struct_zego_user, userCount C.uint, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	goUserList := make([]ZegoUser, 0)
 	if userList != nil && userCount > 0 {
@@ -445,7 +505,13 @@ func GoOnRoomUserUpdate(roomID *C.char, updateType C.enum_zego_update_type, user
 
 //export GoOnRoomOnlineUserCountUpdate
 func GoOnRoomOnlineUserCountUpdate(roomID *C.char, count C.int, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	callbackFunc := func() {
 		engine.handlerLock.RLock()
@@ -461,7 +527,13 @@ func GoOnRoomOnlineUserCountUpdate(roomID *C.char, count C.int, ctx unsafe.Point
 
 //export GoOnRoomStreamUpdate
 func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, streamInfoList *C.struct_zego_stream, streamInfoCount C.uint, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	streamList := make([]ZegoStream, 0)
 	if streamInfoList != nil && streamInfoCount > 0 {
@@ -490,7 +562,13 @@ func GoOnRoomStreamUpdate(roomID *C.char, updateType C.enum_zego_update_type, st
 
 //export GoOnRoomStreamExtraInfoUpdate
 func GoOnRoomStreamExtraInfoUpdate(roomID *C.char, streamInfoList *C.struct_zego_stream, streamInfoCount C.uint, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	streamList := make([]ZegoStream, 0)
 	if streamInfoList != nil && streamInfoCount > 0 {
@@ -515,7 +593,13 @@ func GoOnRoomStreamExtraInfoUpdate(roomID *C.char, streamInfoList *C.struct_zego
 
 //export GoOnRoomStateChanged
 func GoOnRoomStateChanged(roomID *C.char, reason C.enum_zego_room_state_changed_reason, errorCode C.zego_error, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	goData := ""
 	if data != nil {
@@ -535,7 +619,13 @@ func GoOnRoomStateChanged(roomID *C.char, reason C.enum_zego_room_state_changed_
 
 //export GoOnRoomTokenWillExpire
 func GoOnRoomTokenWillExpire(roomID *C.char, remainTimeInSecond C.int, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goRoomID := C.GoString(roomID)
 	callbackFunc := func() {
 		engine.handlerLock.RLock()
@@ -551,7 +641,13 @@ func GoOnRoomTokenWillExpire(roomID *C.char, remainTimeInSecond C.int, ctx unsaf
 
 //export GoOnPublisherStateUpdate
 func GoOnPublisherStateUpdate(streamID *C.char, state C.enum_zego_publisher_state, errorCode C.zego_error, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
@@ -571,7 +667,13 @@ func GoOnPublisherStateUpdate(streamID *C.char, state C.enum_zego_publisher_stat
 
 //export GoOnPublisherQualityUpdate
 func GoOnPublisherQualityUpdate(streamID *C.char, quality C.struct_zego_publish_stream_quality, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	goQuality := ZegoPublishStreamQuality{
 		VideoCaptureFPS:  float64(quality.video_capture_fps),
@@ -604,7 +706,13 @@ func GoOnPublisherQualityUpdate(streamID *C.char, quality C.struct_zego_publish_
 
 //export GoOnPublisherStreamEvent
 func GoOnPublisherStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
@@ -624,7 +732,13 @@ func GoOnPublisherStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char
 
 //export GoOnPublisherSendAudioFirstFrame
 func GoOnPublisherSendAudioFirstFrame(channel C.enum_zego_publish_channel, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.handlerLock.RLock()
 		defer engine.handlerLock.RUnlock()
@@ -639,7 +753,13 @@ func GoOnPublisherSendAudioFirstFrame(channel C.enum_zego_publish_channel, ctx u
 
 //export GoOnPlayerStateUpdate
 func GoOnPlayerStateUpdate(streamID *C.char, state C.enum_zego_player_state, errorCode C.zego_error, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
@@ -659,7 +779,13 @@ func GoOnPlayerStateUpdate(streamID *C.char, state C.enum_zego_player_state, err
 
 //export GoOnPlayerQualityUpdate
 func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream_quality, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	goQuality := ZegoPlayStreamQuality{
 		VideoRecvFPS:              float64(quality.video_recv_fps),
@@ -712,7 +838,13 @@ func GoOnPlayerQualityUpdate(streamID *C.char, quality C.struct_zego_play_stream
 
 //export GoOnPlayerRecvSei
 func GoOnPlayerRecvSei(info C.struct_zego_media_side_info, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.handlerLock.RLock()
 	defer engine.handlerLock.RUnlock()
 	handler := engine.eventHandler
@@ -730,7 +862,13 @@ func GoOnPlayerRecvSei(info C.struct_zego_media_side_info, ctx unsafe.Pointer) {
 
 //export GoOnPlayerStreamEvent
 func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, data *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	goData := ""
 	if data != nil {
@@ -750,7 +888,13 @@ func GoOnPlayerStreamEvent(eventID C.enum_zego_stream_event, streamID *C.char, d
 
 //export GoOnPlayerRecvAudioFirstFrame
 func GoOnPlayerRecvAudioFirstFrame(streamID *C.char, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	goStreamID := C.GoString(streamID)
 	callbackFunc := func() {
 		engine.handlerLock.RLock()
@@ -766,7 +910,13 @@ func GoOnPlayerRecvAudioFirstFrame(streamID *C.char, ctx unsafe.Pointer) {
 
 //export GoOnMediaPlayerStateUpdate
 func GoOnMediaPlayerStateUpdate(state C.enum_zego_media_player_state, errorCode C.zego_error, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.mediaPlayerLock.Lock()
 		defer engine.mediaPlayerLock.Unlock()
@@ -784,7 +934,13 @@ func GoOnMediaPlayerStateUpdate(state C.enum_zego_media_player_state, errorCode 
 
 //export GoOnMediaPlayerNetworkEvent
 func GoOnMediaPlayerNetworkEvent(event C.enum_zego_media_player_network_event, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.mediaPlayerLock.Lock()
 		defer engine.mediaPlayerLock.Unlock()
@@ -802,7 +958,13 @@ func GoOnMediaPlayerNetworkEvent(event C.enum_zego_media_player_network_event, i
 
 //export GoOnMediaPlayerPlayingProgress
 func GoOnMediaPlayerPlayingProgress(millisecond C.ulonglong, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.mediaPlayerLock.Lock()
 	defer engine.mediaPlayerLock.Unlock()
 	if mediaPlayer, ok := engine.mediaPlayerImplMap[int(index)]; ok {
@@ -817,7 +979,13 @@ func GoOnMediaPlayerPlayingProgress(millisecond C.ulonglong, index C.enum_zego_m
 
 //export GoOnMediaPlayerRenderingProgress
 func GoOnMediaPlayerRenderingProgress(millisecond C.ulonglong, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.mediaPlayerLock.Lock()
 	defer engine.mediaPlayerLock.Unlock()
 	if mediaPlayer, ok := engine.mediaPlayerImplMap[int(index)]; ok {
@@ -832,7 +1000,13 @@ func GoOnMediaPlayerRenderingProgress(millisecond C.ulonglong, index C.enum_zego
 
 //export GoOnMediaPlayerRecvSEI
 func GoOnMediaPlayerRecvSEI(data *C.uchar, dataLen C.uint, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.mediaPlayerLock.Lock()
 	defer engine.mediaPlayerLock.Unlock()
 	if mediaPlayer, ok := engine.mediaPlayerImplMap[int(index)]; ok {
@@ -848,7 +1022,13 @@ func GoOnMediaPlayerRecvSEI(data *C.uchar, dataLen C.uint, index C.enum_zego_med
 
 //export GoOnMediaPlayerFirstFrameEvent
 func GoOnMediaPlayerFirstFrameEvent(event C.enum_zego_media_player_first_frame_event, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.mediaPlayerLock.Lock()
 		defer engine.mediaPlayerLock.Unlock()
@@ -866,7 +1046,13 @@ func GoOnMediaPlayerFirstFrameEvent(event C.enum_zego_media_player_first_frame_e
 
 //export GoOnMediaPlayerAudioFrame
 func GoOnMediaPlayerAudioFrame(data *C.uchar, dataLen C.uint, param C.struct_zego_audio_frame_param, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	engine.mediaPlayerLock.Lock()
 	defer engine.mediaPlayerLock.Unlock()
 	if mediaPlayer, ok := engine.mediaPlayerImplMap[int(index)]; ok {
@@ -886,7 +1072,13 @@ func GoOnMediaPlayerAudioFrame(data *C.uchar, dataLen C.uint, param C.struct_zeg
 
 //export GoOnMediaPlayerLoadFileResult
 func GoOnMediaPlayerLoadFileResult(errorCode C.zego_error, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.mediaPlayerLock.Lock()
 		defer engine.mediaPlayerLock.Unlock()
@@ -910,7 +1102,13 @@ func GoOnMediaPlayerLoadFileResult(errorCode C.zego_error, index C.enum_zego_med
 
 //export GoOnMediaPlayerSeekTo
 func GoOnMediaPlayerSeekTo(seq C.zego_seq, errorCode C.zego_error, index C.enum_zego_media_player_instance_index, ctx unsafe.Pointer) {
-	engine := (*engineImpl)(ctx)
+	gMapLock.RLock()
+	engine, ok := gEngineMap[int(uintptr(ctx))]
+	if !ok {
+		gMapLock.RUnlock()
+		return
+	}
+	gMapLock.RUnlock()
 	callbackFunc := func() {
 		engine.mediaPlayerLock.Lock()
 		defer engine.mediaPlayerLock.Unlock()
@@ -934,19 +1132,19 @@ func GoOnEngineUninit(ctx unsafe.Pointer) {
 	callbackFunc := func() {
 		engineDestroyCallbackLock.Lock()
 		defer engineDestroyCallbackLock.Unlock()
-		if callback, ok := engineDestroyCallbacks[ctx]; ok {
+		if callback, ok := engineDestroyCallbacks[int(uintptr(ctx))]; ok {
 			if callback != nil {
 				callback()
 			}
-			delete(engineDestroyCallbacks, ctx)
+			delete(engineDestroyCallbacks, int(uintptr(ctx)))
 		}
 	}
 	gCallbackHandler.dispatchInCallbackGoroutine(callbackFunc)
 }
 
 type engineImpl struct {
-	handle C.zego_handle
-	pinner runtime.Pinner
+	handle   C.zego_handle
+	engineID int
 
 	handlerLock               sync.RWMutex
 	eventHandler              IZegoEventHandler
@@ -971,7 +1169,6 @@ func NewEngineImpl() *engineImpl {
 		setStreamExtraInfoCallback:     make(map[int]ZegoPublisherSetStreamExtraInfoCallback),
 		mediaPlayerImplMap:             make(map[int]*mediaPlayerImpl),
 	}
-	result.pinner.Pin(result)
 	return result
 }
 
@@ -980,8 +1177,15 @@ func (e *engineImpl) init(profile ZegoMultiEngineProfile, handler IZegoEventHand
 	e.eventHandler = handler
 	e.handlerLock.Unlock()
 
+	gMapLock.Lock()
+	gEngineID++
+	id := gEngineID
+	gEngineMap[id] = e
+	e.engineID = id
+	gMapLock.Unlock()
+
 	e.handle = C.zego_express_engine_create_handle()
-	C.zego_express_go_bridge_init(e.handle, unsafe.Pointer(e))
+	C.zego_express_go_bridge_init(e.handle, C.uintptr_t(id))
 	C.zego_express_set_room_mode(e.handle, C.enum_zego_room_mode(profile.RoomMode))
 
 	if profile.AdvancedConfig == nil {
@@ -1432,7 +1636,7 @@ func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 	if realEngine, ok := engine.(*engineImpl); ok {
 		engineDestroyCallbackLock.Lock()
 		// 考虑换成seq, 避免engineImpl的地址重复使用
-		engineDestroyCallbacks[unsafe.Pointer(realEngine)] = callback
+		engineDestroyCallbacks[realEngine.engineID] = callback
 		engineDestroyCallbackLock.Unlock()
 		C.zego_express_engine_uninit_async(realEngine.handle)
 		realEngine.handlerLock.Lock()
@@ -1440,7 +1644,9 @@ func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 		realEngine.audioDataHandler = nil
 		realEngine.customAudioProcessHandler = nil
 		realEngine.handlerLock.Unlock()
-		realEngine.pinner.Unpin()
+		gMapLock.Lock()
+		delete(gEngineMap, realEngine.engineID)
+		gMapLock.Unlock()
 	}
 }
 
