@@ -229,6 +229,7 @@ import "C"
 import (
 	"container/list"
 	"fmt"
+	"runtime"
 	"strconv"
 	"sync"
 	"unsafe"
@@ -945,6 +946,7 @@ func GoOnEngineUninit(ctx unsafe.Pointer) {
 
 type engineImpl struct {
 	handle C.zego_handle
+	pinner runtime.Pinner
 
 	handlerLock               sync.RWMutex
 	eventHandler              IZegoEventHandler
@@ -962,13 +964,15 @@ type engineImpl struct {
 }
 
 func NewEngineImpl() *engineImpl {
-	return &engineImpl{
+	result := &engineImpl{
 		roomLoginCallback:              make(map[int]ZegoRoomLoginCallback),
 		roomLogoutCallback:             make(map[int]ZegoRoomLogoutCallback),
 		imSendBroadcastMessageCallback: make(map[int]ZegoIMSendBroadcastMessageCallback),
 		setStreamExtraInfoCallback:     make(map[int]ZegoPublisherSetStreamExtraInfoCallback),
 		mediaPlayerImplMap:             make(map[int]*mediaPlayerImpl),
 	}
+	result.pinner.Pin(result)
+	return result
 }
 
 func (e *engineImpl) init(profile ZegoMultiEngineProfile, handler IZegoEventHandler) int {
@@ -1436,6 +1440,7 @@ func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 		realEngine.audioDataHandler = nil
 		realEngine.customAudioProcessHandler = nil
 		realEngine.handlerLock.Unlock()
+		realEngine.pinner.Unpin()
 	}
 }
 
