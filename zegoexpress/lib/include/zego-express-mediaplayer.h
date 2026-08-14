@@ -858,7 +858,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_get_playback_statistic
 /// Restrictions: None.
 ///
 /// @param state Media player status.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index Media player instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_state_update)(
@@ -1203,7 +1203,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_media_player_set_voice_changer_para
 
 /// Callback for media player loads resources.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index Media player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_load_resource)(
@@ -1221,7 +1221,7 @@ typedef void(EXP_CALL *pfnzego_register_media_player_load_resource_callback)(
 /// Callback for media player seek to playback progress.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index Media player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_media_player_seek_to)(zego_handle handle, zego_seq seq,
@@ -1239,7 +1239,7 @@ typedef void(EXP_CALL *pfnzego_register_media_player_seek_to_callback)(
 
 /// The callback of the screenshot of the media player playing screen
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param image Snapshot image (Windows: HBITMAP; macOS/iOS: CGImageRef; Linux: QImage; Android: Bitmap)
 /// @param instance_index Media player instance index
 /// @param user_context Context of user.

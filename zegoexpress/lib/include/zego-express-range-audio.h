@@ -67,7 +67,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_audio_receive_range
 ///
 /// @param param Configuration of audio receiving range.
 /// @param instance_index range audio instance index
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_audio_receive_range_with_param(
     zego_handle handle, struct zego_receive_range_param param,
@@ -146,7 +146,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_set_stream_vocal_range)
 /// @param stream_id play stream id
 /// @param param Flow sound range.
 /// @param instance_index range audio instance index
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_audio_set_stream_vocal_range_with_param(
     zego_handle handle, const char *stream_id, struct zego_vocal_range_param param,
@@ -376,7 +376,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_audio_mute_user)(
 /// Caution: 1. It must be monitored before the [enableMicrophone] function is called. 2. The callback is not triggered when the [enableMicrophone] is stopped normally, and the Off state is triggered only when the [enableMicrophone] is stopped abnormally.
 ///
 /// @param state The use state of the range audio.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index Range audio instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_range_audio_microphone_state_update)(

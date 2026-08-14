@@ -99,7 +99,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_ai_voice_changer_set_speaker)(zego_
 /// Trigger: The callback triggered when call [init] function.
 /// Restrictions: None.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_ai_voice_changer_init)(zego_handle handle, zego_error error_code,
@@ -144,7 +144,7 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_update_progress_callbac
 /// Trigger: The callback triggered when call [update] function.
 /// Restrictions: None.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_ai_voice_changer_update)(zego_handle handle, zego_error error_code,
@@ -165,7 +165,7 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_update_callback)(
 /// Trigger: The callback triggered when call [getSpeakerList] function.
 /// Restrictions: None.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param speaker_list Available speaker list.
 /// @param speaker_count Speaker count.
 /// @param instance_index AI voice changer instance index.
@@ -214,7 +214,7 @@ typedef void(EXP_CALL *pfnzego_register_ai_voice_changer_event_callback)(
 /// Trigger: The callback triggered when call [setSpeaker] function.
 /// Restrictions: None.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index AI voice changer instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_ai_voice_changer_set_speaker)(zego_handle handle, zego_error error_code,

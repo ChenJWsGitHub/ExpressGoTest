@@ -439,7 +439,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_audio_effect_player_update_position
 ///
 /// @param audio_effect_id The ID of the audio effect resource that triggered this callback.
 /// @param state The playback state of the audio effect.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index audio effect instance index.
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_effect_play_state_update)(
@@ -458,7 +458,7 @@ typedef void(EXP_CALL *pfnzego_register_audio_effect_play_state_update_callback)
 /// Callback for audio effect player loads resources.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index Audio effect player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_effect_player_load_resource)(
@@ -478,7 +478,7 @@ typedef void(EXP_CALL *pfnzego_register_audio_effect_player_load_resource_callba
 /// Callback for audio effect player seek to playback progress.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index Audio effect player instance index
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_effect_player_seek_to)(

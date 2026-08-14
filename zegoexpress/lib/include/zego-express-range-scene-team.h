@@ -16,7 +16,7 @@ ZEGO_BEGIN_DECLS
 /// @param range_scene_handle Range scene handle. Obtained through [getHandle] of ZegoRangeScene instance.
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @param config Team Param.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_team_join_team(
     zego_handle handle, int range_scene_handle, zego_seq *seq, struct zego_team_param config);
@@ -36,7 +36,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_join_team)(
 /// @param range_scene_handle Range scene handle. Obtained through [getHandle] of ZegoRangeScene instance.
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @param team_id Team ID.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_team_leave_team(zego_handle handle,
                                                                          int range_scene_handle,
@@ -56,7 +56,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_leave_team)(zego_h
 /// Use cases: Developers can use this callback to determine the status of the current user in the team.
 /// When to trigger:
 ///  1. The developer will receive this notification when calling the [joinTeam], [leaveTeam] functions.
-///  2. This notification may also be received when the network condition of the user's device changes (SDK will automatically join the team when reconnected, please refer to [Does ZEGO SDK support a fast reconnection for temporary disconnection] for details](https://docs.zegocloud.com/faq/reconnect?product=ExpressVideo&platform=all).
+///  2. This notification may also be received when the network condition of the user's device changes (SDK will automatically join the team when reconnected, please refer to [Does ZEGO SDK support a fast reconnection for temporary disconnection] for details](https://www.zegocloud.com/docs/faq/express-reconnect).
 /// Restrictions: None.
 /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
 /// Related APIs: [joinTeam]、[leaveTeam]
@@ -64,7 +64,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_team_leave_team)(zego_h
 /// @param range_scene_handle Range scene instance handle.
 /// @param team_id Team ID.
 /// @param state Changed team state.
-/// @param error_code Error code, For details, please refer to [Common Error Codes](https://docs.zegocloud.com/article/5548).
+/// @param error_code Error code, For details, please refer to [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code).
 /// @param user_context context of user
 typedef void (*zego_on_range_scene_team_team_state_update)(
     zego_handle handle, int range_scene_handle, unsigned int team_id, enum zego_team_state state,
@@ -116,7 +116,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_team_team_member_update_call
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param team_id Team ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_team_join_team)(zego_handle handle, int range_scene_handle,
@@ -135,7 +135,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_team_join_team_callback)(
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param team_id Team ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_team_leave_team)(zego_handle handle, int range_scene_handle,

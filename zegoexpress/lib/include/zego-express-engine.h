@@ -373,7 +373,7 @@ typedef zego_seq(EXP_CALL *pfnzego_express_get_increase_seq)(zego_handle handle)
 /// Restrictions: None.
 /// Caution: None.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param func_name Function name.
 /// @param info Detailed error information.
 /// @param user_context context of user.
@@ -398,7 +398,7 @@ typedef void(EXP_CALL *pfnzego_register_debug_error_callback)(zego_handle handle
 /// Restrictions: None.
 /// Caution: It is recommended to monitor and process this callback in the development and testing phases, and turn off the monitoring of this callback after going online.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param func_name Function name.
 /// @param info Detailed error information.
 /// @param user_context context of user.
@@ -411,6 +411,28 @@ ZEGOEXP_API void EXP_CALL zego_register_api_called_result_callback(
 #else
 typedef void(EXP_CALL *pfnzego_register_api_called_result_callback)(
     zego_handle handle, zego_on_api_called_result callback_func, void *user_context);
+#endif
+
+/// Log callback
+///
+/// Available since: 3.25.0
+/// Description: When the monitoring is turned on through [setLogHookHandler], all log data will be called back through this callback.
+/// Trigger: When the SDK generates log data.
+/// Restrictions: None.
+/// Caution: None.
+///
+/// @param message Log information.
+/// @param user_context context of user.
+typedef void (*zego_on_log_hook)(zego_handle handle, const char *message, void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_log_hook_callback(zego_handle handle,
+                                                          zego_on_log_hook callback_func,
+                                                          void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_log_hook_callback)(zego_handle handle,
+                                                           zego_on_log_hook callback_func,
+                                                           void *user_context);
 #endif
 
 /// The callback triggered when the audio/video engine state changes.
@@ -517,7 +539,7 @@ typedef void(EXP_CALL *pfnzego_register_video_backend_type_changed_callback)(
     zego_handle handle, zego_on_video_backend_type_changed callback_func, void *user_context);
 #endif
 
-/// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) for more details.
+/// [Deprecated] Create ZegoExpressEngine singleton object and initialize SDK. Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead. Please refer to [Testing environment deprecation](/real-time-voice-android/introduction/abandon-test-environment) for more details.
 ///
 /// Available: 1.1.0 ~ 2.13.1, deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead
 /// Description: Create ZegoExpressEngine singleton object and initialize SDK.
@@ -528,8 +550,8 @@ typedef void(EXP_CALL *pfnzego_register_video_backend_type_changed_callback)(
 /// @deprecated Deprecated since 2.14.0, please use the method with the same name without [isTestEnv] parameter instead.
 /// @param app_id Application ID issued by ZEGO for developers, please apply from the ZEGO Admin Console https://console.zegocloud.com The value ranges from 0 to 4294967295.
 /// @param app_sign Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows NULL or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
-/// @param is_test_env [Deprecated] For providing better and more standardized services, starting from 2021-11-16, ZEGO no longer classifies environments into production environments and testing environments. f you create your project in ZEGO Admin Console on/before 2021-11-16, refer to [Testing environment deprecation](https://docs.zegocloud.com/article/13315) to upgrade the SDK and adjust related codes.
-/// @param scenario The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940
+/// @param is_test_env [Deprecated] For providing better and more standardized services, starting from 2021-11-16, ZEGO no longer classifies environments into production environments and testing environments. f you create your project in ZEGO Admin Console on/before 2021-11-16, refer to [Testing environment deprecation](/real-time-voice-android/introduction/abandon-test-environment) to upgrade the SDK and adjust related codes.
+/// @param scenario The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://www.zegocloud.com/docs/real-time-video-ios-oc/quick-start/scenario-based-audio-video-configuration
 /// @return Zego error code.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_engine_init(zego_handle handle, unsigned int app_id,
@@ -548,7 +570,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_engine_init)(zego_handle handle, un
 /// Caution: In the case of poor network, the return time of this callback may be longer.
 ///
 /// @param seq The serial number returned by calling [uploadLog] is used to match calls and callbacks.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_upload_log_result)(zego_handle handle, zego_seq seq, zego_error error_code,
                                           void *user_context);

@@ -195,6 +195,33 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_audio_capture_aac_data)
     struct zego_audio_frame_param param, enum zego_publish_channel channel);
 #endif
 
+/// Sends Opus audio data produced by custom audio capture to the SDK (for the specified channel).
+///
+/// Available since: 3.25.0
+/// Description: Sends the captured audio Opus data to the SDK.
+/// Use cases: 1.The customer needs to obtain input after acquisition from the existing audio stream, audio file, or customized acquisition system, and hand it over to the SDK for transmission. 2.Customers have their own requirements for special sound processing for Opus input sources. After the sound processing, the input will be sent to the SDK for transmission.
+/// When to call: After [enableCustomAudioIO] and publishing stream successfully.
+/// Restrictions: None.
+/// Related APIs: Enable the custom audio IO function [enableCustomAudioIO], and start the push stream [startPublishingStream].
+///
+/// @param data Opus buffer data.
+/// @param data_length The total length of the buffer data.
+/// @param reference_time_millisecond The UNIX timestamp of this Opus audio frame in millisecond.
+/// @param samples The number of samples for this Opus audio frame.
+/// @param param The param of this Opus audio frame.
+/// @param channel Publish channel for capturing audio frames.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_audio_capture_opus_data(
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    unsigned long long reference_time_millisecond, unsigned int samples,
+    struct zego_audio_frame_param param, enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_send_custom_audio_capture_opus_data)(
+    zego_handle handle, unsigned char *data, unsigned int data_length,
+    unsigned long long reference_time_millisecond, unsigned int samples,
+    struct zego_audio_frame_param param, enum zego_publish_channel channel);
+#endif
+
 /// Sends PCM audio data produced by custom audio capture to the SDK (for the specified channel).
 ///
 /// Available since: 1.10.0
@@ -442,7 +469,7 @@ typedef void(EXP_CALL *pfnzego_register_process_playback_audio_data_callback)(
 ///
 /// Available: Since 1.1.0
 /// Description: In non-custom audio capture mode, the SDK capture the microphone's sound, but the developer may also need to get a copy of the audio data captured by the SDK is available through this callback.
-/// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b01 that means 1 << 0, this callback will be triggered only when it is in the publishing stream state.
+/// When to trigger: On the premise of calling [setAudioDataHandler] to set the listener callback, after calling [startAudioDataObserver] to set the mask 0b01 that means 1 << 0, this callback will be triggered.
 /// Restrictions: None.
 /// Caution: This callback is a high-frequency callback, please do not perform time-consuming operations in this callback.
 ///

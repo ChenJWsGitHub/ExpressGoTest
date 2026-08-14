@@ -82,7 +82,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_stop_recording_remote_data)(zego_ha
 /// Restrictions: None.
 ///
 /// @param state File recording status.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param config Record config.
 /// @param channel Publishing stream channel.
 /// @param user_context Context of user.
@@ -135,7 +135,7 @@ typedef void(EXP_CALL *pfnzego_register_captured_data_record_progress_update_cal
 /// Restrictions: None.
 ///
 /// @param state File recording status.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param config Record config.
 /// @param stream_id play stream id.
 /// @param user_context Context of user.

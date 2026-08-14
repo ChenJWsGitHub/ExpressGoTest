@@ -16,7 +16,7 @@ ZEGO_BEGIN_DECLS
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param range The range distance from the center point of the person.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_stream_set_receive_range(
     zego_handle handle, int range_scene_handle, float range);
@@ -36,7 +36,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_stream_set_receive_rang
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param param The configuration of audio receiving range.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_stream_set_receive_range_with_param(
     zego_handle handle, int range_scene_handle, struct zego_receive_range_param param);
@@ -56,7 +56,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_stream_set_receive_rang
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param enable Whether to turn 3D spatial sound on, true: enable, false: disable.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_stream_enable_range_spatializer(
     zego_handle handle, int range_scene_handle, bool enable);
@@ -77,7 +77,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_stream_enable_range_spa
 /// @param range_scene_handle Range scene instance handle.
 /// @param userid User ID.
 /// @param mute true: do not receive the user's audio stream, false: receive the user's audio stream.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_stream_mute_play_audio(
     zego_handle handle, int range_scene_handle, const char *userid, bool mute);
@@ -98,7 +98,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_stream_mute_play_audio)
 /// @param range_scene_handle Range scene instance handle.
 /// @param userid User ID.
 /// @param mute true: do not receive the user's video stream, false: receive the user's video stream.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_stream_mute_play_video(
     zego_handle handle, int range_scene_handle, const char *userid, bool mute);

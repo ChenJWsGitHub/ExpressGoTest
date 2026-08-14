@@ -25,6 +25,7 @@
 #define ZEGO_EXPRESS_MODULE_SCREENCAPTURE (20)
 #define ZEGO_EXPRESS_MODULE_AIVOICECHANGER (21)
 #define ZEGO_EXPRESS_MODULE_PICTURECAPTURER (22)
+#define ZEGO_EXPRESS_MODULE_CUSTOMAUDIOSOURCE (23)
 
 /** Execution successful. */
 #define ZEGO_ERRCODE_COMMON_SUCCESS 0
@@ -37,6 +38,9 @@
 
 /** Description: The audio and video module of the engine is not started and cannot support function realization. <br>Cause: Audio and video modules with no engine started.<br>Solutions: Please call [startPreviewView] [startPublishingStream] [startPlayingStream] to start the audio and video module first. */
 #define ZEGO_ERRCODE_COMMON_ENGINE_NOT_STARTED 1000003
+
+/** Description: The audio and video module of the engine has started and cannot support function realization. <br>Cause: Audio and video modules with engine has been started.<br>Solutions: Please call this method before invoking [startPreviewView], [startPublishingStream], or [startPlayingStream]. */
+#define ZEGO_ERRCODE_COMMON_ENGINE_ALREADY_STARTED 1000004
 
 /** Description: Call functions that are not supported on the current system/platform. <br>Cause: For example, calling the function of setting the Android context environment on a non-Android system.<br>Solutions: Check if the system environment matches. */
 #define ZEGO_ERRCODE_COMMON_UNSUPPORTED_PLATFORM 1000006
@@ -308,6 +312,12 @@
 /** Description: License authentication is used, and when using the relevant function, the license is configured with a functional limitation that does not allow the use of the function.  <br>Solutions:  Proofread the license's functionality limitations and use the functionality appropriately. */
 #define ZEGO_ERRCODE_ROOM_ROOM_LICENSE_FEATURE_LIMIT 1002087
 
+/** Description: app package name error.  <br>Solutions:  Please check app package name. */
+#define ZEGO_ERRCODE_ROOM_APP_PACKAGE_NOT_MATCH 1002088
+
+/** Description: Whiteboard service login failed.  <br>Solutions:  Please log in again. */
+#define ZEGO_ERRCODE_ROOM_ROOM_EDU_LOGIN_FAILED 1002089
+
 /** Description: Room login failed due to internal system exceptions.<br>Cause: Unknown internal error.<br>Solutions: Contact ZEGO technical support to deal with it. */
 #define ZEGO_ERRCODE_ROOM_INNER_ERROR 1002099
 
@@ -416,6 +426,9 @@
 /** Description: Video encoder error.<br>Caution: Video encoder error.<br>Solutions: Please contact ZEGO technical support. */
 #define ZEGO_ERRCODE_PUBLISHER_VIDEO_ENCODER_FAIL 1003081
 
+/** Description: Face detection error.<br>Caution: The device does not support face detection.<br>Solutions: Check if the device supports face detection. */
+#define ZEGO_ERRCODE_PUBLISHER_FACE_DETECTION_ERROR 1003082
+
 /** Description: Stream publishing failed due to system internal exceptions.<br>Caution: Stream publishing failed due to system internal exceptions.<br>Solutions: Please contact ZEGO technical support to solve the problem. */
 #define ZEGO_ERRCODE_PUBLISHER_INNER_ERROR 1003099
 
@@ -443,11 +456,17 @@
 /** Description: Super resolution uninitialized.<br>Caution: Super resolution uninitialized.<br>Solutions: Please initialize super resolution. */
 #define ZEGO_ERRCODE_PLAYER_SUPER_RESOLUTION_NOT_INIT_ERROR 1004008
 
-/** Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 12 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary. */
+/** Description: Super resolution unsupported resolution.<br>Caution: The resolution is not supported by super resolution.<br>Solutions: Please reduce the resolution. */
+#define ZEGO_ERRCODE_PLAYER_SUPER_RESOLUTION_UNSUPPORTED_RESOLUTION 1004009
+
+/** Description: Stream playing error.<br>Caution: The number of streams the user attempted to play simultaneously exceeds the maximum number allowed.<br>Solutions: Currently, up to 20 steams can be played at the same time. Please contact ZEGO technical support to increase the capacity if necessary. */
 #define ZEGO_ERRCODE_PLAYER_COUNT_EXCEED 1004010
 
 /** Description: The stream was not played.<br>Caution: The stream was not played.<br>Solutions: Please confirm that the stream has been played through the [onPlayerStateUpdate] or [onUserStreamStateUpdate] callback. */
 #define ZEGO_ERRCODE_PLAYER_STREAM_WAS_NOT_PLAYED 1004011
+
+/** Description: Cross-room streaming failed.<br>Caution: Cross-room streaming occurred in a scenario where it is prohibited.<br>Solutions: Login the room where the stream is located and set the roomID correctly. */
+#define ZEGO_ERRCODE_PLAYER_CROSS_ROOM 1004012
 
 /** Description: Stream playing is temporarily interrupted.<br>Caution: Network exception.<br>Solutions: Please wait or check whether the network is normal. */
 #define ZEGO_ERRCODE_PLAYER_ERROR_NETWORK_INTERRUPT 1004020
@@ -1261,5 +1280,8 @@
 
 /** Description: Failed to set the picture capturer path. <br>Cause: The picture capturer path is null. <br>Solution: Please make sure the picture capturer path is not null. */
 #define ZEGO_ERRCODE_PICTURECAPTURER_PATH_NULL 1022002
+
+/** Description: Failed to create audio source instance. <br>Cause: The instance exceeds the maximum limit. <br>Solutions: Use an existing audio source instance or destroy the previous instance. */
+#define ZEGO_ERRCODE_CUSTOMAUDIOSOURCE_EXCEED_MAX_COUNT 1023000
 
 #endif /* __ZEGO_EXPRESS_ERRCODE_H__ */

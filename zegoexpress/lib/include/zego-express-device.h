@@ -256,7 +256,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_mute_audio_device)(
 ///
 /// Available since: 2.22.0
 /// Description: Select audio equipment mode according to the need of the scene (only supported by Android and iOS).
-/// Use cases: In the case of KTV, the General mode must be used, but in the language room, the Communication2 or Communication3 mode is required in order to avoid the sound of third-party music being collected. For details on how to set the audio device mode, see https://doc-zh.zego.im/faq/AudioDeviceMod?product=ExpressVideo&platform=macos
+/// Use cases: In the case of KTV, the General mode must be used, but in the language room, the Communication2 or Communication3 mode is required in order to avoid the sound of third-party music being collected. For details on how to set the audio device mode, see https://doc-zh.zego.im/faq/audio-device-mode-setting
 /// When to call: After creating the engine [createEngine].
 /// Caution: This interface triggers startup switchover of the device. You are advised not to invoke this interface frequently to avoid unnecessary overhead and hardware problems. This interface may cause the volume mode to switch between call and media. If the media volume is inconsistent with the call volume, the volume may change.
 ///
@@ -293,6 +293,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_is_audio_device_muted)(
 /// Use cases: When the user never needs to use the audio, you can call this function to close the audio collection.
 /// Default value: The default is `true`.
 /// When to call: After creating the engine [createEngine].
+/// Caution: This function blocks the main thread, and it is recommended to use it in a child thread.
 /// Restrictions: None.
 /// Related APIs: Turning off or turning on the microphone on the hardware is a time-consuming operation, and there is a certain performance overhead when the user performs frequent operations. [muteMicrophone] is generally recommended.
 ///
@@ -755,7 +756,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_headphone_monitor_volume)(zego_
 /// Available since: 1.9.0
 /// Description: Enable sound card capture to mix sounds played by the system into the publishing stream, such as sounds played by the browser, sounds played by the third-party player, etc.
 /// Default value: Default is disable.
-/// When to call: Called this function after calling [startPublishingStream] or [startPreview].
+/// When to call: Called this function after calling [createEngine].
 /// Restrictions: None.
 /// Caution: The system sound card sound does not include streaming sound, media player sound and sound effect player sound.
 /// Related APIs: [setMixSystemPlayoutVolume] function can set system audio capture volume.
@@ -1213,7 +1214,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_current_audio_device)(
 
 /// Enable audio capture device result callback.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Message sequence.
 /// @param user_context Context of user.
 typedef void (*zego_on_audio_captrue_device_enable_result)(zego_handle handle,

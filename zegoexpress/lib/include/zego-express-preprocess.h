@@ -289,7 +289,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_audio_mixing_volume_with_type)(
 /// Default value: When this function is not called, the beauty environment is not activated by default.
 /// When to call: Must be called before calling [startPreview], [startPublishingStream]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
 /// Related APIs: [enableEffectsBeauty] switch beauty, [setEffectsBeautyParam] set beauty parameters.
-/// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​Effects SDK [ZegoEffects] https://doc-zh.zego.im/article/9556 for best results.
+/// Caution: This beauty function is the basic function. If it does not meet the expectations of the developer, you can use the custom video pre-processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] docking and constructing the AI ​​Effects SDK [ZegoEffects] https://doc-zh.zego.im/ai-effects-android-java/overview/overview for best results.
 /// Restrictions: This function only supports Android system 5.0 and above, Android SDK version 21 and above.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 #ifndef ZEGOEXP_EXPLICIT
@@ -580,7 +580,7 @@ typedef void(EXP_CALL *pfnzego_register_copy_audio_mixing_data_callback)(
 /// When to call: It needs to be called after [createEngine].
 /// Default value: When this function is not called, the beauty feature is not enabled by default.
 /// Related APIs: After turning on the beauty features, you can call the [setBeautifyOption] function to adjust the beauty parameters.
-/// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the AI Effects SDK [ZegoEffects] https://docs.zegocloud.com/article/9896 for best results.
+/// Caution: This beauty feature is very simple and may not meet the developer’s expectations. It is recommended to use the custom video processing function [enableCustomVideoProcessing] or the custom video capture function [enableCustomVideoCapture] to connect the AI Effects SDK [ZegoEffects] https://www.zegocloud.com/docs/ai-effects-android-java/overview for best results.
 /// Restrictions: In the case of using the custom video capture function, since the developer has handle the video data capturing, the SDK is no longer responsible for the video data capturing, so this function is no longer valid. It is also invalid when using the custom video processing function.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///

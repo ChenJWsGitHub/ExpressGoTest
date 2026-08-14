@@ -22,7 +22,7 @@ ZEGO_BEGIN_DECLS
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @param param Item param.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_item_create_item(
     zego_handle handle, int range_scene_handle, zego_seq *seq, struct zego_item_param param);
@@ -43,7 +43,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_item_create_item)(
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @param item_id Item ID.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_item_destroy_item(zego_handle handle,
                                                                            int range_scene_handle,
@@ -68,7 +68,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_item_destroy_item)(zego
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @param item_id Item ID.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_item_bind_item(zego_handle handle,
                                                                         int range_scene_handle,
@@ -93,7 +93,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_item_bind_item)(zego_ha
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq The seq executed this time, the seq is valid when the call is successful.
 /// @param item_id Item ID.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_item_unbind_item(zego_handle handle,
                                                                           int range_scene_handle,
@@ -121,7 +121,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_item_unbind_item)(zego_
 /// @param channel The channel to which the status belongs, starting from 0, cannot exceed the maximum channel number.
 /// @param status Current status data.
 /// @param status_length Current status data length.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_item_update_item_status(
     zego_handle handle, int range_scene_handle, zego_seq *seq, long long item_id,
@@ -149,7 +149,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_range_scene_item_update_item_status
 /// @param channel The channel to which the status belongs, starting from 0, cannot exceed the maximum channel number.
 /// @param command Next command data.
 /// @param command_length Next command data length.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_range_scene_item_update_item_command(
     zego_handle handle, int range_scene_handle, zego_seq *seq, long long item_id,
@@ -327,7 +327,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_item_item_command_update_cal
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param item_id Item ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_item_create_item)(zego_handle handle, int range_scene_handle,
@@ -346,7 +346,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_item_create_item_callback)(
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param item_id Item ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_item_destroy_item)(zego_handle handle, int range_scene_handle,
@@ -365,7 +365,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_item_destroy_item_callback)(
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param item_id Item ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_item_bind_item)(zego_handle handle, int range_scene_handle,
@@ -384,7 +384,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_item_bind_item_callback)(
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param item_id Item ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_item_unbind_item)(zego_handle handle, int range_scene_handle,
@@ -403,7 +403,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_item_unbind_item_callback)(
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param item_id Item ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_item_update_item_status)(zego_handle handle,
@@ -425,7 +425,7 @@ typedef void(EXP_CALL *pfnzego_register_range_scene_item_update_item_status_call
 ///
 /// @param range_scene_handle Range scene instance handle.
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param item_id Item ID.
 /// @param user_context Context of user.
 typedef void (*zego_on_range_scene_item_update_item_command)(zego_handle handle,

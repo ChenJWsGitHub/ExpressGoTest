@@ -151,7 +151,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_texture_d
 /// Related APIs: [enableCustomVideoCapture], [setCustomVideoCaptureHandler].
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
-/// @param texture D3D texture。只支持 D3D11 的 DXGI_FORMAT_B8G8R8A8_UNORM 格式纹理
+/// @param texture D3D texture. Only supports D3D11 DXGI_FORMAT_B8G8R8A8_UNORM format textures.
 /// @param rotation The rotation direction of the video frame, the SDK rotates clockwise
 /// @param reference_time_millisecond video frame reference time, UNIX timestamp, in milliseconds.
 /// @param channel Publishing stream channel
@@ -163,6 +163,31 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_d3d_textu
 typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_capture_d3d_texture_data)(
     zego_handle handle, void *texture, int rotation, unsigned long long reference_time_millisecond,
     unsigned int reference_time_scale, enum zego_publish_channel channel);
+#endif
+
+/// Send custom captured video frame D3D Texture data to the SDK (for the specified channel).
+///
+/// Available since: 3.23.0
+/// Description: Send custom captured video frame type ZEGO_VIDEO_BUFFER_TYPE_D3D_TEXTURE_2D data to the SDK.
+/// When to call: After receiving the [onStart] notification, the developer starts the call after the collection logic starts and ends the call after the [onStop] notification.
+/// Caution: Calling this interface must be [enableCustomVideoCapture] with an argument of type ZEGO_VIDEO_BUFFER_TYPE_D3D_TEXTURE_2D. only D3D11 DXGI_FORMAT_B8G8R8A8_UNORM texture is supported
+/// Related APIs: [enableCustomVideoCapture], [setCustomVideoCaptureHandler].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param texture D3D texture. Only supports D3D11 DXGI_FORMAT_B8G8R8A8_UNORM format textures.
+/// @param reference_time_millisecond video frame reference time, UNIX timestamp, in milliseconds.
+/// @param channel Publishing stream channel
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_send_custom_video_capture_d3d_texture_with_handle_data(
+    zego_handle handle, void *texture, void *shared_handle,
+    unsigned long long reference_time_millisecond, unsigned int reference_time_scale,
+    enum zego_publish_channel channel);
+#else
+typedef zego_error(
+    EXP_CALL *pfnzego_express_send_custom_video_capture_d3d_texture_with_handle_data)(
+    zego_handle handle, void *texture, void *shared_handle,
+    unsigned long long reference_time_millisecond, unsigned int reference_time_scale,
+    enum zego_publish_channel channel);
 #endif
 
 /// Gets the SurfaceTexture instance (for the specified channel).
@@ -310,7 +335,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_custom_video_capture_device_sta
 /// Description: You can set the video transform matrix of custom video capture (for the specified channel) through this function. The transformation matrix can include rotation, flipping, and scaling. It is recommended for developers with some OpenGL development experience.
 /// When to call: After the callback [onStart] is received.
 /// Restrictions: This function takes effect only when the custom acquisition type is Texture2D.
-/// References: Please refer to the documentation https://docs.zegocloud.com/article/4054 for details.
+/// References: Please refer to the documentation https://www.zegocloud.com/docs/real-time-video-ios-oc/video/custom-video-capture for details.
 /// Caution: When both the settings transform matrix and the setting rotation interface are called. the transformation matrix is executed before the rotation is set.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -437,6 +462,32 @@ ZEGOEXP_API void EXP_CALL zego_register_custom_video_capture_encoded_data_traffi
 #else
 typedef void(EXP_CALL *pfnzego_register_custom_video_capture_encoded_data_traffic_control_callback)(
     zego_handle handle, zego_on_custom_video_capture_encoded_data_traffic_control callback_func,
+    void *user_context);
+#endif
+
+/// Notification for Custom Video Capture Keyframe Request.
+///
+/// Available since: 3.25.0
+/// Description: Key frame loss detected, the SDK notifies to request a key frame..
+/// Use cases: Live data collected by non-cameras. For example, local video file playback, screen sharing, game live broadcast, etc.
+/// When to Trigger: After calling [stopPreview] or [stopPublishingStream] successfully.
+/// Caution: If you call [startPreview] and [startPublishingStream] to start preview and push stream at the same time after you start custom capture, you should call [stopPreview] and [stopPublishingStream] to stop the preview and push stream before triggering the callback.
+/// Related callbacks: Custom video capture start notification [onCaptureStart].
+/// Related APIs: Call [setCustomVideoCaptureHandler] to set custom video capture callback.
+///
+/// @param channel Publishing stream channel.
+/// @param user_context Context of user.
+typedef void (*zego_on_custom_video_capture_request_key_frame)(zego_handle handle,
+                                                               enum zego_publish_channel channel,
+                                                               void *user_context);
+
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API void EXP_CALL zego_register_custom_video_capture_request_key_frame_callback(
+    zego_handle handle, zego_on_custom_video_capture_request_key_frame callback_func,
+    void *user_context);
+#else
+typedef void(EXP_CALL *pfnzego_register_custom_video_capture_request_key_frame_callback)(
+    zego_handle handle, zego_on_custom_video_capture_request_key_frame callback_func,
     void *user_context);
 #endif
 
@@ -606,7 +657,7 @@ typedef void(EXP_CALL *pfnzego_register_custom_video_render_remote_frame_encoded
 /// Description: When the developer opens custom pre-processing, by calling [setCustomVideoProcessHandler] you can set the custom video pre-processing callback.
 /// Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
 /// Default value: Off by default
-/// When to call: Must be set before calling [startPreview], [startPublishingStream], [createRealTimeSequentialDataManager]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
+/// When to call: Must be set before calling [startPreview], [startPublishingStream], [createRealTimeSequentialDataManager], [startPlayingStream], [createMediaPlayer] or [createAudioEffectPlayer]. If you need to modify the configuration, please call [logoutRoom] to log out of the room first, otherwise it will not take effect.
 /// Restrictions: None.
 /// Related APIs: Call the [setCustomVideoProcessHandler] function to set the callback before custom video processing.
 /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -686,7 +737,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_raw_dat
 /// Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
 /// When to call: Must be called in the [onCapturedUnprocessedCVPixelbuffer] callback.
 /// Restrictions: This interface takes effect when [enableCustomVideoProcessing] is called to enable custom video pre-processing and the bufferType of config is passed in [ZegoVideoBufferTypeCVPixelBuffer] or [ZegoVideoBufferTypeNV12CVPixelBuffer].
-/// Platform differences: Only valid on Windows platform.
+/// Platform differences: Only valid on iOS/macOS platform.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
 /// @param buffer CVPixelBuffer type video frame data to be sent to the SDK.
@@ -709,7 +760,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_send_custom_video_processed_cv_pixe
 /// Use cases: After the developer collects the video data by himself or obtains the video data collected by the SDK, if the basic beauty and watermark functions of the SDK cannot meet the needs of the developer (for example, the beauty effect cannot meet the expectations), the ZegoEffects SDK can be used to perform the video Some special processing, such as beautifying, adding pendants, etc., this process is the pre-processing of custom video.
 /// When to call: Must be called in the [onCapturedUnprocessedCVPixelbuffer] callback.
 /// Restrictions: This interface takes effect when [enableCustomVideoProcessing] is called to enable custom video pre-processing and the bufferType of config is passed in [ZegoVideoBufferTypeCVPixelBuffer] or [ZegoVideoBufferTypeNV12CVPixelBuffer].
-/// Platform differences: Only valid on Windows platform.
+/// Platform differences: Only valid on iOS/macOS platform.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
 /// @param buffer CVPixelBuffer type video frame data to be sent to the SDK.

@@ -11,7 +11,7 @@ ZEGO_BEGIN_DECLS
 /// Description: If the room does not exist, [loginRoom] creates and logs in the room. SDK uses the 'room' to organize users. After users log in to a room, they can use interface such as push stream [startPublishingStream], pull stream [startPlayingStream], send and receive broadcast messages [sendBroadcastMessage], etc. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
 /// Use cases: In the same room, users can conduct live broadcast, audio and video calls, etc.
 /// When to call /Trigger: This interface is called after [createEngine] initializes the SDK.
-/// Restrictions: For restrictions on the use of this function, please refer to https://docs.zegocloud.com/article/7611 or contact ZEGO technical support.
+/// Restrictions: For restrictions on the use of this function, please refer to https://www.zegocloud.com/docs/real-time-video-ios-oc/introduction/overview or contact ZEGO technical support.
 /// Caution:
 ///   1. Apps that use different appIDs cannot intercommunication with each other.
 ///   2. SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
@@ -51,7 +51,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_login_room)(zego_handle handle, con
 /// Description: If the room does not exist, [loginRoom] creates and logs in the room. SDK uses the 'room' to organize users. After users log in to a room, they can use interface such as push stream [startPublishingStream], pull stream [startPlayingStream], send and receive broadcast messages [sendBroadcastMessage], etc. To prevent the app from being impersonated by a malicious user, you can add authentication before logging in to the room, that is, the [token] parameter in the ZegoRoomConfig object passed in by the [config] parameter.
 /// Use cases: In the same room, users can conduct live broadcast, audio and video calls, etc.
 /// When to call /Trigger: This interface is called after [createEngine] initializes the SDK.
-/// Restrictions: For restrictions on the use of this function, please refer to https://docs.zegocloud.com/article/7611 or contact ZEGO technical support.
+/// Restrictions: For restrictions on the use of this function, please refer to https://www.zegocloud.com/docs/real-time-video-ios-oc/introduction/overview or contact ZEGO technical support.
 /// Caution:
 ///   1. Apps that use different appIDs cannot intercommunication with each other.
 ///   2. SDK supports startPlayingStream audio and video streams from different rooms under the same appID, that is, startPlayingStream audio and video streams across rooms. Since ZegoExpressEngine's room related callback notifications are based on the same room, when developers want to startPlayingStream streams across rooms, developers need to maintain related messages and signaling notifications by themselves.
@@ -207,7 +207,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_switch_room)(zego_handle handle,
 /// Use cases: Used when the token is about to expire.
 /// When to call /Trigger: After the developer receives [onRoomTokenWillExpire].
 /// Restrictions: None.
-/// Caution: The token contains important information such as the user's room permissions, publish stream permissions, and effective time, please refer to https://docs.zegocloud.com/article/11649.
+/// Caution: The token contains important information such as the user's room permissions, publish stream permissions, and effective time, please refer to https://www.zegocloud.com/docs/real-time-video-android-java/communication/using-token-authentication .
 /// Related callbacks: None.
 /// Related APIs: None.
 ///
@@ -227,7 +227,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_renew_token)(zego_handle handle, co
 /// Description: The user can call this function to set the extra info of the room.
 /// Use cases: You can set some room-related business attributes, such as whether someone is Co-hosting.
 /// When to call /Trigger: After logging in the room successful.
-/// Restrictions: For restrictions on the use of this function, please refer to https://docs.zegocloud.com/article/7611 or contact ZEGO technical support.
+/// Restrictions: For restrictions on the use of this function, please refer to https://www.zegocloud.com/docs/real-time-video-ios-oc/introduction/overview or contact ZEGO technical support.
 /// Caution: For key and value restrictions, please refer to Restrictions. Newly set values ​​will overwrite old ones.
 /// Related callbacks: Other users in the same room will be notified through the [onRoomExtraInfoUpdate] callback function.
 /// Related APIs: None.
@@ -293,14 +293,14 @@ typedef zego_error(EXP_CALL *pfnzego_express_free_room_stream_list)(
 /// Use cases: Developers can use this callback to determine the status of the current user in the room.
 /// When to trigger:
 ///  1. The developer will receive this notification when calling the [loginRoom], [logoutRoom], [switchRoom] functions.
-///  2. This notification may also be received when the network condition of the user's device changes (SDK will automatically log in to the room when disconnected, please refer to [Does ZEGO SDK support a fast reconnection for temporary disconnection] for details](https://docs.zegocloud.com/faq/reconnect?product=ExpressVideo&platform=all).
+///  2. This notification may also be received when the network condition of the user's device changes (SDK will automatically log in to the room when disconnected, please refer to [Does ZEGO SDK support a fast reconnection for temporary disconnection] for details](https://www.zegocloud.com/docs/faq/express-reconnect).
 /// Restrictions: None.
 /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
 /// Related APIs: [loginRoom]、[logoutRoom]、[switchRoom]
 ///
 /// @param room_id Room ID, a string of up to 128 bytes in length.
 /// @param state Changed room state.
-/// @param error_code Error code, For details, please refer to [Common Error Codes](https://docs.zegocloud.com/article/5548).
+/// @param error_code Error code, For details, please refer to [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code).
 /// @param extended_data Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
 /// @param user_context context of user
 typedef void (*zego_on_room_state_update)(zego_handle handle, const char *room_id,
@@ -320,14 +320,14 @@ typedef void(EXP_CALL *pfnzego_register_room_state_update_callback)(
 /// Available since: 2.18.0
 /// Description: This callback is triggered when the connection status of the room changes, and the reason for the change is notified.For versions 2.18.0 and above, it is recommended to use the onRoomStateChanged callback instead of the onRoomStateUpdate callback to monitor room state changes.
 /// Use cases: Developers can use this callback to determine the status of the current user in the room.
-/// When to trigger: Users will receive this notification when they call room functions (refer to [Related APIs]). 2. This notification may also be received when the user device's network conditions change (SDK will automatically log in to the room again when the connection is disconnected, refer to https://doc-zh.zego.im/faq/reconnect ).
+/// When to trigger: Users will receive this notification when they call room functions (refer to [Related APIs]). 2. This notification may also be received when the user device's network conditions change (SDK will automatically log in to the room again when the connection is disconnected, refer to https://doc-zh.zego.im/faq/express-reconnect ).
 /// Restrictions: None.
 /// Caution: If the connection is being requested for a long time, the general probability is that the user's network is unstable.
 /// Related APIs: [loginRoom], [logoutRoom], [switchRoom]
 ///
 /// @param room_id Room ID, a string of up to 128 bytes in length.
 /// @param reason Room state change reason.
-/// @param error_code Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @param error_code Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 /// @param extended_data Extended Information with state updates. When the room login is successful, the key "room_session_id" can be used to obtain the unique RoomSessionID of each audio and video communication, which identifies the continuous communication from the first user in the room to the end of the audio and video communication. It can be used in scenarios such as call quality scoring and call problem diagnosis.
 /// @param user_context context of user
 typedef void (*zego_on_room_state_changed)(zego_handle handle, const char *room_id,
@@ -489,7 +489,7 @@ typedef void(EXP_CALL *pfnzego_register_room_extra_info_update_callback)(
 /// Use cases: In order to prevent illegal entry into the room, it is necessary to perform authentication control on login room, push streaming, etc., to improve security.
 /// When to call /Trigger: 30 seconds before the Token expires, the SDK will call [onRoomTokenWillExpire] to notify developer.
 /// Restrictions: None.
-/// Caution: The token contains important information such as the user's room permissions, publish stream permissions, and effective time, please refer to https://docs.zegocloud.com/article/11649.
+/// Caution: The token contains important information such as the user's room permissions, publish stream permissions, and effective time, please refer to https://www.zegocloud.com/docs/real-time-video-ios-oc/communication/using-token-authentication .
 /// Related APIs: When the developer receives this callback, he can use [renewToken] to update the token authentication information.
 ///
 /// @param room_id Room ID where the user is logged in, a string of up to 128 bytes in length.
@@ -508,7 +508,7 @@ typedef void(EXP_CALL *pfnzego_register_room_token_will_expire_callback)(
 
 /// Callback for setting room extra information.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param room_id Room ID where the user is logged in, a string of up to 128 bytes in length.
 /// @param key the key of the extra info
 /// @param seq Message sequence.
@@ -527,7 +527,7 @@ typedef void(EXP_CALL *pfnzego_register_room_set_room_extra_info_result_callback
 
 /// Login room result callback.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param extended_data Extended Information
 /// @param seq Message sequence.
 /// @param user_context Context of user.
@@ -545,7 +545,7 @@ typedef void(EXP_CALL *pfnzego_register_room_login_result_callback)(
 
 /// Logout room result callback.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param extended_data Extended Information
 /// @param seq Message sequence.
 /// @param user_context Context of user.

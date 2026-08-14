@@ -141,7 +141,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_get_network_time_info)(
 /// Description: Dump audio, video data.
 /// Use cases: This is a debugging tool. When there is a problem with audio/video capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
 /// When to call: It needs to be called after [createEngine].
-/// Restrictions: Only support Android and iOS to dump video.
+/// Restrictions: If dumping video, only support Android and iOS.
 /// Caution: It will trigger the [onStartDumpData] callback when data dumping starts. The video dump auto-stops after 30 seconds to prevent excessive storage usage, triggering the [onStopDumpData] callback.
 /// Related APIs: Call [stopDumpData] to stop dumping data.
 ///
@@ -161,7 +161,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_dump_data)(zego_handle handle
 /// Use cases: This is a debugging tool. When there is a problem with audio capturing, 3A processing, or other environment processing during publish, you can dump the audio data and upload it to the ZEGO server for further analysis.
 /// When to call: It needs to be called after [startDumpData].
 /// Restrictions: None.
-/// Caution: It will trigger the [onUploadDumpData] callback.
+/// Caution: It will trigger the [onStopDumpData] callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_stop_dump_data(zego_handle handle);
 #else
@@ -245,7 +245,7 @@ typedef void(EXP_CALL *pfnzego_register_network_mode_changed_callback)(
 /// When to Trigger: If an error occurs during the speed test, such as: can not connect to speed test server, this callback will be triggered.
 /// Restrictions: None.
 ///
-/// @param error_code Network speed test error code. Please refer to error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Network speed test error code. Please refer to [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param type Uplink or downlink.
 /// @param user_context Context of user.
 typedef void (*zego_on_network_speed_test_error)(zego_handle handle, int error_code,
@@ -451,7 +451,7 @@ typedef void(EXP_CALL *pfnzego_register_upload_dump_data_callback)(
 /// Callback for test network connectivity.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param result Network connectivity test results
 /// @param user_context Context of user.
 typedef void (*zego_on_test_network_connectivity)(
@@ -469,7 +469,7 @@ typedef void(EXP_CALL *pfnzego_register_test_network_connectivity_callback)(
 /// Callback for network probe.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param result Network probe result
 /// @param user_context Context of user.
 typedef void (*zego_on_network_probe_result)(zego_handle handle, zego_seq seq,

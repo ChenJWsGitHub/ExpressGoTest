@@ -16,6 +16,7 @@ ZEGO_BEGIN_DECLS
 ///   1. Before start to publish the stream, the user can choose to call [setVideoConfig] to set the relevant video parameters, and call [startPreview] to preview the video.
 ///   2. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
 ///   3. In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
+///   4. When there is a web client play the RTC stream, the audio encoder needs to be set to ZegoAudioCodecIDLow3, and the audio sampling rate needs to be set to high.
 ///
 /// @param stream_id Stream ID, a string of up to 256 characters.
 ///   Caution:
@@ -43,6 +44,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_publishing_stream)(
 ///   2. Other users in the same room can get the streamID by monitoring the [onRoomStreamUpdate] event callback after the local user publishing stream successfully.
 ///   3. In the case of poor network quality, user publish may be interrupted, and the SDK will attempt to reconnect. You can learn about the current state and error information of the stream published by monitoring the [onPublisherStateUpdate] event.
 ///   4. To call [SetRoomMode] function to select multiple rooms, the room ID must be specified explicitly.
+///   5. When there is a web client play the RTC stream, the audio encoder needs to be set to ZegoAudioCodecIDLow3, and the audio sampling rate needs to be set to high.
 ///
 /// @param stream_id Stream ID, a string of up to 256 characters.
 ///   Caution:
@@ -381,7 +383,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_publish_stream_encryption_key)(
 /// Description: Take a snapshot of the publishing stream.
 /// When to call: Called this function after calling [startPublishingStream] or [startPreview].
 /// Restrictions: None.
-/// Caution: The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post].
+/// Caution: The resolution of the snapshot is the encoding resolution set in [setVideoConfig]. If you need to change it to capture resolution, please call [setCapturePipelineScaleMode] to change the capture pipeline scale mode to [Post].When using custom video capture, screenshots cannot be taken if only [startPublishingStream] is called for stream pushing without invoking [startPreview] to enable screen preview.
 /// Related callbacks: The screenshot result will be called back through [ZegoPublisherTakeSnapshotCallback].
 /// Related APIs: [takePlayStreamSnapshot].
 /// Note: This function is only available in ZegoExpressVideo SDK!
@@ -1239,7 +1241,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_alpha_channel_video_encoder)
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
 /// @param enable Whether to enable, true: enable, false: disable
-/// @param enhance_level enhance_level [0.0,1.5], advise 0.9
+/// @param enhance_level enhance_level [0.0,1.5], advise 1.2
 /// @param channel Publish stream channel.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_encoder_enhancement(
@@ -1247,6 +1249,28 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_encoder_enhancement(
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_enable_video_encoder_enhancement)(
     zego_handle handle, bool enable, float enhance_level, enum zego_publish_channel channel);
+#endif
+
+/// Enable video encoder enhancement.
+///
+/// Available since: 3.23.0
+/// Description: Call this function to enable or disable video encoder enhancement.
+/// Use cases: Commonly used in video calling, live streaming, and similar scenarios.
+/// Default value: When this function is not called, video encoder enhancement is not enabled by default.
+/// When to call: It needs to be called after [createEngine].
+/// Note: This function is only available in ZegoExpressVideo SDK!
+///
+/// @param enable Whether to enable, true: enable, false: disable
+/// @param config video encoder enhancement config
+/// @param channel Publish stream channel.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_enable_video_encoder_enhancement_with_config(
+    zego_handle handle, bool enable, struct zego_video_encoder_enhancement_config config,
+    enum zego_publish_channel channel);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_enable_video_encoder_enhancement_with_config)(
+    zego_handle handle, bool enable, struct zego_video_encoder_enhancement_config config,
+    enum zego_publish_channel channel);
 #endif
 
 /// Set the camera stabilization mode.
@@ -1292,6 +1316,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_aux_bgm_balance)(zego_handle
 /// When to call: Called after the engine is created [createEngine].
 /// Restrictions: This interface is disabled when using custom video capture.
 /// Related callbacks: Detect results will be called back through [onPublisherFaceDetectInfo].
+/// Caution:
+///   1. This interface depends on the face detection capability of the Android/iOS platform system, and the SDK only encapsulates and throws the related event callbacks.
+///   2. The face detection function is only effective on devices that support face detection, and some devices may not support this capability.
+///   3. The accuracy of the face detection result depends on the underlying system capabilities and cannot be guaranteed to be completely accurate. Please carefully evaluate and use for applications with high accuracy requirements.
 ///
 /// @param enable Turn on or off the face detection.
 /// @param channel Publish stream channel.
@@ -1312,7 +1340,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_enable_face_detection)(
 ///
 /// @param stream_id Stream ID.
 /// @param state State of publishing stream.
-/// @param error_code The error code corresponding to the status change of the publish stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code The error code corresponding to the status change of the publish stream, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param extended_data Extended information with state updates, include playing stream CDN address.
 /// @param user_context Context of user.
 typedef void (*zego_on_publisher_state_update)(zego_handle handle, const char *stream_id,
@@ -1566,7 +1594,7 @@ typedef void(EXP_CALL *pfnzego_register_publisher_stream_event_callback)(
 ///
 /// @param state Object segmentation state.
 /// @param channel Publishing stream channel.If you only publish one audio and video stream, you can ignore this parameter.
-/// @param error_code The error code corresponding to the status change of the object segmentation, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code The error code corresponding to the status change of the object segmentation, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_video_object_segmentation_state_changed)(
     zego_handle handle, enum zego_object_segmentation_state state,
@@ -1657,7 +1685,7 @@ typedef void(EXP_CALL *pfnzego_register_publisher_face_detect_info_callback)(
 
 /// Callback for setting stream extra information.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Message sequence.
 /// @param user_context Context of user.
 typedef void (*zego_on_publisher_update_stream_extra_info_result)(zego_handle handle,
@@ -1677,7 +1705,7 @@ typedef void(EXP_CALL *pfnzego_register_publisher_update_stream_extra_info_resul
 /// Callback for add/remove CDN URL.
 ///
 /// @param stream_id Stream ID.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Message sequence.
 /// @param user_context Context of user.
 typedef void (*zego_on_publisher_update_cdn_url_result)(zego_handle handle, const char *stream_id,
@@ -1694,7 +1722,7 @@ typedef void(EXP_CALL *pfnzego_register_publisher_update_cdn_url_result_callback
 
 /// Results of take publish stream snapshot.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param channel Publish stream channel
 /// @param image Snapshot image (Windows: HBITMAP; macOS/iOS: CGImageRef; Linux: QImage; Android: Bitmap)
 /// @param user_context Context of user.

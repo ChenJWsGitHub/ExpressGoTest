@@ -9,7 +9,7 @@ ZEGO_BEGIN_DECLS
 ///
 /// Available since: 3.1.0
 /// Description: Get a list of screens or windows in a screen.
-/// Restrictions: Only support in Windows/macOS.
+/// Platform differences: Only for Windows / macOS / Linux.
 ///
 /// @param thumbnail_width Get the thumbnail width corresponding to the window, the thumbnail can be used to draw on the window selection interface. (unit is pixel)
 /// @param thumbnail_height Get the thumbnail height corresponding to the window, the thumbnail can be used to draw on the window selection interface. (unit is pixel)
@@ -48,10 +48,10 @@ typedef zego_error(EXP_CALL *pfnzego_express_free_screen_capture_source_list)(
 /// Create the screen capture source
 ///
 /// Available: since 3.1.0
-/// Description: Creates a screen capture source object based on the provided source ID and source type.
-/// Use cases: It is used when you need to record and share the screen or window.
+/// Description: Creates a screen capture source object.
+/// Use cases: It is used when you need to record or share the screen or window.
 /// When to call: It needs to be called after [createEngine].
-/// Platform differences: Only supports Windows and macOS.
+/// Platform differences: Supported on Windows / macOS / Linux / OHOS, not supported on Android/iOS.
 ///
 /// @param source_id The specified screen ID or window ID.
 /// @param source_type The specified screen source type.
@@ -71,7 +71,7 @@ typedef int(EXP_CALL *pfnzego_express_create_screen_capture_source)(
 /// Use cases: When you no longer need to use the screen capture function, you can use this function to destroy the instance object created by the [createScreenCaptureSource] function
 /// When to call: When you need to the screen capture source object needs to be destroyed
 /// Restrictions: After destroy the instance, you need to release the [ZegoScreenCaptureSource] instance object you hold by yourself, and don’t call the function of this instance object after the destruction.
-/// Platform differences: Only supports Windows and macOS.
+/// Platform differences: Supported on Windows / macOS / Linux / OHOS, not supported on mobile.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_destroy_screen_capture_source(zego_handle handle,
                                                                            int instance_index);
@@ -86,7 +86,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_destroy_screen_capture_source)(zego
 /// Description: Update a screen capture source object based on the provided source ID and source type.
 /// Use cases: It is used when you need to record and share the screen or window.
 /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-/// Restrictions: Only available on Windows/macOS.
+/// Restrictions: Available on Windows/macOS/Linux.
 ///
 /// @param source_id The specified screen ID or window ID.
 /// @param source_type The specified screen source type.
@@ -114,6 +114,23 @@ ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_start_capture(zego_h
 #else
 typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_start_capture)(zego_handle handle,
                                                                            int instance_index);
+#endif
+
+/// Start screen capture.
+///
+/// Available since: 3.1.0
+/// Description: Start screen capture with mobile screen capture configuration.
+/// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
+/// Restrictions: Available for starting mobile screen capture with configuration.
+///
+/// @param config Screen capture parameter configuration.
+/// @param instance_index The screen capture source instance index.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_screen_capture_start_capture_with_config(
+    zego_handle handle, struct zego_screen_capture_config config, int instance_index);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_start_capture_with_config)(
+    zego_handle handle, struct zego_screen_capture_config config, int instance_index);
 #endif
 
 /// Stop screen capture.
@@ -221,7 +238,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_window_activa
 /// Available since: 3.1.0
 /// Description: Set whether to show the cursor.
 /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-/// Restrictions: Only available on Windows/macOS.
+/// Restrictions: Available on Windows/macOS/OHOS.
 ///
 /// @param visible Whether to show the cursor. true to show the cursor, false to not show the cursor, the default is true.
 /// @param instance_index The screen capture source instance index.
@@ -238,7 +255,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_enable_cursor_visibl
 /// Available since: 3.21.0
 /// Description: Set whether to highlight the capture area.
 /// When to call: It can be called after the engine by [createScreenCaptureSource] has been initialized.
-/// Restrictions: Only available on Windows/macOS.
+/// Restrictions: Available on Windows/macOS/OHOS.
 ///
 /// @param enable Whether to highlight the capture area. true to highlight, false to not highlight, the default is false.
 /// @param config Highlight capture area border configuration.
@@ -416,7 +433,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_set_app_group_id_ios
 ///
 /// Available since: 3.1.0
 /// Description: Start screen capture.
-/// When to call: After calling the [setVideoSource]、[setAudioSource] function to set the capture source to `ScreenCapture`.
+/// Note: To use screen capture data as a publishing source, call [setVideoSource] or [setAudioSource] as needed to set the corresponding source to `ScreenCapture`.
 /// Restrictions: Only valid for iOS system
 ///
 /// @param config Screen capture parameter configuration.
@@ -432,7 +449,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_screen_capture_in_app_ios)(
 ///
 /// Available since: 3.6.0
 /// Description: Start screen capture.
-/// When to call: After calling the [setVideoSource]、[setAudioSource] function to set the capture source to `ScreenCapture`.
+/// Note: To use screen capture data as a publishing source, call [setVideoSource] or [setAudioSource] as needed to set the corresponding source to `ScreenCapture`.
 ///
 /// @param config Screen capture parameter configuration.
 #ifndef ZEGOEXP_EXPLICIT
@@ -459,7 +476,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_screen_capture_stop_capture_mobile)
 /// Available since: 3.1.0
 /// Description: Update screen capture parameter configuration.
 /// When to call: After calling [startScreenCapture] to start capturing.
-/// Restrictions: Only valid for iOS system. Only available on iOS 12.0 or newer
+/// Restrictions: Available on Android, iOS, and OHOS.
 ///
 /// @param config Screen capture parameter configuration.
 #ifndef ZEGOEXP_EXPLICIT
@@ -476,7 +493,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_update_screen_capture_config_mobile
 /// Description: The callback triggered when the mobile screen capture source exception occurred.
 /// Trigger: This callback is triggered when an exception occurs after the mobile screen capture started.
 /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-/// Restrictions: Only available on Android and iOS.
+/// Restrictions: Only available on Android, iOS, and OHOS.
 ///
 /// @param exception_type Screen capture exception type.
 /// @param user_context Context of user.
@@ -499,7 +516,7 @@ typedef void(EXP_CALL *pfnzego_register_screen_capture_mobile_exception_occurred
 /// Description: The callback triggered when calling the start mobile screen capture.
 /// Trigger: After calling [startScreenCapture], this callback will be triggered when starting screen capture successfully, and [onScreenCaptureExceptionOccurred] will be triggered when failing.
 /// Caution: The callback does not actually take effect until call [setEventHandler] to set.
-/// Restrictions: Only available on Android and iOS.
+/// Restrictions: Only available on Android, iOS, and OHOS.
 ///
 /// @param user_context Context of user.
 typedef void (*zego_on_screen_capture_mobile_start)(zego_handle handle, void *user_context);

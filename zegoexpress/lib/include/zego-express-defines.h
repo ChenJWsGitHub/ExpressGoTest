@@ -530,7 +530,13 @@ enum zego_voice_changer_preset {
     zego_voice_changer_preset_autobot = 30,
 
     /// Out of power effect
-    zego_voice_changer_preset_out_of_power = 31
+    zego_voice_changer_preset_out_of_power = 31,
+
+    /// Foreigner robot voice effect
+    zego_voice_changer_preset_foreigner_robot = 32,
+
+    /// Foreigner Optimus Prime voice effect
+    zego_voice_changer_preset_foreigner_optimus_prime = 33
 
 };
 
@@ -1426,7 +1432,7 @@ enum zego_video_buffer_type {
     /// D3D Texture2D type video frame
     zego_video_buffer_type_d3d_texture_2d = 8,
 
-    /// CVPixelBuffer type nv12 format video frame. Only for custom video processing
+    /// CVPixelBuffer type nv12 format video frame. Only for custom video processing. (Only valid on iOS platform.)
     zego_video_buffer_type_nv12_cv_pixel_buffer = 9
 
 };
@@ -1955,12 +1961,12 @@ enum zego_camera_exposure_mode {
 
 };
 
-/// voice activity detection type
+/// Audio activity detection type
 enum zego_audio_vad_type {
-    /// noise
+    /// inactive audio activity
     zego_audio_vad_type_noise = 0,
 
-    /// speech
+    /// active audio activity
     zego_audio_vad_type_speech = 1
 
 };
@@ -2348,7 +2354,7 @@ enum zego_screen_capture_orientation {
 
 };
 
-/// Screen capture source exception type. (only for Android and iOS)
+/// Screen capture source exception type. (only for Android, iOS, and OHOS)
 enum zego_screen_capture_exception_type {
     /// Unknown exception type.
     zego_screen_capture_exception_type_unknown = 0,
@@ -2374,7 +2380,7 @@ enum zego_screen_capture_exception_type {
     /// Failed to start the foreground service.
     zego_screen_capture_exception_type_foreground_service_failed = 7,
 
-    /// Before starting screen capture, you need to call [setVideoSource], [setAudioSource] to specify the video and audio source `ScreenCapture`.
+    /// The video or audio output source for screen capture is not specified.
     zego_screen_capture_exception_type_source_not_specified = 8,
 
     /// System error exception. For example, low memory, etc.
@@ -2410,7 +2416,10 @@ enum zego_multimedia_load_type {
     zego_multimedia_load_type_memory = 1,
 
     /// Load by copyrighted music resource ID.
-    zego_multimedia_load_type_resource_id = 2
+    zego_multimedia_load_type_resource_id = 2,
+
+    /// Load by memory data and copyrighted music resource ID.
+    zego_multimedia_load_type_memory_resource_id = 3
 
 };
 
@@ -2440,6 +2449,16 @@ enum zego_object_segmentation_type {
 
     /// Green screen background object segmentation.
     zego_object_segmentation_type_green_screen_background = 1
+
+};
+
+/// video encode enhance level mode.
+enum zego_video_encode_enhance_level_mode {
+    /// In automatic mode, the algorithm automatically adjusts based on the set enhancement level, with the maximum value being the set enhancement level.
+    zego_video_encode_enhance_level_mode_auto = 0,
+
+    /// Fixed mode, the algorithm does not dynamically adjust the enhancement level.
+    zego_video_encode_enhance_level_mode_fix = 1
 
 };
 
@@ -2638,7 +2657,7 @@ struct zego_engine_profile {
     /// Application signature for each AppID, please apply from the ZEGO Admin Console. Application signature is a 64 character string. Each character has a range of '0' ~ '9', 'a' ~ 'z'. AppSign 2.17.0 and later allows null or no transmission. If the token is passed empty or not passed, the token must be entered in the [ZegoRoomConfig] parameter for authentication when the [loginRoom] interface is called to login to the room.
     char app_sign[ZEGO_EXPRESS_MAX_APPSIGN_LEN];
 
-    /// The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://docs.zegocloud.com/article/14940
+    /// The room scenario. the SDK will optimize the audio and video configuration for the specified scenario to achieve the best effect in this scenario. After specifying the scenario, you can call other APIs to adjusting the audio and video configuration. Differences between scenarios and how to choose a suitable scenario, please refer to https://www.zegocloud.com/docs/real-time-video-ios-oc/quick-start/scenario-based-audio-video-configuration
     enum zego_scenario scenario;
 };
 
@@ -2681,7 +2700,7 @@ struct zego_room_config {
     /// Whether to enable the user in and out of the room callback notification [onRoomUserUpdate], the default is off. If developers need to use ZEGO Room user notifications, make sure that each user who login sets this flag to true
     bool is_user_status_notify;
 
-    /// The token issued by the developer's business server is used to ensure security. For the generation rules, please refer to [Using Token Authentication](https://doc-zh.zego.im/article/10360), the default is an empty string, that is, no authentication. In versions 2.17.0 and above, if appSign is not passed in when calling the [createEngine] API to create an engine, or if appSign is empty, this parameter must be set for authentication when logging in to a room.
+    /// The token issued by the developer's business server is used to ensure security. For the generation rules, please refer to [Using Token Authentication](/real-time-video-android-java/communication/using-token-authentication), the default is an empty string, that is, no authentication. In versions 2.17.0 and above, if appSign is not passed in when calling the [createEngine] API to create an engine, or if appSign is empty, this parameter must be set for authentication when logging in to a room.
     char token[ZEGO_EXPRESS_MAX_ROOM_TOKEN_VALUE_LEN];
 
     /// The bitmask marker for capability negotiation, refer to enum [ZegoRoomCapabilityNegotiationTypesBitMask], when this param converted to binary, 0b01 that means 1 << 0 for enable the capability negotiation of all user in the room, 0x10 that means 1 << 1 for enable the capability negotiation of publisher in the room. The masks can be combined to allow different types of capability negotiation.
@@ -2839,10 +2858,10 @@ struct zego_reverb_echo_param {
 /// Note that the userID must be unique under the same appID, otherwise, there will be mutual kicks when logging in to the room.
 /// It is strongly recommended that userID corresponds to the user ID of the business APP, that is, a userID and a real user are fixed and unique, and should not be passed to the SDK in a random userID. Because the unique and fixed userID allows ZEGO technicians to quickly locate online problems.
 struct zego_user {
-    /// User ID, a utf8 string with a maximum length of 64 bytes or less.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'. Do not use '%' if you need to communicate with the Web SDK.
+    /// User ID, a utf8 string less than 64 bytes.Privacy reminder: Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.Caution: Only support numbers, English characters and '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '=', '-', '`', ';', '’', ',', '.', '<', '>', '\'. Do not use '%' if you need to communicate with the Web SDK.
     char user_id[ZEGO_EXPRESS_MAX_USERID_LEN];
 
-    /// User Name, a utf8 string with a maximum length of 256 bytes or less.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
+    /// User Name, a utf8 string with a maximum length of less than 256 bytes.Please do not fill in sensitive user information in this field, including but not limited to mobile phone number, ID number, passport number, real name, etc.
     char user_name[ZEGO_EXPRESS_MAX_USERNAME_LEN];
 };
 
@@ -3096,6 +3115,9 @@ struct zego_face_detection_info {
     /// Face position information list
     struct zego_face_position_info *face_position_list;
 
+    /// The error code corresponding to the status of the face detection, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
+    zego_error error_code;
+
     /// Length of face position information list
     unsigned int face_position_count;
 };
@@ -3221,7 +3243,7 @@ struct zego_play_stream_quality {
     /// Audio break count, break count during the callback cycle (Available since 1.17.0)
     double audio_break_rate;
 
-    /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://docs.zegocloud.com/article/3720#4_4 (Available since 2.16.0)
+    /// The audio quality of the playing stream determined by the audio MOS (Mean Opinion Score) measurement method, value range [-1, 5], where -1 means unknown, [0, 5] means valid score, the higher the score, the better the audio quality. For the subjective perception corresponding to the MOS value, please refer to https://www.zegocloud.com/docs/real-time-video-android-java/communication/monitor-stream-quality#4_4 (Available since 2.16.0)
     double mos;
 
     /// Server to local delay, in milliseconds
@@ -4344,19 +4366,19 @@ struct zego_screen_capture_config {
     /// Whether to capture audio when screen capture. The default is true.
     bool capture_audio;
 
-    /// Set Microphone audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS)
+    /// Set microphone audio volume during screen capture. The range is 0 ~ 200. The default is 100. (only for iOS and OHOS)
     unsigned int microphone_volume;
 
-    /// Set Application audio volume for ReplayKit. The range is 0 ~ 200. The default is 100. (only for iOS and Android)
+    /// Set application audio volume during screen capture. The range is 0 ~ 200. The default is 100. (only for iOS, Android, and OHOS)
     unsigned int application_volume;
 
-    /// Set the audio capture parameters during screen capture. (only for Android)
+    /// Set the audio capture parameters during screen capture. (only for Android and OHOS)
     struct zego_audio_frame_param audio_param;
 
-    /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android)
+    /// Set the crop rectangle during screen capture. The crop rectangle must be included in the rectangle of the original data, unit is pixel. (only for iOS/Android/OHOS)
     struct zego_rect crop_rect;
 
-    /// Set the capture orientation of the screen capture. The capture orientation will be fixed, ignoring the system returned orientation. (only for iOS/Android)
+    /// Set the capture orientation of the screen capture. The capture orientation will be fixed, ignoring the system returned orientation. (only for iOS/Android/OHOS)
     enum zego_screen_capture_orientation orientation;
 
     /// Set whether to mute the microphone of the extension process. The default is false. (only for iOS)
@@ -4368,6 +4390,9 @@ struct zego_screen_capture_config {
     /// 3. The audio device mode changes during screen capture may cause the audio output of the screen capture to be abnormal, which can be monitored through [onMobileScreenCaptureExceptionOccurred] callback, and if necessary, the screen capture needs to be restarted.;
     /// 4. After the screen capture is stopped, the audio device mode before the screen capture will be restored.
     enum zego_screen_capture_audio_device_mode audio_device_mode;
+
+    /// Whether to show the system picker when starting screen capture or updating screen capture configuration. The default is false. (Only available on OHOS)
+    bool show_picker;
 };
 
 /// The screen captures source information.
@@ -4401,8 +4426,11 @@ struct zego_layer_border_config {
 
 /// Screen capture audio config
 struct zego_screen_capture_audio_config {
-    /// Whether to collect window sound. true for collection, false for no collection, default false. (only for Windows 10 2004 and above versions)
+    /// Whether to capture window sounds. When true, window sounds will be captured if the capture source is a window; otherwise, system sounds will be captured if the capture source is the screen or if false. When true, the excludeProcessID parameter will be ignored. (only for Windows 10 2004 and above versions)
     bool enable_window_capture;
+
+    /// The process ID to exclude. If system sound capture is enabled, this process's sound can be excluded. Passing in -1 will remove the sound from this process. (Only supports capturing window sounds on Windows 10 2004 and later versions)
+    int exclude_process_id;
 };
 
 /// Audio source mix config
@@ -4427,8 +4455,25 @@ struct zego_audio_source_mix_config {
     /// Enable or disable mix SDK playout into publish stream.
     bool enable_mix_engine_playout;
 
-    /// Enable or disable mix screen capture into publish stream, the input source cannot be set to screen capture. (only for Android and iOS)
+    /// Enable or disable mix screen capture into publish stream, the input source cannot be set to screen capture. (only for Android, iOS and OHOS)
     bool enable_mix_screen_capture;
+
+    /// Audio capture source instance index list.
+    int *audio_source_index_list;
+
+    /// Audio capture source instance count.
+    int audio_source_count;
+};
+
+/// Audio capture source mix process config
+///
+/// Used to configure the mix instance index list and mix instance count when setting audio capture source mix.
+struct zego_audio_source_process_config {
+    /// Audio capture source mix instance index list.
+    int *mix_audio_source_index_list;
+
+    /// Audio capture source mix instance count.
+    int mix_audio_source_count;
 };
 
 /// Multimedia resource for ZEGO media player.
@@ -4453,7 +4498,7 @@ struct zego_media_player_resource {
     /// Binary data memory length.
     int memory_length;
 
-    /// The resource ID obtained from the copyrighted music module.
+    /// The resource ID obtained from the copyrighted music module. When the resource type is [ZegoMultimediaLoadTypeMemoryResourceID], you need to pass the memory resource through [memory] and the corresponding resource ID through this field at the same time.
     char resource_id[ZEGO_EXPRESS_MAX_COMMON_LEN];
 
     /// Online resource cache path, in utf8 encoding format.
@@ -4492,6 +4537,17 @@ struct zego_object_segmentation_config {
 
     /// Background config.
     struct zego_background_config background_config;
+};
+
+/// video rncoder Enhancement Config.
+///
+/// It is used to configure parameters when Video Encoder Enhancement Config is turned on.
+struct zego_video_encoder_enhancement_config {
+    /// The mode of object enhance level mode.
+    enum zego_video_encode_enhance_level_mode enhance_level_mode;
+
+    /// enhance_level [0.0,1.5], advise 1.2
+    float enhance_level;
 };
 
 /// Media Infomration of media file.

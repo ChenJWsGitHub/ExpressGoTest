@@ -11,7 +11,7 @@ ZEGO_BEGIN_DECLS
 /// Description: Play audio and video streams from the ZEGO RTC server.
 /// Use cases: In the real-time scenario, developers can listen to the [onRoomStreamUpdate] event callback to obtain the new stream information in the room where they are located, and call this interface to pass in streamID for play streams.
 /// When to call: After [loginRoom].
-/// Restrictions: None.
+/// Restrictions: Up to 20 streams can be played simultaneously.
 /// Caution: 1. The developer can update the player canvas by calling this function again (the streamID must be the same). 2. After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min. 3. In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event. please refer to https://docs.zegocloud.com/faq/reconnect. 4. Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -35,7 +35,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream)(zego_handle h
 /// Description: Play audio and video streams from the ZEGO RTC server or CDN.
 /// Use cases: In real-time or live broadcast scenarios, developers can listen to the [onRoomStreamUpdate] event callback to obtain the new stream information in the room where they are located, and call this interface to pass in streamID for play streams.
 /// When to call: After [loginRoom].
-/// Restrictions: None.
+/// Restrictions: Up to 20 streams can be played simultaneously.
 /// Caution: 1. The developer can update the player canvas by calling this function again (the streamID must be the same). 2. After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min. 3. In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event. please refer to https://docs.zegocloud.com/faq/reconnect. 4. Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -60,7 +60,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_start_playing_stream_with_config)(
 /// Description: Play audio and video streams from the ZEGO RTC server or CDN.
 /// Use cases: When using RangeScene, users can use this function to customize play the streaming.
 /// When to call: After [loginScene].
-/// Restrictions: None.
+/// Restrictions: Up to 20 streams can be played simultaneously.
 /// Caution: 1. The developer can update the player canvas by calling this function again (the streamID must be the same). 2. After the first play stream failure due to network reasons or the play stream is interrupted, the default time for SDK reconnection is 20min. 3. In the case of poor network quality, user play may be interrupted, the SDK will try to reconnect, and the current play status and error information can be obtained by listening to the [onPlayerStateUpdate] event. please refer to https://docs.zegocloud.com/faq/reconnect. 4. Playing the stream ID that does not exist, the SDK continues to try to play after calling this function. After the stream ID is successfully published, the audio and video stream can be actually played.
 /// Note: This function is only available in ZegoExpressVideo SDK!
 ///
@@ -107,6 +107,27 @@ zego_express_switch_playing_stream(zego_handle handle, const char *from_stream_i
 typedef zego_error(EXP_CALL *pfnzego_express_switch_playing_stream)(
     zego_handle handle, const char *from_stream_id, const char *to_stream_id,
     struct zego_player_config config);
+#endif
+
+/// Switch from playing one resource type to playing another resource type.
+///
+/// Available since: 3.25.0
+/// Description: Smoothly switch from one resource type to another resource type.
+/// Use cases: First, play the L3 or CDN stream, then switch to the RTC stream to reduce latency.
+/// When to call: After [startPlayingStream].
+/// Restrictions: Make sure the feature for the target resource type is enabled.
+/// Related callbacks: The current streaming status can be known through the [onPlayerStateUpdate] event.
+///
+/// @param stream_id Stream ID, a string of up to 256 characters.
+///   Caution:
+///   Only support numbers, English characters and '-', '_'.
+/// @param resource_type Target resource type.
+#ifndef ZEGOEXP_EXPLICIT
+ZEGOEXP_API zego_error EXP_CALL zego_express_switch_playing_resource(
+    zego_handle handle, const char *stream_id, enum zego_resource_type resource_type);
+#else
+typedef zego_error(EXP_CALL *pfnzego_express_switch_playing_resource)(
+    zego_handle handle, const char *stream_id, enum zego_resource_type resource_type);
 #endif
 
 /// Stops playing a stream.
@@ -607,7 +628,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_uninit_video_super_resolution)(zego
 ///   Caution:
 ///   Only support numbers, English characters and '-', '_'.
 /// @param canvas The view used to display the play audio and video stream's image. When the view is set to [NULL], no video is displayed, only audio is played.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_update_playing_canvas(zego_handle handle,
                                                                    const char *stream_id,
@@ -633,7 +654,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_update_playing_canvas)(zego_handle 
 ///   Only support numbers, English characters and '-', '_'.
 /// @param update_type Update type.
 /// @param canvas The view used to display the play audio and video stream's image.
-/// @return Error code, please refer to the error codes document https://doc-en.zego.im/en/5548.html for details.
+/// @return Error code, please refer to the error codes document https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code for details.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL
 zego_express_set_playing_canvas(zego_handle handle, const char *stream_id,
@@ -653,7 +674,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_set_playing_canvas)(
 ///
 /// @param stream_id stream ID.
 /// @param state State of playing stream.
-/// @param error_code The error code corresponding to the status change of the playing stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code The error code corresponding to the status change of the playing stream, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param extended_data Extended Information with state updates. As the standby, only an empty json table is currently returned.
 /// @param user_context Context of user.
 typedef void (*zego_on_player_state_update)(zego_handle handle, const char *stream_id,
@@ -676,7 +697,7 @@ typedef void(EXP_CALL *pfnzego_register_player_state_update_callback)(
 /// Related callbacks: After the stream switching is successful or failed, you can obtain the current streaming status through the callback function [onPlayerStateUpdate].
 ///
 /// @param stream_id The stream ID currently playing.
-/// @param error_code The error code corresponding to the result of the switch stream, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code The error code corresponding to the result of the switch stream, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_player_switched)(zego_handle handle, const char *stream_id,
                                         zego_error error_code, void *user_context);
@@ -1002,7 +1023,7 @@ typedef void(EXP_CALL *pfnzego_register_player_stream_event_callback)(
 ///
 /// @param stream_id Stream ID.
 /// @param state Video super resolution state.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_player_video_super_resolution_update)(zego_handle handle,
                                                              const char *stream_id,
@@ -1021,7 +1042,7 @@ typedef void(EXP_CALL *pfnzego_register_player_video_super_resolution_update_cal
 
 /// Results of take play stream snapshot.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param stream_id Stream ID
 /// @param image Snapshot image (Windows: HBITMAP; macOS/iOS: CGImageRef; Linux: QImage; Android: Bitmap)
 /// @param user_context Context of user.

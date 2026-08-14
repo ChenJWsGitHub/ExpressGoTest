@@ -395,7 +395,7 @@ typedef void(EXP_CALL *pfnzego_register_im_recv_custom_command_callback)(
 
 /// Callback for sending real-time sequential data.
 ///
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param instance_index The real time sequential data manager instance index.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
@@ -415,7 +415,7 @@ typedef void(EXP_CALL *pfnzego_register_real_time_sequential_data_sent_callback)
 ///
 /// @param room_id Room ID.
 /// @param message_id ID of this message
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
 typedef void (*zego_on_im_send_broadcast_message_result)(zego_handle handle, const char *room_id,
@@ -435,7 +435,7 @@ typedef void(EXP_CALL *pfnzego_register_im_send_broadcast_message_result_callbac
 ///
 /// @param room_id Room ID.
 /// @param message_id ID of this message
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
 typedef void (*zego_on_im_send_barrage_message_result)(zego_handle handle, const char *room_id,
@@ -454,7 +454,7 @@ typedef void(EXP_CALL *pfnzego_register_im_send_barrage_message_result_callback)
 /// Callback for sending custom command.
 ///
 /// @param room_id Room ID.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
 typedef void (*zego_on_im_send_custom_command_result)(zego_handle handle, const char *room_id,
@@ -472,7 +472,7 @@ typedef void(EXP_CALL *pfnzego_register_im_send_custom_command_result_callback)(
 /// Callback for sending custom command.
 ///
 /// @param room_id Room ID.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param seq Sequence of sending broadcast message.
 /// @param user_context Context of user.
 typedef void (*zego_on_send_transparent_message_result)(zego_handle handle, const char *room_id,

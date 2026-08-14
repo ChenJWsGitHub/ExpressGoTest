@@ -136,7 +136,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_get_lrc_lyric_wit
 /// Use case: Used to display lyrics word by word.
 /// When to call: After initializing the copyrighted music success [initCopyrightedMusic].
 ///
-/// @param krc_token The krcToken obtained when calling [requestResource] for accompaniment or climax clips, or when obtaining shared resources through the [getSharedResource] interface. For more details, please refer to https://doc-zh.zego.im/article/15079#2_2
+/// @param krc_token The krcToken obtained when calling [requestResource] for accompaniment or climax clips, or when obtaining shared resources through the [getSharedResource] interface. For more details, please refer to https://doc-zh.zego.im/online-ktv-ios/client-api/apis-to-obtain-songs-and-lyrics#2_2
 /// @param sequence [in/out] Context that identifies which invocation triggered this callback.
 #ifndef ZEGOEXP_EXPLICIT
 ZEGOEXP_API zego_error EXP_CALL zego_express_copyrighted_music_get_krc_lyric_by_token(
@@ -705,7 +705,7 @@ typedef zego_error(EXP_CALL *pfnzego_express_copyrighted_music_query_cache_with_
 /// Callback for copyrighted music init.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_init)(zego_handle handle, zego_seq seq,
                                                zego_error error_code, void *user_context);
@@ -721,7 +721,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_init_callback)(
 /// Callback of sending extended feature request.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param command request command.
 /// @param result request result, each request command has corresponding request result.
 /// @param user_context Context of user.
@@ -744,7 +744,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_send_extended_request_
 /// Get lrc format lyrics complete callback.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param lyrics lrc format lyrics.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_get_lrc_lyric)(zego_handle handle, zego_seq seq,
@@ -762,7 +762,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_lrc_lyric_callback
 /// Get verbatim lyrics complete callback.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param lyrics verbatim lyrics.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_get_krc_lyric_by_token)(zego_handle handle, zego_seq seq,
@@ -783,7 +783,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_krc_lyric_by_token
 /// Callback for request song.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param resource The JSON string returned by the song ordering service, including song resource information.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_request_song)(zego_handle handle, zego_seq seq,
@@ -801,7 +801,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_song_callback)
 /// Callback for request accompaniment.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param resource accompany resource information.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_request_accompaniment)(zego_handle handle, zego_seq seq,
@@ -822,7 +822,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_accompaniment_
 /// Callback for request accompaniment clip.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param resource accompany clip resource information.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_request_accompaniment_clip)(zego_handle handle,
@@ -844,7 +844,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_accompaniment_
 /// Callback for acquire songs or accompaniment through authorization token.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param resource song or accompany resource information.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_get_music_by_token)(zego_handle handle, zego_seq seq,
@@ -865,7 +865,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_music_by_token_cal
 /// Callback of requesting music resource.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param resource The JSON string returned by the song ordering service, including music resource information.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_request_resource)(zego_handle handle, zego_seq seq,
@@ -886,7 +886,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_request_resource_callb
 /// Callback of getting shared music resource.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param resource The JSON string returned by the song ordering service, including music resource information.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_get_shared_resource)(zego_handle handle, zego_seq seq,
@@ -907,7 +907,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_get_shared_resource_ca
 /// Callback for download song or accompaniment.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_download)(zego_handle handle, zego_seq seq,
                                                    zego_error error_code, void *user_context);
@@ -923,7 +923,7 @@ typedef void(EXP_CALL *pfnzego_register_copyrighted_music_download_callback)(
 /// Get standard pitch data complete callback.
 ///
 /// @param seq Sequence.
-/// @param error_code Error code, please refer to the error codes document https://docs.zegocloud.com/en/5548.html for details.
+/// @param error_code Error code, please refer to the [Common Error Codes](https://www.zegocloud.com/docs/real-time-video-android-java/client-sdk/error-code) for details.
 /// @param pitch Standard pitch data.
 /// @param user_context Context of user.
 typedef void (*zego_on_copyrighted_music_get_standard_pitch)(zego_handle handle, zego_seq seq,
