@@ -1647,6 +1647,7 @@ func destroyEngine(engine IZegoExpressEngine, callback ZegoDestroyCompletionCall
 		gMapLock.Lock()
 		delete(gEngineMap, realEngine.engineID)
 		gMapLock.Unlock()
+		C.zego_express_engine_destroy_handle(realEngine.handle)
 	}
 }
 
